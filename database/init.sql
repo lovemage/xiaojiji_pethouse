@@ -51,6 +51,17 @@ CREATE TABLE IF NOT EXISTS site_settings (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 建立管理員表
+CREATE TABLE IF NOT EXISTS admins (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 插入預設寵物資料
 INSERT INTO pets (name, breed, age, gender, color, category, price, description, health, images) VALUES
 ('小黑', '邊境牧羊犬', '3個月大', 'male', '黑白色', 'medium', 35000, '活潑聰明的邊境牧羊犬幼犬，已完成基礎訓練', '健康狀況良好，已接種疫苗', '["images/64805.jpg"]'),
@@ -76,10 +87,16 @@ INSERT INTO site_settings (setting_key, setting_value) VALUES
 ('license_number', '特寵業字第W1141071號'),
 ('tax_id', '00879221');
 
+-- 插入預設管理員資料 (密碼: xiaojiji2024)
+INSERT INTO admins (username, password, email, is_active) VALUES
+('admin', 'xiaojiji2024', 'admin@xiaojiji.com', TRUE);
+
 -- 建立索引以提升效能
 CREATE INDEX IF NOT EXISTS idx_pets_category ON pets(category);
 CREATE INDEX IF NOT EXISTS idx_pets_created_at ON pets(created_at);
 CREATE INDEX IF NOT EXISTS idx_inquiries_created_at ON inquiries(created_at);
 CREATE INDEX IF NOT EXISTS idx_inquiries_is_read ON inquiries(is_read);
 CREATE INDEX IF NOT EXISTS idx_testimonials_is_active ON testimonials(is_active);
-CREATE INDEX IF NOT EXISTS idx_testimonials_created_at ON testimonials(created_at); 
+CREATE INDEX IF NOT EXISTS idx_testimonials_created_at ON testimonials(created_at);
+CREATE INDEX IF NOT EXISTS idx_admins_username ON admins(username);
+CREATE INDEX IF NOT EXISTS idx_admins_is_active ON admins(is_active); 

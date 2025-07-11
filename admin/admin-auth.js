@@ -1,39 +1,101 @@
 // 管理員認證系統
-const ADMIN_USERNAME = 'admin';
-const ADMIN_PASSWORD = 'xiaojiji2024'; // 實際使用時應該使用更安全的方式
+let currentAdmin = null;
 
 // 檢查是否已登入
 function checkAuth() {
-    const isLoggedIn = localStorage.getItem('adminLoggedIn');
+    const adminData = localStorage.getItem('adminData');
     const currentPage = window.location.pathname;
     
-    if (!isLoggedIn && !currentPage.includes('login.html')) {
+    if (!adminData && !currentPage.includes('login.html')) {
         window.location.href = 'login.html';
+        return false;
     }
+    
+    if (adminData) {
+        currentAdmin = JSON.parse(adminData);
+        return true;
+    }
+    
+    return false;
 }
 
 // 登入處理
 if (document.getElementById('loginForm')) {
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
+        const submitBtn = document.querySelector('button[type="submit"]');
         
-        if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-            localStorage.setItem('adminLoggedIn', 'true');
-            window.location.href = 'dashboard.html';
-        } else {
-            alert('帳號或密碼錯誤！');
+        // 顯示載入狀態
+        submitBtn.disabled = true;
+        submitBtn.textContent = '登入中...';
+        
+        try {
+            const response = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // 儲存管理員資料到 localStorage
+                localStorage.setItem('adminData', JSON.stringify(data.admin));
+                localStorage.setItem('adminLoggedIn', 'true');
+                currentAdmin = data.admin;
+                
+                // 跳轉到儀表板
+                window.location.href = 'dashboard.html';
+            } else {
+                alert(data.message || '登入失敗');
+            }
+        } catch (error) {
+            console.error('登入錯誤:', error);
+            alert('登入失敗，請檢查網路連接');
+        } finally {
+            // 恢復按鈕狀態
+            submitBtn.disabled = false;
+            submitBtn.textContent = '登入';
         }
     });
 }
 
+// 獲取當前管理員資料
+function getCurrentAdmin() {
+    const adminData = localStorage.getItem('adminData');
+    if (adminData) {
+        return JSON.parse(adminData);
+    }
+    return null;
+}
+
 // 登出功能
 function logout() {
+    localStorage.removeItem('adminData');
     localStorage.removeItem('adminLoggedIn');
+    currentAdmin = null;
     window.location.href = 'login.html';
 }
 
 // 頁面載入時檢查認證
-document.addEventListener('DOMContentLoaded', checkAuth);
+document.addEventListener('DOMContentLoaded', function() {
+    checkAuth();
+    
+    // 如果在管理頁面，顯示當前管理員資訊
+    const currentPage = window.location.pathname;
+    if (currentPage.includes('admin/') && !currentPage.includes('login.html')) {
+        const admin = getCurrentAdmin();
+        if (admin) {
+            // 更新頁面上的管理員資訊
+            const adminInfo = document.querySelector('.admin-info');
+            if (adminInfo) {
+                adminInfo.textContent = `歡迎, ${admin.username}`;
+            }
+        }
+    }
+});

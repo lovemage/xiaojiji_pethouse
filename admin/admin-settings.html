@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理員設定 - 小基基寵物犬舍</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <style>
+        .admin-settings {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .settings-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .settings-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-primary:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        .admin-info-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-info-card h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .admin-info-card p {
+            margin: 5px 0;
+            color: #666;
+        }
+        
+        .password-requirements {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .password-requirements h5 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .password-requirements ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .password-requirements li {
+            color: #856404;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 側邊欄 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>管理後台</h2>
+                <p class="admin-info">歡迎, 管理員</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    儀表板
+                </a>
+                <a href="pets.html">
+                    <i class="fas fa-paw"></i>
+                    寵物管理
+                </a>
+                <a href="add-pet.html">
+                    <i class="fas fa-plus"></i>
+                    新增寵物
+                </a>
+                <a href="messages.html">
+                    <i class="fas fa-envelope"></i>
+                    客戶諮詢
+                </a>
+                <a href="testimonials.html">
+                    <i class="fas fa-star"></i>
+                    客戶評價
+                </a>
+                <a href="gallery.html">
+                    <i class="fas fa-images"></i>
+                    相簿管理
+                </a>
+                <a href="site-settings.html">
+                    <i class="fas fa-cog"></i>
+                    網站設定
+                </a>
+                <a href="admin-settings.html" class="active">
+                    <i class="fas fa-user-cog"></i>
+                    管理員設定
+                </a>
+                <a href="#" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    登出
+                </a>
+            </nav>
+        </div>
+
+        <!-- 主要內容 -->
+        <div class="main-content">
+            <div class="content-header">
+                <h1>管理員設定</h1>
+                <p>管理您的帳戶資訊和密碼</p>
+            </div>
+
+            <div class="admin-settings">
+                <!-- 管理員資訊 -->
+                <div class="settings-section">
+                    <h3>帳戶資訊</h3>
+                    <div class="admin-info-card" id="adminInfoCard">
+                        <h4>當前管理員</h4>
+                        <p><strong>用戶名：</strong><span id="currentUsername">載入中...</span></p>
+                        <p><strong>電子郵件：</strong><span id="currentEmail">載入中...</span></p>
+                        <p><strong>建立時間：</strong><span id="createdAt">載入中...</span></p>
+                    </div>
+                </div>
+
+                <!-- 密碼修改 -->
+                <div class="settings-section">
+                    <h3>修改密碼</h3>
+                    
+                    <div class="password-requirements">
+                        <h5>密碼要求：</h5>
+                        <ul>
+                            <li>至少 6 個字元</li>
+                            <li>建議包含英文字母和數字</li>
+                            <li>避免使用過於簡單的密碼</li>
+                        </ul>
+                    </div>
+
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label for="currentPassword">當前密碼</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newPassword">新密碼</label>
+                            <input type="password" id="newPassword" required minlength="6">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">確認新密碼</label>
+                            <input type="password" id="confirmPassword" required minlength="6">
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">更新密碼</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+    <script src="admin-auth.js"></script>
+    <script>
+        // 載入管理員資訊
+        async function loadAdminInfo() {
+            try {
+                const admin = getCurrentAdmin();
+                if (admin) {
+                    document.getElementById('currentUsername').textContent = admin.username;
+                    document.getElementById('currentEmail').textContent = admin.email || '未設定';
+                    
+                    // 獲取完整的管理員資料
+                    const response = await fetch(`/api/admin/profile?username=${admin.username}`);
+                    const data = await response.json();
+                    
+                    if (data.created_at) {
+                        const createdDate = new Date(data.created_at).toLocaleString('zh-TW');
+                        document.getElementById('createdAt').textContent = createdDate;
+                    }
+                }
+            } catch (error) {
+                console.error('載入管理員資訊錯誤:', error);
+            }
+        }
+
+        // 密碼修改表單處理
+        document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const submitBtn = document.querySelector('button[type="submit"]');
+            
+            // 驗證新密碼
+            if (newPassword !== confirmPassword) {
+                alert('新密碼和確認密碼不一致！');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                alert('新密碼至少需要 6 個字元！');
+                return;
+            }
+            
+            if (newPassword === currentPassword) {
+                alert('新密碼不能與當前密碼相同！');
+                return;
+            }
+            
+            // 顯示載入狀態
+            submitBtn.disabled = true;
+            submitBtn.textContent = '更新中...';
+            
+            try {
+                const admin = getCurrentAdmin();
+                const response = await fetch('/api/admin/password', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: admin.username,
+                        currentPassword: currentPassword,
+                        newPassword: newPassword
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('密碼更新成功！');
+                    // 清空表單
+                    document.getElementById('passwordForm').reset();
+                } else {
+                    alert(data.message || '密碼更新失敗');
+                }
+            } catch (error) {
+                console.error('密碼更新錯誤:', error);
+                alert('密碼更新失敗，請檢查網路連接');
+            } finally {
+                // 恢復按鈕狀態
+                submitBtn.disabled = false;
+                submitBtn.textContent = '更新密碼';
+            }
+        });
+
+        // 頁面載入時執行
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAdminInfo();
+        });
+    </script>
+</body>
+</html> 

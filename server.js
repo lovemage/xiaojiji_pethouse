@@ -259,6 +259,86 @@ app.post('/api/settings', async (req, res) => {
   }
 });
 
+// 管理員相關 API
+app.post('/api/admin/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    
+    const result = await pool.query(
+      'SELECT * FROM admins WHERE username = $1 AND password = $2 AND is_active = true',
+      [username, password]
+    );
+    
+    if (result.rows.length > 0) {
+      res.json({ 
+        success: true, 
+        message: '登入成功',
+        admin: {
+          id: result.rows[0].id,
+          username: result.rows[0].username,
+          email: result.rows[0].email
+        }
+      });
+    } else {
+      res.status(401).json({ success: false, message: '帳號或密碼錯誤' });
+    }
+  } catch (err) {
+    console.error('管理員登入錯誤:', err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+app.get('/api/admin/profile', async (req, res) => {
+  try {
+    const { username } = req.query;
+    
+    const result = await pool.query(
+      'SELECT id, username, email, created_at FROM admins WHERE username = $1 AND is_active = true',
+      [username]
+    );
+    
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
+    } else {
+      res.status(404).json({ error: '管理員不存在' });
+    }
+  } catch (err) {
+    console.error('獲取管理員資料錯誤:', err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+app.put('/api/admin/password', async (req, res) => {
+  try {
+    const { username, currentPassword, newPassword } = req.body;
+    
+    // 驗證當前密碼
+    const authResult = await pool.query(
+      'SELECT * FROM admins WHERE username = $1 AND password = $2 AND is_active = true',
+      [username, currentPassword]
+    );
+    
+    if (authResult.rows.length === 0) {
+      return res.status(401).json({ success: false, message: '當前密碼錯誤' });
+    }
+    
+    // 更新密碼
+    const result = await pool.query(
+      'UPDATE admins SET password = $1, updated_at = CURRENT_TIMESTAMP WHERE username = $2 RETURNING id, username, email',
+      [newPassword, username]
+    );
+    
+    res.json({ 
+      success: true, 
+      message: '密碼更新成功',
+      admin: result.rows[0]
+    });
+  } catch (err) {
+    console.error('更新密碼錯誤:', err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
 // 首頁路由
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
