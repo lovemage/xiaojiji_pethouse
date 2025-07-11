@@ -22,6 +22,8 @@ document.querySelectorAll('.nav-menu a').forEach(link => {
 // 初始化分類篩選（頁面載入時調用）
 document.addEventListener('DOMContentLoaded', () => {
     initializeCategoryFilters();
+    initializeGallery(); // 初始化相簿功能
+    loadGalleryImages(); // 載入相簿圖片
 });
 
 // 平滑滾動
@@ -78,9 +80,9 @@ window.addEventListener('scroll', () => {
 });
 
 // 載入寵物資料
-async function loadPetsFromStorage() {
+function loadPetsFromStorage() {
     try {
-        const pets = await API.getPets();
+        const pets = JSON.parse(localStorage.getItem('pets') || '[]');
         const dogsGrid = document.querySelector('.dogs-grid');
         
         if (pets.length > 0 && dogsGrid) {
@@ -101,8 +103,7 @@ async function loadPetsFromStorage() {
                 }[pet.category] || '';
                 
                 // 處理圖片
-                const images = pet.images ? JSON.parse(pet.images) : [];
-                const imageUrl = images.length > 0 ? images[0] : 'images/64805.jpg';
+                const imageUrl = pet.images && pet.images.length > 0 ? pet.images[0] : 'images/64805.jpg';
                 
                 dogCard.innerHTML = `
                     <img src="${imageUrl}" alt="${pet.name}">
@@ -127,9 +128,9 @@ async function loadPetsFromStorage() {
 }
 
 // 顯示寵物詳細資訊
-async function showPetDetails(petId) {
+function showPetDetails(petId) {
     try {
-        const pets = await API.getPets();
+        const pets = JSON.parse(localStorage.getItem('pets') || '[]');
         const pet = pets.find(p => p.id === petId);
         
         if (pet) {
@@ -174,7 +175,7 @@ async function showPetDetails(petId) {
             };
         }
     } catch (error) {
-        console.error('載入寵物詳細資訊失敗:', error);
+        console.error('載入寵物詳細資料失敗:', error);
     }
 }
 
@@ -543,3 +544,162 @@ window.addEventListener('load', () => {
         }, index * 100);
     });
 });
+
+// 相簿功能
+let currentLightboxIndex = 0;
+let galleryImages = [];
+
+// 初始化相簿功能
+function initializeGallery() {
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    const categoryBtns = document.querySelectorAll('.gallery-category-btn');
+    const lightbox = document.getElementById('gallery-lightbox');
+    const lightboxClose = document.querySelector('.lightbox-close');
+    
+    // 收集所有圖片數據
+    galleryImages = Array.from(galleryItems).map(item => ({
+        src: item.querySelector('img').src,
+        title: item.querySelector('img').dataset.title,
+        description: item.querySelector('img').dataset.description,
+        category: item.dataset.category
+    }));
+    
+    // 分類篩選功能
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // 更新按鈕狀態
+            categoryBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const category = btn.dataset.category;
+            
+            // 篩選顯示圖片
+            galleryItems.forEach((item, index) => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.classList.remove('hidden');
+                    item.classList.add('visible');
+                    item.style.display = 'block';
+                } else {
+                    item.classList.add('hidden');
+                    item.classList.remove('visible');
+                    setTimeout(() => {
+                        if (item.classList.contains('hidden')) {
+                            item.style.display = 'none';
+                        }
+                    }, 300);
+                }
+            });
+        });
+    });
+    
+    // 點擊圖片開啟燈箱
+    galleryItems.forEach((item, index) => {
+        item.addEventListener('click', () => {
+            openLightbox(index);
+        });
+    });
+    
+    // 關閉燈箱
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+            closeLightbox();
+        }
+    });
+    
+    // 鍵盤導航
+    document.addEventListener('keydown', (e) => {
+        if (lightbox.classList.contains('active')) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            } else if (e.key === 'ArrowLeft') {
+                changeLightboxImage(-1);
+            } else if (e.key === 'ArrowRight') {
+                changeLightboxImage(1);
+            }
+        }
+    });
+}
+
+// 開啟燈箱
+function openLightbox(index) {
+    currentLightboxIndex = index;
+    const lightbox = document.getElementById('gallery-lightbox');
+    const image = document.getElementById('lightbox-image');
+    const title = document.getElementById('lightbox-title');
+    const description = document.getElementById('lightbox-description');
+    
+    // 設置圖片和資訊
+    image.src = galleryImages[index].src;
+    image.alt = galleryImages[index].title;
+    title.textContent = galleryImages[index].title;
+    description.textContent = galleryImages[index].description;
+    
+    // 顯示燈箱
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden'; // 防止背景滾動
+}
+
+// 關閉燈箱
+function closeLightbox() {
+    const lightbox = document.getElementById('gallery-lightbox');
+    lightbox.classList.remove('active');
+    document.body.style.overflow = ''; // 恢復滾動
+}
+
+// 切換燈箱圖片
+function changeLightboxImage(direction) {
+    const visibleImages = getVisibleImages();
+    const currentVisibleIndex = visibleImages.findIndex(img => img.src === galleryImages[currentLightboxIndex].src);
+    
+    let newIndex = currentVisibleIndex + direction;
+    
+    if (newIndex < 0) {
+        newIndex = visibleImages.length - 1;
+    } else if (newIndex >= visibleImages.length) {
+        newIndex = 0;
+    }
+    
+    // 找到新圖片在原始數組中的索引
+    const newImageIndex = galleryImages.findIndex(img => img.src === visibleImages[newIndex].src);
+    
+    if (newImageIndex !== -1) {
+        currentLightboxIndex = newImageIndex;
+        const image = document.getElementById('lightbox-image');
+        const title = document.getElementById('lightbox-title');
+        const description = document.getElementById('lightbox-description');
+        
+        // 添加淡入效果
+        image.style.opacity = '0';
+        setTimeout(() => {
+            image.src = galleryImages[currentLightboxIndex].src;
+            image.alt = galleryImages[currentLightboxIndex].title;
+            title.textContent = galleryImages[currentLightboxIndex].title;
+            description.textContent = galleryImages[currentLightboxIndex].description;
+            image.style.opacity = '1';
+        }, 150);
+    }
+}
+
+// 獲取當前可見的圖片
+function getVisibleImages() {
+    const activeCategory = document.querySelector('.gallery-category-btn.active').dataset.category;
+    
+    if (activeCategory === 'all') {
+        return galleryImages;
+    } else {
+        return galleryImages.filter(img => img.category === activeCategory);
+    }
+}
+
+// 載入相簿圖片（從 API 獲取）
+async function loadGalleryImages() {
+    try {
+        // 如果有後端 API 可以從這裡載入圖片
+        // const images = await API.getGalleryImages();
+        // 目前使用靜態圖片
+        console.log('相簿圖片載入完成');
+    } catch (error) {
+        console.error('載入相簿圖片失敗:', error);
+    }
+}

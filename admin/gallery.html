@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>相簿管理 - 小基基寵物犬舍管理系統</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 側邊欄 -->
+        <nav class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>管理系統</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 儀表板</a></li>
+                <li><a href="pets.html"><i class="fas fa-paw"></i> 寵物管理</a></li>
+                <li><a href="messages.html"><i class="fas fa-envelope"></i> 客戶訊息</a></li>
+                <li><a href="testimonials.html"><i class="fas fa-star"></i> 客戶評價</a></li>
+                <li><a href="gallery.html" class="active"><i class="fas fa-images"></i> 相簿管理</a></li>
+                <li><a href="site-settings.html"><i class="fas fa-cog"></i> 網站設定</a></li>
+                <li><a href="../index.html"><i class="fas fa-home"></i> 回到首頁</a></li>
+            </ul>
+        </nav>
+
+        <!-- 主要內容 -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>相簿管理</h1>
+                <button class="btn-primary" onclick="showAddImageModal()">
+                    <i class="fas fa-plus"></i> 新增圖片
+                </button>
+            </div>
+
+            <!-- 分類篩選 -->
+            <div class="gallery-filters">
+                <button class="filter-btn active" data-category="all">全部</button>
+                <button class="filter-btn" data-category="puppy">幼犬</button>
+                <button class="filter-btn" data-category="adult">成犬</button>
+                <button class="filter-btn" data-category="training">訓練</button>
+                <button class="filter-btn" data-category="daily">日常</button>
+            </div>
+
+            <!-- 相簿網格 -->
+            <div class="admin-gallery-grid" id="adminGalleryGrid">
+                <!-- 圖片項目將通過 JavaScript 動態載入 -->
+            </div>
+        </main>
+    </div>
+
+    <!-- 新增圖片彈窗 -->
+    <div id="addImageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>新增圖片</h2>
+                <span class="close" onclick="closeAddImageModal()">&times;</span>
+            </div>
+            <form id="addImageForm">
+                <div class="form-group">
+                    <label for="imageFile">選擇圖片</label>
+                    <input type="file" id="imageFile" accept="image/*" required>
+                    <div class="image-preview" id="imagePreview"></div>
+                </div>
+                <div class="form-group">
+                    <label for="imageTitle">圖片標題</label>
+                    <input type="text" id="imageTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="imageDescription">圖片描述</label>
+                    <textarea id="imageDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="imageCategory">分類</label>
+                    <select id="imageCategory" required>
+                        <option value="">請選擇分類</option>
+                        <option value="puppy">幼犬</option>
+                        <option value="adult">成犬</option>
+                        <option value="training">訓練</option>
+                        <option value="daily">日常</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeAddImageModal()">取消</button>
+                    <button type="submit" class="btn-primary">新增圖片</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 編輯圖片彈窗 -->
+    <div id="editImageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>編輯圖片</h2>
+                <span class="close" onclick="closeEditImageModal()">&times;</span>
+            </div>
+            <form id="editImageForm">
+                <input type="hidden" id="editImageId">
+                <div class="form-group">
+                    <label>目前圖片</label>
+                    <div class="current-image" id="currentImage"></div>
+                </div>
+                <div class="form-group">
+                    <label for="editImageTitle">圖片標題</label>
+                    <input type="text" id="editImageTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="editImageDescription">圖片描述</label>
+                    <textarea id="editImageDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editImageCategory">分類</label>
+                    <select id="editImageCategory" required>
+                        <option value="puppy">幼犬</option>
+                        <option value="adult">成犬</option>
+                        <option value="training">訓練</option>
+                        <option value="daily">日常</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeEditImageModal()">取消</button>
+                    <button type="submit" class="btn-primary">更新圖片</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="admin-gallery.js"></script>
+</body>
+</html> 

@@ -362,6 +362,202 @@
     color: var(--primary-color);
 }
 
+/* 相簿管理樣式 */
+.gallery-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.filter-btn:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.filter-btn.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.admin-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.gallery-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.gallery-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.gallery-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.gallery-card:hover .gallery-image img {
+    transform: scale(1.05);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-card:hover .image-overlay {
+    opacity: 1;
+}
+
+.btn-icon {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: #495057;
+}
+
+.btn-icon:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.btn-icon.btn-danger {
+    color: #dc3545;
+}
+
+.btn-icon.btn-danger:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.gallery-info {
+    padding: 15px;
+}
+
+.gallery-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.gallery-info .category {
+    display: inline-block;
+    background: #e9ecef;
+    color: #495057;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.gallery-info .description {
+    margin: 0 0 10px 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.gallery-info .date {
+    color: #999;
+    font-size: 12px;
+}
+
+/* 圖片預覽 */
+.image-preview {
+    margin-top: 10px;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.current-image img {
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+/* 通知樣式 */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    z-index: 10000;
+    animation: slideIn 0.3s ease;
+}
+
+.notification.success {
+    background-color: #28a745;
+}
+
+.notification.error {
+    background-color: #dc3545;
+}
+
+.notification.info {
+    background-color: #17a2b8;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
 /* 響應式設計 */
 @media (max-width: 768px) {
     .admin-panel {
@@ -380,5 +576,25 @@
         flex-direction: column;
         gap: 15px;
         text-align: center;
+    }
+
+    .admin-gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+    
+    .gallery-filters {
+        justify-content: center;
+    }
+    
+    .filter-btn {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+    
+    .notification {
+        left: 20px;
+        right: 20px;
+        top: 10px;
     }
 }

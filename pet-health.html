@@ -219,14 +219,63 @@
     </style>
 </head>
 <body>
-    <!-- 返回主頁 -->
+    <!-- 頂部聯絡資訊欄 -->
     <div class="top-bar">
         <div class="container">
-            <a href="index.html" style="color: white; text-decoration: none;">
-                <i class="fas fa-arrow-left"></i> 返回首頁
-            </a>
+            <div class="contact-info">
+                <span><i class="fas fa-phone"></i> 0910-808-283</span>
+                <span><i class="fab fa-line"></i> @corgidog</span>
+                <span><i class="fas fa-clock"></i> 下午13:00 ~ 晚上21:00</span>
+            </div>
+            <div class="social-links">
+                <a href="https://lin.ee/kWyAbbF" target="_blank" aria-label="Line"><i class="fab fa-line"></i></a>
+                <a href="http://instagram.com/xiaojijichongwuquanshe?utm_source=qr" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.tiktok.com/@corgidog114666?_t=ZS-8xwHtofNTBI&_r=1" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            </div>
         </div>
     </div>
+
+    <!-- 導航欄 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="index.html" style="text-decoration: none;">
+                    <img src="images/logo.png" alt="小基基寵物犬舍" style="height: 50px; vertical-align: middle; margin-right: 10px;" id="adminLogo">
+                    <div style="display: inline-block; vertical-align: middle;">
+                        <h1 style="margin: 0; font-size: 24px;">小基基寵物犬舍</h1>
+                        <span class="subtitle">專業邊境牧羊犬培育</span>
+                    </div>
+                </a>
+            </div>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="index.html#home">首頁</a></li>
+                <li><a href="index.html#about">關於我們</a></li>
+                <li class="dropdown">
+                    <a href="index.html#dogs">幼犬出售區</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#small">小型犬</a></li>
+                        <li><a href="index.html#medium">中型犬</a></li>
+                        <li><a href="index.html#large">大型犬</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="index.html#health">健康專區</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="pet-health.html">寵物健康資訊</a></li>
+                        <li><a href="adoption-guide.html">領養後注意事項</a></li>
+                    </ul>
+                </li>
+                <li><a href="index.html#gallery">相簿</a></li>
+                <li><a href="index.html#testimonials">客戶評價</a></li>
+                <li><a href="index.html#contact">聯絡我們</a></li>
+            </ul>
+        </div>
+    </nav>
 
     <!-- 頁面標題 -->
     <section class="health-header">
@@ -592,6 +641,7 @@
         <span class="line-tooltip">聯絡我們</span>
     </a>
 
+    <script src="script.js"></script>
     <script>
         // 平滑滾動
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
