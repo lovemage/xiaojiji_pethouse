@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聯絡諮詢 - 小基基寵物犬舍</title>
+    <meta name="description" content="填寫表單與小基基寵物犬舍聯繫，我們將盡快回覆您的諮詢">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --form-yellow: #F4A7A7;
+            --form-black: #000000;
+            --form-grey: #cccccc;
+        }
+        
+        .form-page-body {
+            background: #f2f2f2;
+            padding: 40px 0;
+        }
+        
+        .clearfix:after {
+            content: "";
+            display: block;
+            clear: both;
+            visibility: hidden;
+            height: 0;
+        }
+        
+        .form_wrapper {
+            background: #fff;
+            width: 500px;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 35px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            border-top: 5px solid var(--form-yellow);
+            -webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            -moz-box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            -webkit-transform-origin: 50% 0%;
+            transform-origin: 50% 0%;
+            -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+            -webkit-transition: none;
+            transition: none;
+            -webkit-animation: expand 0.8s 0.6s ease-out forwards;
+            animation: expand 0.8s 0.6s ease-out forwards;
+            opacity: 0;
+            border-radius: 15px;
+        }
+        
+        .form_wrapper h2 {
+            font-size: 1.8em;
+            line-height: 1.5em;
+            margin: 0;
+            color: var(--primary-color);
+        }
+        
+        .form_wrapper .title_container {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        
+        .form_wrapper .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        .form_wrapper .input_field {
+            position: relative;
+            margin-bottom: 25px;
+            -webkit-animation: bounce 0.6s ease-out;
+            animation: bounce 0.6s ease-out;
+        }
+        
+        .form_wrapper .input_field > span {
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #333;
+            height: 100%;
+            border-right: 1px solid var(--form-grey);
+            text-align: center;
+            width: 40px;
+            line-height: 40px;
+        }
+        
+        .form_wrapper input[type="text"],
+        .form_wrapper input[type="tel"],
+        .form_wrapper input[type="email"],
+        .form_wrapper textarea {
+            width: 100%;
+            padding: 10px 10px 10px 50px;
+            height: 40px;
+            border: 1px solid var(--form-grey);
+            box-sizing: border-box;
+            outline: none;
+            -webkit-transition: all 0.30s ease-in-out;
+            -moz-transition: all 0.30s ease-in-out;
+            -ms-transition: all 0.30s ease-in-out;
+            transition: all 0.30s ease-in-out;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        
+        .form_wrapper textarea {
+            height: 120px;
+            padding-top: 10px;
+            resize: vertical;
+        }
+        
+        .form_wrapper input:hover,
+        .form_wrapper textarea:hover {
+            background: #fafafa;
+        }
+        
+        .form_wrapper input:focus,
+        .form_wrapper textarea:focus {
+            -webkit-box-shadow: 0 0 2px 1px rgba(244, 167, 167, 0.5);
+            -moz-box-shadow: 0 0 2px 1px rgba(244, 167, 167, 0.5);
+            box-shadow: 0 0 2px 1px rgba(244, 167, 167, 0.5);
+            border: 1px solid var(--form-yellow);
+            background: #fafafa;
+        }
+        
+        .form_wrapper .select_option {
+            position: relative;
+            width: 100%;
+            margin-bottom: 25px;
+            -webkit-animation: bounce 0.6s ease-out;
+            animation: bounce 0.6s ease-out;
+        }
+        
+        .form_wrapper .select_option > span {
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #333;
+            height: 100%;
+            border-right: 1px solid var(--form-grey);
+            text-align: center;
+            width: 40px;
+            line-height: 40px;
+            z-index: 1;
+            background: white;
+            border-radius: 8px 0 0 8px;
+        }
+        
+        .form_wrapper select {
+            display: inline-block;
+            width: 100%;
+            height: 40px;
+            padding: 0px 15px 0px 50px;
+            cursor: pointer;
+            color: #333;
+            border: 1px solid var(--form-grey);
+            border-radius: 8px;
+            background: #fff;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            transition: all 0.2s ease;
+            font-size: 15px;
+        }
+        
+        .form_wrapper select::-ms-expand {
+            display: none;
+        }
+        
+        .form_wrapper select:hover,
+        .form_wrapper select:focus {
+            color: var(--form-black);
+            background: #fafafa;
+            border-color: var(--form-yellow);
+            outline: none;
+        }
+        
+        .select_arrow {
+            position: absolute;
+            top: calc(50% - 4px);
+            right: 15px;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            border-width: 8px 5px 0 5px;
+            border-style: solid;
+            border-color: #7b7b7b transparent transparent transparent;
+        }
+        
+        .form_wrapper select:hover + .select_arrow,
+        .form_wrapper select:focus + .select_arrow {
+            border-top-color: var(--form-black);
+        }
+        
+        .form_wrapper input[type="submit"] {
+            align-items: center;
+            appearance: none;
+            background-color: #fcfcfd;
+            border-radius: 4px;
+            border-width: 0;
+            box-shadow:
+                rgba(45, 35, 66, 0.2) 0 2px 4px,
+                rgba(45, 35, 66, 0.15) 0 7px 13px -3px,
+                #d6d6e7 0 -3px 0 inset;
+            box-sizing: border-box;
+            color: #36395a;
+            cursor: pointer;
+            display: inline-flex;
+            height: 48px;
+            justify-content: center;
+            line-height: 1;
+            width: 100%;
+            overflow: hidden;
+            padding-left: 16px;
+            padding-right: 16px;
+            position: relative;
+            text-align: center;
+            text-decoration: none;
+            transition:
+                box-shadow 0.15s,
+                transform 0.15s;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            white-space: nowrap;
+            will-change: box-shadow, transform;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .form_wrapper input[type="submit"]:focus {
+            box-shadow:
+                #d6d6e7 0 0 0 1.5px inset,
+                rgba(45, 35, 66, 0.4) 0 2px 4px,
+                rgba(45, 35, 66, 0.3) 0 7px 13px -3px,
+                #d6d6e7 0 -3px 0 inset;
+        }
+        
+        .form_wrapper input[type="submit"]:hover {
+            box-shadow:
+                rgba(45, 35, 66, 0.3) 0 4px 8px,
+                rgba(45, 35, 66, 0.2) 0 7px 13px -3px,
+                #d6d6e7 0 -3px 0 inset;
+            transform: translateY(-2px);
+        }
+        
+        .form_wrapper input[type="submit"]:active {
+            box-shadow: #d6d6e7 0 3px 7px inset;
+            transform: translateY(2px);
+        }
+        
+        .quick-contact {
+            background-color: var(--accent-color);
+            padding: 40px;
+            border-radius: 15px;
+            margin-top: 40px;
+            text-align: center;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .quick-contact h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .quick-contact-methods {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .quick-contact-method {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background-color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .quick-contact-method:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        @-webkit-keyframes expand { 
+            0% { -webkit-transform: scale3d(1,0,1); opacity:0; }
+            25% { -webkit-transform: scale3d(1,1.2,1); }
+            50% { -webkit-transform: scale3d(1,0.85,1); }
+            75% { -webkit-transform: scale3d(1,1.05,1); }
+            100% { -webkit-transform: scale3d(1,1,1);  opacity:1; }
+        }
+        
+        @keyframes expand { 
+            0% { -webkit-transform: scale3d(1,0,1); transform: scale3d(1,0,1);  opacity:0; }
+            25% { -webkit-transform: scale3d(1,1.2,1); transform: scale3d(1,1.2,1); }
+            50% { -webkit-transform: scale3d(1,0.85,1); transform: scale3d(1,0.85,1); }
+            75% { -webkit-transform: scale3d(1,1.05,1); transform: scale3d(1,1.05,1); }
+            100% { -webkit-transform: scale3d(1,1,1); transform: scale3d(1,1,1);  opacity:1; }
+        }
+        
+        @-webkit-keyframes bounce { 
+            0% { -webkit-transform: translate3d(0,-25px,0); opacity:0; }
+            25% { -webkit-transform: translate3d(0,10px,0); }
+            50% { -webkit-transform: translate3d(0,-6px,0); }
+            75% { -webkit-transform: translate3d(0,2px,0); }
+            100% { -webkit-transform: translate3d(0,0,0); opacity: 1; }
+        }
+        
+        @keyframes bounce { 
+            0% { -webkit-transform: translate3d(0,-25px,0); transform: translate3d(0,-25px,0); opacity:0; }
+            25% { -webkit-transform: translate3d(0,10px,0); transform: translate3d(0,10px,0); }
+            50% { -webkit-transform: translate3d(0,-6px,0); transform: translate3d(0,-6px,0); }
+            75% { -webkit-transform: translate3d(0,2px,0); transform: translate3d(0,2px,0); }
+            100% { -webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0); opacity: 1; }
+        }
+        
+        @media (max-width: 600px) {
+            .form_wrapper {
+                padding: 25px;
+                width: 90%;
+            }
+            
+            .quick-contact-methods {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 返回首頁 -->
+    <div class="top-bar">
+        <div class="container">
+            <a href="index.html" style="color: white; text-decoration: none;">
+                <i class="fas fa-arrow-left"></i> 返回首頁
+            </a>
+        </div>
+    </div>
+
+    <!-- 頁面標題 -->
+    <section class="form-header">
+        <div class="container">
+            <h1>聯絡諮詢</h1>
+            <p>我們很樂意為您解答任何問題</p>
+        </div>
+    </section>
+
+    <!-- 表單容器 -->
+    <div class="form-page-body">
+        <div class="container">
+            <div class="form_wrapper">
+            <div class="title_container">
+                <h2>聯絡諮詢</h2>
+                <p class="subtitle">請留下您的資訊，我們會儘快與您聯繫</p>
+            </div>
+            
+            <form id="contactForm">
+                <div class="input_field">
+                    <span><i class="fas fa-user"></i></span>
+                    <input type="text" name="name" placeholder="您的姓名" required />
+                </div>
+                
+                <div class="input_field">
+                    <span><i class="fas fa-phone"></i></span>
+                    <input type="tel" name="phone" placeholder="聯絡電話" pattern="[0-9]{10}" required />
+                </div>
+                
+                <div class="input_field">
+                    <span><i class="fab fa-line"></i></span>
+                    <input type="text" name="lineId" placeholder="LINE ID" />
+                </div>
+                
+                <div class="select_option">
+                    <span><i class="fas fa-dog"></i></span>
+                    <select name="petSize" required>
+                        <option value="">想要詢問的犬種大小</option>
+                        <option value="small">小型犬</option>
+                        <option value="medium">中型犬</option>
+                        <option value="large">大型犬</option>
+                        <option value="undecided">尚未決定</option>
+                    </select>
+                    <div class="select_arrow"></div>
+                </div>
+                
+                <div class="input_field">
+                    <span><i class="fas fa-comment"></i></span>
+                    <textarea name="message" placeholder="請告訴我們您的需求或問題..." rows="4"></textarea>
+                </div>
+                
+                <input type="submit" value="送出諮詢" />
+            </form>
+        </div>
+        </div>
+    </div>
+
+    <!-- 快速聯絡 -->
+    <div class="container">
+        <div class="quick-contact">
+            <h3>需要立即聯繫嗎？</h3>
+            <p>您也可以透過以下方式直接與我們聯絡</p>
+            <div class="quick-contact-methods">
+                <a href="https://lin.ee/kWyAbbF" target="_blank" class="quick-contact-method">
+                    <i class="fab fa-line"></i> LINE: @corgidog
+                </a>
+                <a href="tel:0910808283" class="quick-contact-method">
+                    <i class="fas fa-phone"></i> 電話: 0910-808-283
+                </a>
+                <a href="https://www.instagram.com/xiaojijichongwuquanshe/" target="_blank" class="quick-contact-method">
+                    <i class="fab fa-instagram"></i> Instagram
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 頁尾 -->
+    <footer class="footer" style="margin-top: 60px;">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 小基基寵物犬舍. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 社群媒體懸浮選單 -->
+    <div class="social-float-menu">
+        <div class="social-float-toggle" onclick="toggleSocialMenu()">
+            <img src="images/logo.png" alt="小基基寵物犬舍" class="social-logo">
+            <span class="social-close"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="social-float-buttons">
+            <a href="https://lin.ee/kWyAbbF" target="_blank" class="social-float-btn line-btn" aria-label="LINE">
+                <i class="fab fa-line"></i>
+                <span class="social-tooltip">LINE</span>
+            </a>
+            <a href="https://www.tiktok.com/@corgidog114666?_t=ZS-8xwHtofNTBI&_r=1" target="_blank" class="social-float-btn tiktok-btn" aria-label="TikTok">
+                <i class="fab fa-tiktok"></i>
+                <span class="social-tooltip">TikTok</span>
+            </a>
+            <a href="http://instagram.com/xiaojijichongwuquanshe?utm_source=qr" target="_blank" class="social-float-btn instagram-btn" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+                <span class="social-tooltip">Instagram</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // 表單提交處理
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                // 收集表單數據
+                const formData = new FormData(this);
+                const data = {
+                    name: formData.get('name'),
+                    phone: formData.get('phone'),
+                    lineId: formData.get('lineId'),
+                    petSize: formData.get('petSize'),
+                    message: formData.get('message')
+                };
+                
+                // 發送到後端 API
+                await API.createInquiry(data);
+                
+                // 顯示成功訊息
+                alert('感謝您的諮詢！我們已收到您的訊息，將在24小時內與您聯繫。');
+                
+                // 重置表單
+                this.reset();
+                
+                // 可選：重定向到感謝頁面或首頁
+                // window.location.href = 'thank-you.html';
+            } catch (error) {
+                console.error('提交諮詢失敗:', error);
+                alert('提交失敗，請稍後再試或直接聯絡我們。');
+            }
+        });
+    </script>
+</body>
+</html>

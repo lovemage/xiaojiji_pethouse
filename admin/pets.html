@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寵物管理 - 小基基寵物犬舍</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-panel">
+        <!-- 側邊欄 -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <img src="../images/logo.png" alt="小基基寵物犬舍">
+                <h3>管理系統</h3>
+            </div>
+            <ul class="admin-menu">
+                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 儀表板</a></li>
+                <li><a href="pets.html" class="active"><i class="fas fa-dog"></i> 寵物管理</a></li>
+                <li><a href="add-pet.html"><i class="fas fa-plus-circle"></i> 新增寵物</a></li>
+                <li><a href="messages.html"><i class="fas fa-envelope"></i> 訊息管理</a></li>
+                <li><a href="testimonials.html"><i class="fas fa-star"></i> 客戶評價</a></li>
+                <li><a href="site-settings.html"><i class="fas fa-cog"></i> 網站設定</a></li>
+                <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+            </ul>
+        </aside>
+
+        <!-- 主要內容 -->
+        <main class="admin-content">
+            <div class="admin-header">
+                <h1>寵物管理</h1>
+                <div class="admin-actions">
+                    <a href="add-pet.html" class="btn-primary">新增寵物</a>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>圖片</th>
+                            <th>名稱</th>
+                            <th>品種</th>
+                            <th>年齡</th>
+                            <th>性別</th>
+                            <th>價格</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="petsTableBody">
+                        <!-- 動態載入 -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="admin-auth.js"></script>
+    <script src="admin-pets.js"></script>
+</body>
+</html>

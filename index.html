@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小基基寵物犬舍 - 專業邊境牧羊犬培育</title>
+    <meta name="description" content="小基基寵物犬舍專業培育邊境牧羊犬，提供健康可愛的寵物犬，擁有政府特寵業執照">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 頂部聯絡資訊欄 -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="contact-info">
+                <span><i class="fas fa-phone"></i> 0910-808-283</span>
+                <span><i class="fab fa-line"></i> @corgidog</span>
+                <span><i class="fas fa-clock"></i> 下午13:00 ~ 晚上21:00</span>
+            </div>
+            <div class="social-links">
+                <a href="https://lin.ee/kWyAbbF" target="_blank" aria-label="Line"><i class="fab fa-line"></i></a>
+                <a href="http://instagram.com/xiaojijichongwuquanshe?utm_source=qr" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.tiktok.com/@corgidog114666?_t=ZS-8xwHtofNTBI&_r=1" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 導航欄 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="index.html" style="text-decoration: none;">
+                    <img src="images/logo.png" alt="小基基寵物犬舍" style="height: 50px; vertical-align: middle; margin-right: 10px;" id="adminLogo">
+                    <div style="display: inline-block; vertical-align: middle;">
+                        <h1 style="margin: 0; font-size: 24px;">小基基寵物犬舍</h1>
+                        <span class="subtitle">專業邊境牧羊犬培育</span>
+                    </div>
+                </a>
+            </div>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="#home">首頁</a></li>
+                <li><a href="#about">關於我們</a></li>
+                <li class="dropdown">
+                    <a href="#dogs">幼犬出售區</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#small">小型犬</a></li>
+                        <li><a href="#medium">中型犬</a></li>
+                        <li><a href="#large">大型犬</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#health">健康專區</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="pet-health.html">寵物健康資訊</a></li>
+                        <li><a href="adoption-guide.html">領養後注意事項</a></li>
+                    </ul>
+                </li>
+                <li><a href="#gallery">相簿</a></li>
+                <li><a href="#testimonials">客戶評價</a></li>
+                <li><a href="#contact">聯絡我們</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要橫幅 -->
+    <section class="hero" style="background-image: linear-gradient(rgba(70,130,180,0.7), rgba(70,130,180,0.5)), url('images/pkncb1-golden-retriever-puppy-running-outdoors-in-grass.png');">
+        <div class="hero-content">
+            <h2>歡迎來到小基基寵物犬舍</h2>
+            <p>專業培育健康、聰明、可愛的邊境牧羊犬</p>
+            <p>擁有政府特寵業執照，品質保證</p>
+            <a href="#dogs" class="btn-primary">查看犬隻</a>
+        </div>
+    </section>
+
+    <!-- 關於我們 -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2 class="section-title">關於小基基寵物犬舍</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>小基基寵物犬舍成立於2015年，專注於邊境牧羊犬的專業培育。我們堅持以愛心和專業照顧每一隻狗狗，確保牠們健康成長。</p>
+                    <ul class="features">
+                        <li><i class="fas fa-check-circle"></i> 政府合法特寵業執照</li>
+                        <li><i class="fas fa-check-circle"></i> 專業獸醫定期健檢</li>
+                        <li><i class="fas fa-check-circle"></i> 優良血統證明</li>
+                        <li><i class="fas fa-check-circle"></i> 完整疫苗接種</li>
+                        <li><i class="fas fa-check-circle"></i> 售後服務保證</li>
+                    </ul>
+                </div>
+                <div class="about-image">
+                    <img src="images/RnWoowUwUaWbUjTraVyj-6FYMm_TH-eUtdIZk7XSGZM.jpg" alt="小基基寵物犬舍環境">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 幼犬出售區 -->
+    <section id="dogs" class="dogs-section">
+        <div class="container">
+            <h2 class="section-title">幼犬出售區</h2>
+            <div class="dog-categories">
+                <button class="category-btn active" data-category="all">全部</button>
+                <button class="category-btn" data-category="small">小型犬</button>
+                <button class="category-btn" data-category="medium">中型犬</button>
+                <button class="category-btn" data-category="large">大型犬</button>
+            </div>
+            <div class="dogs-grid">
+                <div class="dog-card" data-category="medium male">
+                    <img src="images/64805.jpg" alt="邊境牧羊犬幼犬">
+                    <div class="dog-info">
+                        <h3>小黑</h3>
+                        <p>邊境牧羊犬 | 3個月大 | 公犬</p>
+                        <p class="price">NT$ 35,000</p>
+                        <a href="#" class="btn-secondary">了解更多</a>
+                    </div>
+                </div>
+                <div class="dog-card" data-category="small female">
+                    <img src="images/download.jpg" alt="柯基犬幼犬">
+                    <div class="dog-info">
+                        <h3>小花</h3>
+                        <p>柯基犬 | 2個月大 | 母犬</p>
+                        <p class="price">NT$ 38,000</p>
+                        <a href="#" class="btn-secondary">了解更多</a>
+                    </div>
+                </div>
+                <div class="dog-card" data-category="large female">
+                    <img src="images/download-1.jpg" alt="黃金獵犬幼犬">
+                    <div class="dog-info">
+                        <h3>露西</h3>
+                        <p>黃金獵犬 | 4個月大 | 母犬</p>
+                        <p class="price">NT$ 45,000</p>
+                        <a href="#" class="btn-secondary">了解更多</a>
+                    </div>
+                </div>
+                <div class="dog-card" data-category="medium male">
+                    <img src="images/download-2.jpg" alt="柴犬幼犬">
+                    <div class="dog-info">
+                        <h3>小白</h3>
+                        <p>柴犬 | 4個月大 | 公犬</p>
+                        <p class="price">NT$ 32,000</p>
+                        <a href="#" class="btn-secondary">了解更多</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 健康專區 -->
+    <section id="health" class="health-section">
+        <div class="container">
+            <h2 class="section-title">健康專區</h2>
+            <div class="health-content">
+                <div class="health-card">
+                    <div class="health-icon">
+                        <i class="fas fa-syringe"></i>
+                    </div>
+                    <h3>疫苗接種</h3>
+                    <p>所有幼犬均已完成基礎疫苗接種，包括：</p>
+                    <ul>
+                        <li>六合一疫苗</li>
+                        <li>狂犬病疫苗</li>
+                        <li>犬瘟熱疫苗</li>
+                    </ul>
+                    <a href="pet-health.html" class="btn-secondary" style="margin-top: 15px; display: inline-block;">了解更多</a>
+                </div>
+                <div class="health-card">
+                    <div class="health-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>健康保證</h3>
+                    <p>我們提供完整的健康保證：</p>
+                    <ul>
+                        <li>30天健康保證期</li>
+                        <li>遺傳疾病篩檢證明</li>
+                        <li>獸醫健康檢查報告</li>
+                    </ul>
+                </div>
+                <div class="health-card">
+                    <div class="health-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3>定期健檢</h3>
+                    <p>犬舍內所有犬隻定期進行：</p>
+                    <ul>
+                        <li>每月獸醫健康檢查</li>
+                        <li>寄生蟲預防</li>
+                        <li>營養狀態評估</li>
+                    </ul>
+                </div>
+                <div class="health-card">
+                    <div class="health-icon">
+                        <i class="fas fa-book-medical"></i>
+                    </div>
+                    <h3>健康手冊</h3>
+                    <p>購買幼犬將獲得：</p>
+                    <ul>
+                        <li>完整健康記錄手冊</li>
+                        <li>飲食建議指南</li>
+                        <li>終身飼養諮詢服務</li>
+                    </ul>
+                    <a href="adoption-guide.html" class="btn-secondary" style="margin-top: 15px; display: inline-block;">查看領養指南</a>
+                </div>
+            </div>
+            <div class="health-notice">
+                <p><i class="fas fa-info-circle"></i> 我們與專業獸醫團隊合作，確保每隻幼犬都健康活潑。所有犬隻皆有完整的健康檢查記錄，歡迎查詢。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 相簿 -->
+    <section id="gallery" class="gallery-section">
+        <div class="container">
+            <h2 class="section-title">精彩相簿</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="images/64805.jpg" alt="快樂的邊境牧羊犬">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/download.jpg" alt="邊境牧羊犬玩耍">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/download-1.jpg" alt="邊境牧羊犬訓練">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/download-2.jpg" alt="邊境牧羊犬家庭">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/RnWoowUwUaWbUjTraVyj-6FYMm_TH-eUtdIZk7XSGZM.jpg" alt="邊境牧羊犬幼犬">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/pkncb1-golden-retriever-puppy-running-outdoors-in-grass.png" alt="邊境牧羊犬戶外">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 客戶評價 -->
+    <section id="testimonials" class="testimonials-section">
+        <div class="container">
+            <h2 class="section-title">客戶評價</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"從小基基帶回家的柯基寶寶超級健康活潑！老闆很細心地教導飼養方式，還提供了完整的健康記錄。寶寶現在已經成為我們家的開心果了！"</p>
+                    <div class="testimonial-author">
+                        <img src="images/64805.jpg" alt="客戶照片" class="author-img">
+                        <div class="author-info">
+                            <h4>陳小姐</h4>
+                            <p>柯基犬主人</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"專業的犬舍！環境乾淨整潔，狗狗們都很健康。最感動的是售後服務，老闆會定期關心狗狗的狀況，真的把每隻狗狗都當作家人。"</p>
+                    <div class="testimonial-author">
+                        <img src="images/download-1.jpg" alt="客戶照片" class="author-img">
+                        <div class="author-info">
+                            <h4>林先生</h4>
+                            <p>黃金獵犬主人</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"第二次來小基基購買狗狗了！品質真的沒話說，價格公道，最重要的是狗狗們都有完整的疫苗接種記錄。推薦給想要養狗的朋友們！"</p>
+                    <div class="testimonial-author">
+                        <img src="images/download.jpg" alt="客戶照片" class="author-img">
+                        <div class="author-info">
+                            <h4>王小姐</h4>
+                            <p>邊境牧羊犬主人</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"老闆超有耐心！第一次養狗什麼都不懂，老闆詳細解說了飲食、訓練等各種注意事項。LINE隨時都可以諮詢，真的很貼心！"</p>
+                    <div class="testimonial-author">
+                        <img src="images/download-2.jpg" alt="客戶照片" class="author-img">
+                        <div class="author-info">
+                            <h4>張先生</h4>
+                            <p>柴犬主人</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-note">
+                <p><i class="fas fa-heart"></i> 感謝每一位客戶的信任與支持，您的滿意是我們最大的動力！</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 聯絡我們 -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="section-title">聯絡我們</h2>
+            <div class="contact-content">
+                <div class="contact-info-box">
+                    <h3>聯絡資訊</h3>
+                    <ul class="contact-list">
+                        <li><i class="fas fa-map-marker-alt"></i> 高雄市鳳山區文龍東路666號</li>
+                        <li><i class="fas fa-phone"></i> 0910-808-283</li>
+                        <li><i class="fas fa-envelope"></i> info@xiaojiji-kennel.com</li>
+                        <li><i class="fab fa-line"></i> <a href="https://lin.ee/kWyAbbF" target="_blank" style="color: inherit;">LINE ID: @corgidog</a></li>
+                        <li><i class="fas fa-clock"></i> 營業時間：下午13:00 ~ 晚上21:00</li>
+                        <li><i class="fas fa-car"></i> 門口可停車呦</li>
+                    </ul>
+                    <div class="license-info">
+                        <p><strong>特寵業字第W1141071號</strong></p>
+                        <p>統一編號：00879221</p>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3>想要諮詢嗎？</h3>
+                    <p>我們提供完整的購買諮詢服務，歡迎填寫表單與我們聯繫！</p>
+                    <a href="contact-form.html" class="btn-primary">填寫諮詢表單</a>
+                    <div class="contact-alternatives">
+                        <p>或透過以下方式聯絡我們：</p>
+                        <div class="contact-methods">
+                            <a href="https://lin.ee/kWyAbbF" target="_blank" class="contact-method">
+                                <i class="fab fa-line"></i> LINE 諮詢
+                            </a>
+                            <a href="tel:0910808283" class="contact-method">
+                                <i class="fas fa-phone"></i> 電話聯絡
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>小基基寵物犬舍</h3>
+                    <p>專業邊境牧羊犬培育中心</p>
+                    <p>給您最健康、最聰明的毛孩子</p>
+                </div>
+                <div class="footer-section">
+                    <h4>快速連結</h4>
+                    <ul>
+                        <li><a href="#about">關於我們</a></li>
+                        <li><a href="#dogs">幼犬出售區</a></li>
+                        <li><a href="#health">健康專區</a></li>
+                        <li><a href="pet-health.html">寵物健康資訊</a></li>
+                        <li><a href="adoption-guide.html">領養指南</a></li>
+                        <li><a href="#gallery">精彩相簿</a></li>
+                        <li><a href="#testimonials">客戶評價</a></li>
+                        <li><a href="#contact">聯絡方式</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>關注我們</h4>
+                    <div class="footer-social">
+                        <a href="https://lin.ee/kWyAbbF" target="_blank" aria-label="Line"><i class="fab fa-line"></i></a>
+                        <a href="http://instagram.com/xiaojijichongwuquanshe?utm_source=qr" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@corgidog114666?_t=ZS-8xwHtofNTBI&_r=1" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 小基基寵物犬舍. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 社群媒體懸浮選單 -->
+    <div class="social-float-menu">
+        <div class="social-float-toggle" onclick="toggleSocialMenu()">
+            <img src="images/logo.png" alt="小基基寵物犬舍" class="social-logo">
+            <span class="social-close"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="social-float-buttons">
+            <a href="https://lin.ee/kWyAbbF" target="_blank" class="social-float-btn line-btn" aria-label="LINE">
+                <i class="fab fa-line"></i>
+                <span class="social-tooltip">LINE</span>
+            </a>
+            <a href="https://www.tiktok.com/@corgidog114666?_t=ZS-8xwHtofNTBI&_r=1" target="_blank" class="social-float-btn tiktok-btn" aria-label="TikTok">
+                <i class="fab fa-tiktok"></i>
+                <span class="social-tooltip">TikTok</span>
+            </a>
+            <a href="http://instagram.com/xiaojijichongwuquanshe?utm_source=qr" target="_blank" class="social-float-btn instagram-btn" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+                <span class="social-tooltip">Instagram</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

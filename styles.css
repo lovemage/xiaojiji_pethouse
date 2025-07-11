@@ -1,0 +1,1321 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #4682B4;      /* 深藍灰 (Slate Blue) */
+    --secondary-color: #F4A7A7;     /* 柔和珊瑚色 (Soft Coral) */
+    --accent-color: #ADD8E6;        /* 淺藍色 (Light Blue) */
+    --beige: #F5F5DC;              /* 米色 (Beige) */
+    --warm-gray: #D3D3D3;          /* 暖灰色 (Warm Gray) */
+    --text-color: #333333;         /* 深灰 (Dark Gray) */
+    --light-bg: #F5F5DC;           /* 米色背景 */
+    --border-color: #D3D3D3;       /* 暖灰色邊框 */
+    --white: #FFFFFF;              /* 純白 */
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 頂部聯絡資訊欄 */
+.top-bar {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 10px 0;
+    font-size: 14px;
+}
+
+.top-bar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contact-info span {
+    margin-right: 20px;
+}
+
+.contact-info i {
+    margin-right: 5px;
+}
+
+.social-links a {
+    color: var(--white);
+    margin-left: 15px;
+    font-size: 16px;
+    transition: opacity 0.3s;
+}
+
+.social-links a:hover {
+    opacity: 0.8;
+}
+
+/* 導航欄 */
+.navbar {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+}
+
+.nav-brand h1 {
+    font-size: 24px;
+    color: var(--primary-color);
+    margin-bottom: 2px;
+}
+
+.nav-brand .subtitle {
+    font-size: 12px;
+    color: #666;
+}
+
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.nav-toggle span {
+    width: 25px;
+    height: 3px;
+    background-color: var(--primary-color);
+    transition: 0.3s;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-menu a:hover {
+    color: var(--accent-color);
+}
+
+/* 下拉選單 */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    list-style: none;
+    min-width: 150px;
+    display: none;
+    z-index: 100;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu li {
+    padding: 10px 15px;
+}
+
+.dropdown-menu a {
+    display: block;
+}
+
+/* 主要橫幅 */
+.hero {
+    background: linear-gradient(rgba(70,130,180,0.7), rgba(70,130,180,0.5)), url('images/hero-bg.jpg') center/cover;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--white);
+}
+
+.hero-content h2 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.hero-content p {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* 新按鈕樣式 - From Uiverse.io by TCdesign-dev */
+button {
+    all: unset;
+}
+
+.btn-primary,
+.btn-secondary {
+    align-items: center;
+    appearance: none;
+    background-color: #fcfcfd;
+    border-radius: 4px;
+    border-width: 0;
+    box-shadow:
+        rgba(45, 35, 66, 0.2) 0 2px 4px,
+        rgba(45, 35, 66, 0.15) 0 7px 13px -3px,
+        #d6d6e7 0 -3px 0 inset;
+    box-sizing: border-box;
+    color: #36395a;
+    cursor: pointer;
+    display: inline-flex;
+    height: 48px;
+    justify-content: center;
+    line-height: 1;
+    list-style: none;
+    overflow: hidden;
+    padding-left: 16px;
+    padding-right: 16px;
+    position: relative;
+    text-align: left;
+    text-decoration: none;
+    transition:
+        box-shadow 0.15s,
+        transform 0.15s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    will-change: box-shadow, transform;
+    font-size: 18px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif;
+    font-weight: 600;
+}
+
+.btn-primary:focus,
+.btn-secondary:focus {
+    box-shadow:
+        #d6d6e7 0 0 0 1.5px inset,
+        rgba(45, 35, 66, 0.4) 0 2px 4px,
+        rgba(45, 35, 66, 0.3) 0 7px 13px -3px,
+        #d6d6e7 0 -3px 0 inset;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+    box-shadow:
+        rgba(45, 35, 66, 0.3) 0 4px 8px,
+        rgba(45, 35, 66, 0.2) 0 7px 13px -3px,
+        #d6d6e7 0 -3px 0 inset;
+    transform: translateY(-2px);
+}
+
+.btn-primary:active,
+.btn-secondary:active {
+    box-shadow: #d6d6e7 0 3px 7px inset;
+    transform: translateY(2px);
+}
+
+/* 移除 span 元素的舊樣式 */
+.btn-primary span,
+.btn-secondary span {
+    all: unset;
+}
+
+/* 區塊標題 */
+.section-title {
+    text-align: center;
+    font-size: 36px;
+    color: var(--primary-color);
+    margin-bottom: 50px;
+}
+
+/* 關於我們 */
+.about-section {
+    padding: 80px 0;
+    background-color: var(--light-bg);
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.about-text p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.features {
+    list-style: none;
+    margin-top: 30px;
+}
+
+.features li {
+    padding: 10px 0;
+    font-size: 16px;
+}
+
+.features i {
+    color: var(--primary-color);
+    margin-right: 10px;
+}
+
+.about-image img {
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    border: 2px solid var(--border-color);
+}
+
+/* 犬隻展示 */
+.dogs-section {
+    padding: 80px 0;
+    position: relative;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.dogs-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(173, 216, 230, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(244, 167, 167, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(70, 130, 180, 0.2) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.dog-categories {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+.category-btn {
+    background-color: var(--warm-gray);
+    border: 1px solid transparent;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: var(--text-color);
+}
+
+.category-btn.active,
+.category-btn:hover {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    border-color: var(--accent-color);
+}
+
+.dogs-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.dogs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.dog-card {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    position: relative;
+}
+
+.dog-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+    pointer-events: none;
+}
+
+.dog-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    border-color: rgba(173, 216, 230, 0.8);
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.dog-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.dog-info {
+    padding: 25px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.dog-info h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.dog-info p {
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.category-tag {
+    display: inline-block;
+    background: rgba(173, 216, 230, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--primary-color);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(173, 216, 230, 0.3);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.dog-card:hover .category-tag {
+    background: rgba(173, 216, 230, 0.7);
+    border-color: rgba(173, 216, 230, 0.5);
+}
+
+.price {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+/* 健康專區 */
+.health-section {
+    padding: 80px 0;
+    background-color: var(--white);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 健康專區背景圖案 */
+.health-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+    z-index: 0;
+    /* 背景圖案 */
+    --size: 80px; /* control the size */
+    --color: var(--accent-color);
+    --l: var(--color) 20%, #0000 0;
+    --bg: 35%, rgba(173, 216, 230, 0.27) 0 45%, var(--color) 0;
+    background: linear-gradient(
+        45deg,
+        var(--l) 45%,
+        var(--color) 0 70%,
+        #db777700 0
+      ),
+      linear-gradient(-45deg, var(--l) var(--bg) 70%, #0000 0),
+      linear-gradient(45deg, var(--color) var(--bg));
+    background-size: var(--size) var(--size);
+}
+
+.health-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.health-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.health-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(173, 216, 230, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.health-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(173, 216, 230, 0.1) 0%, transparent 70%);
+    transform: rotate(45deg);
+    transition: all 0.5s;
+    opacity: 0;
+}
+
+.health-card:hover::before {
+    opacity: 1;
+}
+
+.health-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(70, 130, 180, 0.15);
+    border-color: var(--accent-color);
+}
+
+.health-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--accent-color) 0%, rgba(173, 216, 230, 0.6) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 36px;
+    color: var(--primary-color);
+    position: relative;
+    box-shadow: 0 8px 20px rgba(173, 216, 230, 0.4);
+    transition: all 0.3s;
+}
+
+.health-card:hover .health-icon {
+    transform: scale(1.1) rotate(10deg);
+    box-shadow: 0 12px 30px rgba(173, 216, 230, 0.6);
+}
+
+.health-icon::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent);
+}
+
+.health-card h3 {
+    color: var(--primary-color);
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.health-card p {
+    margin-bottom: 15px;
+    color: var(--text-color);
+}
+
+.health-card ul {
+    list-style: none;
+    text-align: left;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.health-card li {
+    padding: 5px 0;
+    padding-left: 20px;
+    position: relative;
+    color: #666;
+}
+
+.health-card li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+}
+
+.health-notice {
+    background-color: var(--accent-color);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.health-notice p {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 16px;
+}
+
+.health-notice i {
+    margin-right: 10px;
+}
+
+/* 相簿 */
+.gallery-section {
+    padding: 80px 0;
+    background-color: var(--light-bg);
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.gallery-item {
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    border: 1px solid var(--border-color);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+/* 客戶評價 */
+.testimonials-section {
+    padding: 80px 0;
+    background-color: var(--white);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.testimonial-card {
+    background-color: var(--light-bg);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--border-color);
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.stars {
+    color: #ffc107;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.testimonial-text {
+    font-style: italic;
+    line-height: 1.8;
+    color: var(--text-color);
+    margin-bottom: 20px;
+    min-height: 100px;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.author-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-color);
+}
+
+.author-info h4 {
+    color: var(--primary-color);
+    margin-bottom: 2px;
+    font-size: 16px;
+}
+
+.author-info p {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+}
+
+.testimonial-note {
+    text-align: center;
+    background-color: var(--accent-color);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.testimonial-note p {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 16px;
+}
+
+.testimonial-note i {
+    color: var(--secondary-color);
+    margin-right: 10px;
+}
+
+/* 聯絡我們 */
+.contact-section {
+    padding: 80px 0;
+    background-color: var(--light-bg);
+}
+
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+}
+
+.contact-info-box h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+.contact-form {
+    text-align: center;
+}
+
+.contact-form h3 {
+    font-size: 28px;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.contact-form > p {
+    color: #666;
+    margin-bottom: 25px;
+    font-size: 16px;
+}
+
+.contact-alternatives {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid var(--border-color);
+}
+
+.contact-alternatives p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.contact-methods {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.contact-method {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: var(--light-bg);
+    border-radius: 25px;
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.contact-method:hover {
+    background-color: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+.contact-list {
+    list-style: none;
+    margin-bottom: 30px;
+}
+
+.contact-list li {
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+}
+
+.contact-list i {
+    width: 20px;
+    margin-right: 10px;
+    color: var(--primary-color);
+}
+
+.license-info {
+    background-color: var(--accent-color);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(70,130,180,0.1);
+}
+
+/* 頁尾 */
+.footer {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 50px 0 20px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 30px;
+}
+
+.footer-section h3,
+.footer-section h4 {
+    margin-bottom: 15px;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section li {
+    padding: 5px 0;
+}
+
+.footer-section a {
+    color: var(--white);
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.footer-section a:hover {
+    opacity: 0.8;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-social a {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 40px;
+    transition: all 0.3s;
+}
+
+.footer-social a:hover {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* 寵物詳細資訊彈窗 */
+.pet-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-content {
+    background-color: var(--white);
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 30px;
+    cursor: pointer;
+    color: var(--warm-gray);
+    transition: color 0.3s;
+}
+
+.close-modal:hover {
+    color: var(--primary-color);
+}
+
+.modal-content h2 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+.modal-info p {
+    margin-bottom: 10px;
+    line-height: 1.8;
+}
+
+.modal-info strong {
+    color: var(--primary-color);
+}
+
+.modal-contact {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.modal-contact h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.modal-contact .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    justify-content: center;
+}
+
+.modal-contact p {
+    color: var(--text-color);
+}
+
+/* 公告欄 */
+.announcement-bar {
+    position: relative;
+    padding: 12px 0;
+    text-align: center;
+    font-size: 15px;
+    z-index: 1001;
+}
+
+.announcement-bar.announcement-info {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+}
+
+.announcement-bar.announcement-promotion {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.announcement-bar.announcement-warning {
+    background-color: #ff9800;
+    color: white;
+}
+
+.announcement-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.announcement-content strong {
+    font-weight: 600;
+}
+
+.announcement-content a {
+    color: inherit;
+    text-decoration: underline;
+    margin-left: 10px;
+}
+
+.announcement-close {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 10px;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.announcement-close:hover {
+    opacity: 1;
+}
+
+/* 社群媒體懸浮選單 */
+.social-float-menu {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 999;
+}
+
+.social-float-toggle {
+    width: 65px;
+    height: 65px;
+    background-color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    transition: all 0.3s;
+    position: relative;
+    z-index: 2;
+    border: 2px solid var(--accent-color);
+    overflow: hidden;
+    padding: 0;
+}
+
+.social-float-toggle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.2);
+}
+
+.social-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s;
+    display: block;
+}
+
+.social-close {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 24px;
+    color: var(--primary-color);
+}
+
+.social-float-menu.active .social-logo {
+    opacity: 0;
+}
+
+.social-float-menu.active .social-close {
+    opacity: 1;
+}
+
+.social-float-menu.active .social-float-toggle {
+    background-color: var(--light-bg);
+}
+
+/* 社群按鈕容器 */
+.social-float-buttons {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    pointer-events: none;
+}
+
+.social-float-btn {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: white;
+    font-size: 24px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: none;
+}
+
+/* 各社群平台顏色 */
+.line-btn {
+    background-color: #00B900;
+}
+
+.tiktok-btn {
+    background-color: #000000;
+}
+
+.instagram-btn {
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+}
+
+/* 展開時的位置 */
+.social-float-menu.active .social-float-btn {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: all;
+}
+
+.social-float-menu.active .line-btn {
+    bottom: 80px;
+    right: 7px;
+    transition-delay: 0.1s;
+}
+
+.social-float-menu.active .tiktok-btn {
+    bottom: 65px;
+    right: 65px;
+    transition-delay: 0.2s;
+}
+
+.social-float-menu.active .instagram-btn {
+    bottom: 7px;
+    right: 80px;
+    transition-delay: 0.3s;
+}
+
+/* 懸停效果 */
+.social-float-btn:hover {
+    transform: scale(1.15);
+}
+
+/* 工具提示 */
+.social-tooltip {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 5px;
+    white-space: nowrap;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.social-float-btn:hover .social-tooltip {
+    opacity: 1;
+}
+
+.social-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -5px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid rgba(0,0,0,0.8);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .top-bar .container {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .contact-info {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .contact-info span {
+        margin-right: 10px;
+    }
+    
+    .nav-toggle {
+        display: flex;
+    }
+    
+    .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        flex-direction: column;
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        width: 250px;
+        height: 100%;
+        padding: 80px 30px;
+        transition: 0.3s;
+        box-shadow: 2px 0 20px rgba(0,0,0,0.15);
+    }
+    
+    .nav-menu.active {
+        left: 0;
+    }
+    
+    .dropdown-menu {
+        position: static;
+        box-shadow: none;
+        background-color: var(--beige);
+        display: block;
+        margin-top: 10px;
+        border: none;
+    }
+    
+    .hero-content h2 {
+        font-size: 32px;
+    }
+    
+    .hero-content p {
+        font-size: 16px;
+    }
+    
+    .about-content,
+    .contact-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .dogs-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .footer-social {
+        justify-content: center;
+    }
+    
+    .social-float-menu {
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .social-float-toggle {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .social-float-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+    
+    .social-float-menu.active .line-btn {
+        bottom: 70px;
+        right: 5px;
+    }
+    
+    .social-float-menu.active .tiktok-btn {
+        bottom: 55px;
+        right: 55px;
+    }
+    
+    .social-float-menu.active .instagram-btn {
+        bottom: 5px;
+        right: 70px;
+    }
+    
+    .social-tooltip {
+        display: none;
+    }
+    
+    .contact-methods {
+        flex-direction: column;
+        align-items: center;
+    }
+}

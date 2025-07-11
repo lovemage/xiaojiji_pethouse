@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>領養後注意事項 - 小基基寵物犬舍健康手冊</title>
+    <meta name="description" content="小基基寵物犬舍提供完整的幼犬領養後照顧指南，包含飲食、健康、訓練等重要資訊">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .guide-header {
+            background: linear-gradient(rgba(70,130,180,0.9), rgba(70,130,180,0.7)), url('images/pkncb1-golden-retriever-puppy-running-outdoors-in-grass.png') center/cover;
+            padding: 100px 0 60px;
+            text-align: center;
+            color: white;
+        }
+        
+        .guide-header h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .guide-nav {
+            background-color: var(--white);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 15px 0;
+        }
+        
+        .guide-nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .guide-nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        
+        .guide-nav a:hover,
+        .guide-nav a.active {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+        }
+        
+        .guide-section {
+            padding: 60px 0;
+        }
+        
+        .guide-section:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+        
+        .section-intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            color: #666;
+        }
+        
+        .guide-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        
+        .guide-content.reverse {
+            direction: rtl;
+        }
+        
+        .guide-content.reverse .guide-text {
+            direction: ltr;
+        }
+        
+        .guide-image {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .guide-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .guide-text h3 {
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        
+        .guide-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .guide-list li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.8;
+        }
+        
+        .guide-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .tip-box {
+            background-color: var(--accent-color);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+            margin: 30px 0;
+        }
+        
+        .tip-box h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .warning-box {
+            background-color: #fff3cd;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #ff9800;
+            margin: 30px 0;
+        }
+        
+        .warning-box h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+        
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .schedule-table th,
+        .schedule-table td {
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .schedule-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .schedule-table tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+        
+        .cta-section {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .guide-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .guide-content.reverse {
+                direction: ltr;
+            }
+            
+            .guide-nav ul {
+                gap: 15px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 返回主頁 -->
+    <div class="top-bar">
+        <div class="container">
+            <a href="index.html" style="color: white; text-decoration: none;">
+                <i class="fas fa-arrow-left"></i> 返回首頁
+            </a>
+        </div>
+    </div>
+
+    <!-- 頁面標題 -->
+    <section class="guide-header">
+        <div class="container">
+            <h1>領養後注意事項</h1>
+            <p>給予毛孩最好的開始 - 您的完整照護指南</p>
+        </div>
+    </section>
+
+    <!-- 快速導航 -->
+    <nav class="guide-nav">
+        <div class="container">
+            <ul>
+                <li><a href="#first-days">初期適應</a></li>
+                <li><a href="#feeding">飲食指南</a></li>
+                <li><a href="#health">健康照護</a></li>
+                <li><a href="#training">基礎訓練</a></li>
+                <li><a href="#emergency">緊急狀況</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 初期適應 -->
+    <section id="first-days" class="guide-section">
+        <div class="container">
+            <h2 class="section-title">初期適應期 (第1-7天)</h2>
+            <p class="section-intro">
+                帶新成員回家是令人興奮的時刻！前幾天是建立信任關係的關鍵期，請給予幼犬充分的愛心與耐心。
+            </p>
+            
+            <div class="guide-content">
+                <div class="guide-text">
+                    <h3>環境準備</h3>
+                    <ul class="guide-list">
+                        <li>準備一個安靜、溫暖的專屬空間</li>
+                        <li>放置舒適的睡墊和毛毯（帶有媽媽氣味更佳）</li>
+                        <li>確保室溫維持在22-25度</li>
+                        <li>準備適合幼犬高度的食碗和水碗</li>
+                        <li>移除家中可能造成危險的物品</li>
+                    </ul>
+                    
+                    <div class="tip-box">
+                        <h4><i class="fas fa-lightbulb"></i> 小提醒</h4>
+                        <p>初到新環境的幼犬可能會哭鬧，這是正常現象。可以在睡窩放置有滴答聲的時鐘，模擬媽媽的心跳聲，有助於安撫情緒。</p>
+                    </div>
+                </div>
+                <div class="guide-image">
+                    <img src="images/64805.jpg" alt="幼犬適應新環境">
+                </div>
+            </div>
+
+            <div class="guide-content reverse">
+                <div class="guide-text">
+                    <h3>建立作息</h3>
+                    <ul class="guide-list">
+                        <li>固定進食時間（幼犬每日3-4餐）</li>
+                        <li>飯後15-30分鐘帶去上廁所</li>
+                        <li>每2-3小時讓幼犬小睡一次</li>
+                        <li>晚上10點後減少活動，培養睡眠習慣</li>
+                        <li>保持每日作息的一致性</li>
+                    </ul>
+                    
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> 注意事項</h4>
+                        <p>前三天請避免過多訪客或帶幼犬外出，讓牠先熟悉家庭成員和環境。過度刺激可能造成壓力。</p>
+                    </div>
+                </div>
+                <div class="guide-image">
+                    <img src="images/download.jpg" alt="幼犬作息">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 飲食指南 -->
+    <section id="feeding" class="guide-section">
+        <div class="container">
+            <h2 class="section-title">飲食指南</h2>
+            <p class="section-intro">
+                正確的飲食是幼犬健康成長的基礎。請遵循科學的餵養方式，避免營養失衡。
+            </p>
+            
+            <div class="guide-content">
+                <div class="guide-text">
+                    <h3>餵食原則</h3>
+                    <ul class="guide-list">
+                        <li>延續原本犬舍的飼料品牌（避免腸胃不適）</li>
+                        <li>如需更換飼料，採用7-10天漸進式轉換</li>
+                        <li>依照體重計算每日所需份量</li>
+                        <li>提供充足的清潔飲水</li>
+                        <li>避免餵食人類食物</li>
+                    </ul>
+                    
+                    <h3>餵食時間表</h3>
+                    <table class="schedule-table">
+                        <tr>
+                            <th>年齡</th>
+                            <th>每日餐數</th>
+                            <th>建議時間</th>
+                        </tr>
+                        <tr>
+                            <td>2-3個月</td>
+                            <td>4餐</td>
+                            <td>7:00, 12:00, 17:00, 21:00</td>
+                        </tr>
+                        <tr>
+                            <td>4-6個月</td>
+                            <td>3餐</td>
+                            <td>7:00, 13:00, 19:00</td>
+                        </tr>
+                        <tr>
+                            <td>6個月以上</td>
+                            <td>2餐</td>
+                            <td>7:00, 18:00</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="guide-image">
+                    <img src="images/download-1.jpg" alt="幼犬飲食">
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <h4><i class="fas fa-bone"></i> 禁止餵食清單</h4>
+                <p>巧克力、洋蔥、大蒜、葡萄、酪梨、咖啡因飲料、酒精、生肉、碎骨頭等，這些食物對狗狗有毒性，請務必避免！</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 健康照護 -->
+    <section id="health" class="guide-section">
+        <div class="container">
+            <h2 class="section-title">健康照護</h2>
+            <p class="section-intro">
+                預防勝於治療！定期的健康檢查和疫苗接種是保護愛犬的最佳方式。
+            </p>
+            
+            <div class="guide-content">
+                <div class="guide-text">
+                    <h3>疫苗接種計畫</h3>
+                    <table class="schedule-table">
+                        <tr>
+                            <th>週齡</th>
+                            <th>疫苗種類</th>
+                            <th>備註</th>
+                        </tr>
+                        <tr>
+                            <td>6-8週</td>
+                            <td>幼犬五合一/六合一</td>
+                            <td>第一劑基礎疫苗</td>
+                        </tr>
+                        <tr>
+                            <td>10-12週</td>
+                            <td>幼犬五合一/六合一</td>
+                            <td>第二劑加強</td>
+                        </tr>
+                        <tr>
+                            <td>14-16週</td>
+                            <td>幼犬五合一/六合一 + 狂犬病</td>
+                            <td>第三劑 + 狂犬病疫苗</td>
+                        </tr>
+                        <tr>
+                            <td>每年</td>
+                            <td>綜合疫苗 + 狂犬病</td>
+                            <td>年度補強</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="guide-image">
+                    <img src="images/download-2.jpg" alt="健康檢查">
+                </div>
+            </div>
+
+            <div class="guide-content reverse">
+                <div class="guide-text">
+                    <h3>日常保健</h3>
+                    <ul class="guide-list">
+                        <li>每月進行體內外驅蟲</li>
+                        <li>每週檢查耳朵清潔度</li>
+                        <li>定期修剪指甲（約2-3週一次）</li>
+                        <li>每日刷牙或使用潔牙骨</li>
+                        <li>依毛髮類型定期梳理（短毛週1-2次，長毛每日）</li>
+                        <li>觀察糞便狀態（正常應成形、不軟不硬）</li>
+                    </ul>
+                    
+                    <div class="warning-box">
+                        <h4><i class="fas fa-stethoscope"></i> 健康警訊</h4>
+                        <p>如出現以下症狀請立即就醫：持續嘔吐/腹瀉、食慾不振超過24小時、精神萎靡、呼吸急促、抽搐等。</p>
+                    </div>
+                </div>
+                <div class="guide-image">
+                    <img src="images/RnWoowUwUaWbUjTraVyj-6FYMm_TH-eUtdIZk7XSGZM.jpg" alt="日常保健">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 基礎訓練 -->
+    <section id="training" class="guide-section">
+        <div class="container">
+            <h2 class="section-title">基礎訓練</h2>
+            <p class="section-intro">
+                3-6個月是訓練的黃金期！建立良好的行為習慣，讓您和愛犬的生活更加和諧。
+            </p>
+            
+            <div class="guide-content">
+                <div class="guide-text">
+                    <h3>如廁訓練</h3>
+                    <ul class="guide-list">
+                        <li>選定固定如廁地點（尿布墊或戶外）</li>
+                        <li>觀察排泄前兆（轉圈、嗅聞地面）</li>
+                        <li>立即帶至指定地點</li>
+                        <li>成功如廁後給予獎勵（零食+讚美）</li>
+                        <li>意外發生時不要懲罰，靜靜清理即可</li>
+                        <li>保持耐心，通常需要2-4週建立習慣</li>
+                    </ul>
+                </div>
+                <div class="guide-image">
+                    <img src="images/64805.jpg" alt="幼犬訓練">
+                </div>
+            </div>
+
+            <div class="guide-content reverse">
+                <div class="guide-text">
+                    <h3>基本指令訓練</h3>
+                    <ul class="guide-list">
+                        <li><strong>坐下：</strong>手持零食往後上方移動，屁股著地時說"坐下"</li>
+                        <li><strong>等等：</strong>手掌面向狗狗，逐漸拉長等待時間</li>
+                        <li><strong>過來：</strong>蹲下張開雙臂，語氣愉快地呼喚</li>
+                        <li><strong>趴下：</strong>從坐姿開始，零食往下引導</li>
+                        <li><strong>不行：</strong>堅定語氣，搭配手勢制止</li>
+                    </ul>
+                    
+                    <div class="tip-box">
+                        <h4><i class="fas fa-award"></i> 訓練祕訣</h4>
+                        <p>每次訓練時間控制在5-10分鐘，保持愉快氛圍。使用正向鼓勵，避免處罰。訓練後玩耍作為獎勵！</p>
+                    </div>
+                </div>
+                <div class="guide-image">
+                    <img src="images/download.jpg" alt="指令訓練">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 緊急狀況 -->
+    <section id="emergency" class="guide-section">
+        <div class="container">
+            <h2 class="section-title">緊急狀況處理</h2>
+            
+            <div class="warning-box" style="max-width: 800px; margin: 0 auto 40px;">
+                <h4><i class="fas fa-phone-alt"></i> 24小時緊急聯絡</h4>
+                <p>小基基寵物犬舍售後服務專線：0910-808-283<br>
+                LINE ID: @corgidog（緊急時可傳照片或影片）</p>
+            </div>
+            
+            <div class="guide-content">
+                <div class="guide-text">
+                    <h3>常見緊急狀況</h3>
+                    <ul class="guide-list">
+                        <li><strong>誤食異物：</strong>不要催吐，立即就醫</li>
+                        <li><strong>中暑症狀：</strong>移至陰涼處，用濕毛巾降溫</li>
+                        <li><strong>癲癇發作：</strong>清空周圍物品，記錄時間</li>
+                        <li><strong>嚴重外傷：</strong>用乾淨布料按壓止血</li>
+                        <li><strong>呼吸困難：</strong>保持冷靜，立即送醫</li>
+                    </ul>
+                    
+                    <h3>急救包必備物品</h3>
+                    <ul class="guide-list">
+                        <li>消毒紗布、繃帶、膠帶</li>
+                        <li>生理食鹽水（清洗傷口）</li>
+                        <li>體溫計（肛溫38-39度為正常）</li>
+                        <li>止血粉</li>
+                        <li>獸醫院聯絡資訊</li>
+                    </ul>
+                </div>
+                <div class="guide-image">
+                    <img src="images/download-1.jpg" alt="緊急照護">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 行動呼籲 -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>需要更多協助嗎？</h2>
+            <p>小基基寵物犬舍提供終身飼養諮詢服務<br>
+            我們是您養育毛孩路上的最佳夥伴！</p>
+            <div class="cta-buttons">
+                <a href="https://lin.ee/kWyAbbF" target="_blank" class="btn-primary">
+                    <i class="fab fa-line"></i> LINE 諮詢
+                </a>
+                <a href="index.html#contact" class="btn-secondary" style="background: white; color: var(--primary-color);">
+                    查看聯絡資訊
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 小基基寵物犬舍. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 社群媒體懸浮選單 -->
+    <div class="social-float-menu">
+        <div class="social-float-toggle" onclick="toggleSocialMenu()">
+            <img src="images/logo.png" alt="小基基寵物犬舍" class="social-logo">
+            <span class="social-close"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="social-float-buttons">
+            <a href="https://lin.ee/kWyAbbF" target="_blank" class="social-float-btn line-btn" aria-label="LINE">
+                <i class="fab fa-line"></i>
+                <span class="social-tooltip">LINE</span>
+            </a>
+            <a href="https://www.tiktok.com/@corgidog114666?_t=ZS-8xwHtofNTBI&_r=1" target="_blank" class="social-float-btn tiktok-btn" aria-label="TikTok">
+                <i class="fab fa-tiktok"></i>
+                <span class="social-tooltip">TikTok</span>
+            </a>
+            <a href="http://instagram.com/xiaojijichongwuquanshe?utm_source=qr" target="_blank" class="social-float-btn instagram-btn" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+                <span class="social-tooltip">Instagram</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 平滑滾動
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 滾動時更新導航狀態
+        const sections = document.querySelectorAll('.guide-section');
+        const navLinks = document.querySelectorAll('.guide-nav a');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').slice(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

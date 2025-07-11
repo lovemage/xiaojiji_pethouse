@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寵物健康資訊 - 小基基寵物犬舍</title>
+    <meta name="description" content="了解狗狗常見疾病、預防保健、營養需求等完整健康資訊">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .health-header {
+            background: linear-gradient(rgba(70,130,180,0.9), rgba(70,130,180,0.7)), url('images/RnWoowUwUaWbUjTraVyj-6FYMm_TH-eUtdIZk7XSGZM.jpg') center/cover;
+            padding: 100px 0 60px;
+            text-align: center;
+            color: white;
+        }
+        
+        .health-header h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .health-nav {
+            background-color: var(--white);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 15px 0;
+        }
+        
+        .health-nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .health-nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        
+        .health-nav a:hover,
+        .health-nav a.active {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+        }
+        
+        .health-section {
+            padding: 60px 0;
+        }
+        
+        .health-section:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+        
+        .disease-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .disease-card {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s;
+        }
+        
+        .disease-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .disease-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        
+        .symptom-list {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .symptom-list h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+        
+        .symptom-list ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+        
+        .symptom-list li::before {
+            content: "⚠ ";
+            color: #ff6b35;
+        }
+        
+        .prevention-list {
+            background-color: var(--accent-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .prevention-list h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .nutrition-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            margin: 40px 0;
+        }
+        
+        .nutrition-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .nutrition-table th,
+        .nutrition-table td {
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .nutrition-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .nutrition-table tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+        
+        .age-card {
+            background-color: var(--white);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+        
+        .age-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .health-tip {
+            background-color: var(--accent-color);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        .health-tip h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .emergency-box {
+            background-color: #ffebee;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 5px solid #f44336;
+            margin: 30px 0;
+        }
+        
+        .emergency-box h3 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+        }
+        
+        .health-image {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .health-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .nutrition-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .disease-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .health-nav ul {
+                gap: 15px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 返回主頁 -->
+    <div class="top-bar">
+        <div class="container">
+            <a href="index.html" style="color: white; text-decoration: none;">
+                <i class="fas fa-arrow-left"></i> 返回首頁
+            </a>
+        </div>
+    </div>
+
+    <!-- 頁面標題 -->
+    <section class="health-header">
+        <div class="container">
+            <h1>寵物健康資訊</h1>
+            <p>守護毛孩健康，從了解開始</p>
+        </div>
+    </section>
+
+    <!-- 快速導航 -->
+    <nav class="health-nav">
+        <div class="container">
+            <ul>
+                <li><a href="#diseases">常見疾病</a></li>
+                <li><a href="#prevention">預防保健</a></li>
+                <li><a href="#nutrition">營養需求</a></li>
+                <li><a href="#senior">老年照護</a></li>
+                <li><a href="#dental">口腔保健</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 常見疾病 -->
+    <section id="diseases" class="health-section">
+        <div class="container">
+            <h2 class="section-title">狗狗常見疾病</h2>
+            <p class="section-intro">
+                及早發現、及時治療。了解常見疾病的症狀，守護愛犬健康。
+            </p>
+            
+            <div class="disease-grid">
+                <div class="disease-card">
+                    <h3><i class="fas fa-bacteria"></i> 犬瘟熱</h3>
+                    <p>犬瘟熱是一種高度傳染性的病毒性疾病，對幼犬特別危險。</p>
+                    
+                    <div class="symptom-list">
+                        <h4>症狀</h4>
+                        <ul>
+                            <li>發燒（體溫超過39.5°C）</li>
+                            <li>眼鼻分泌物增多</li>
+                            <li>咳嗽、打噴嚏</li>
+                            <li>食慾不振、嘔吐腹瀉</li>
+                            <li>神經症狀（抽搐、癱瘓）</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="prevention-list">
+                        <h4>預防方法</h4>
+                        <p>按時接種疫苗是最有效的預防方式。避免接觸生病的動物。</p>
+                    </div>
+                </div>
+                
+                <div class="disease-card">
+                    <h3><i class="fas fa-virus"></i> 犬小病毒腸炎</h3>
+                    <p>俗稱「翻腸子」，是幼犬的致命殺手，死亡率極高。</p>
+                    
+                    <div class="symptom-list">
+                        <h4>症狀</h4>
+                        <ul>
+                            <li>劇烈嘔吐</li>
+                            <li>血便（番茄汁樣）</li>
+                            <li>脫水</li>
+                            <li>精神極度沉鬱</li>
+                            <li>體溫下降</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="prevention-list">
+                        <h4>預防方法</h4>
+                        <p>完整的疫苗接種計劃。保持環境清潔，定期消毒。</p>
+                    </div>
+                </div>
+                
+                <div class="disease-card">
+                    <h3><i class="fas fa-bug"></i> 皮膚病</h3>
+                    <p>包括濕疹、黴菌感染、寄生蟲等，是最常見的健康問題。</p>
+                    
+                    <div class="symptom-list">
+                        <h4>症狀</h4>
+                        <ul>
+                            <li>搔癢、頻繁抓撓</li>
+                            <li>皮膚紅腫、脫毛</li>
+                            <li>皮屑增多</li>
+                            <li>異味</li>
+                            <li>膿包或潰瘍</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="prevention-list">
+                        <h4>預防方法</h4>
+                        <p>保持皮毛乾燥清潔，定期洗澡但不過度。使用防蚤滴劑。</p>
+                    </div>
+                </div>
+                
+                <div class="disease-card">
+                    <h3><i class="fas fa-heartbeat"></i> 心絲蟲</h3>
+                    <p>由蚊子傳播的寄生蟲疾病，可能導致心臟衰竭。</p>
+                    
+                    <div class="symptom-list">
+                        <h4>症狀</h4>
+                        <ul>
+                            <li>持續咳嗽</li>
+                            <li>運動不耐受</li>
+                            <li>呼吸困難</li>
+                            <li>體重下降</li>
+                            <li>腹部腫脹</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="prevention-list">
+                        <h4>預防方法</h4>
+                        <p>每月服用預防藥物。定期血液檢查。減少蚊蟲叮咬機會。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 預防保健 -->
+    <section id="prevention" class="health-section">
+        <div class="container">
+            <h2 class="section-title">預防保健計劃</h2>
+            
+            <div class="nutrition-content">
+                <div>
+                    <h3>年度健康檢查項目</h3>
+                    <table class="nutrition-table">
+                        <tr>
+                            <th>檢查項目</th>
+                            <th>檢查頻率</th>
+                            <th>重要性</th>
+                        </tr>
+                        <tr>
+                            <td>基礎理學檢查</td>
+                            <td>每年1次</td>
+                            <td>★★★★★</td>
+                        </tr>
+                        <tr>
+                            <td>血液常規檢查</td>
+                            <td>每年1次</td>
+                            <td>★★★★★</td>
+                        </tr>
+                        <tr>
+                            <td>糞便檢查</td>
+                            <td>每年2次</td>
+                            <td>★★★★☆</td>
+                        </tr>
+                        <tr>
+                            <td>尿液檢查</td>
+                            <td>每年1次</td>
+                            <td>★★★★☆</td>
+                        </tr>
+                        <tr>
+                            <td>心絲蟲檢查</td>
+                            <td>每年1次</td>
+                            <td>★★★★★</td>
+                        </tr>
+                        <tr>
+                            <td>X光檢查</td>
+                            <td>7歲後每年1次</td>
+                            <td>★★★☆☆</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="health-image">
+                    <img src="images/download-1.jpg" alt="獸醫檢查">
+                </div>
+            </div>
+            
+            <div class="health-tip">
+                <h3><i class="fas fa-shield-alt"></i> 預防勝於治療</h3>
+                <p>定期健康檢查可以及早發現潛在問題，大幅降低治療成本和風險。<br>
+                建議為愛犬建立健康檔案，記錄每次檢查結果。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 營養需求 -->
+    <section id="nutrition" class="health-section">
+        <div class="container">
+            <h2 class="section-title">營養需求指南</h2>
+            <p class="section-intro">
+                均衡的營養是健康的基礎。不同年齡階段有不同的營養需求。
+            </p>
+            
+            <div class="nutrition-content">
+                <div class="health-image">
+                    <img src="images/64805.jpg" alt="健康飲食">
+                </div>
+                <div>
+                    <h3>六大營養素</h3>
+                    <ul class="guide-list">
+                        <li><strong>蛋白質：</strong>肌肉發育和修復的主要來源（佔25-30%）</li>
+                        <li><strong>脂肪：</strong>能量來源，幫助吸收脂溶性維生素（佔10-15%）</li>
+                        <li><strong>碳水化合物：</strong>提供能量和纖維質（佔30-60%）</li>
+                        <li><strong>維生素：</strong>維持正常生理機能</li>
+                        <li><strong>礦物質：</strong>骨骼和牙齒健康</li>
+                        <li><strong>水分：</strong>佔體重60-70%，極為重要</li>
+                    </ul>
+                    
+                    <div class="health-tip" style="margin-top: 20px;">
+                        <h4>餵食建議</h4>
+                        <p>選擇AAFCO認證的優質飼料，避免頻繁更換品牌。<br>
+                        體重管理很重要，過重會增加關節和心臟負擔。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 40px;">各年齡階段營養需求</h3>
+            <div class="disease-grid">
+                <div class="age-card">
+                    <h4><i class="fas fa-baby"></i> 幼犬期（0-12個月）</h4>
+                    <ul>
+                        <li>高蛋白質、高熱量配方</li>
+                        <li>添加DHA幫助腦部發育</li>
+                        <li>鈣磷比例1.2:1</li>
+                        <li>少量多餐（3-4餐/天）</li>
+                    </ul>
+                </div>
+                
+                <div class="age-card">
+                    <h4><i class="fas fa-dog"></i> 成犬期（1-7歲）</h4>
+                    <ul>
+                        <li>均衡營養配方</li>
+                        <li>依活動量調整熱量</li>
+                        <li>維持理想體重</li>
+                        <li>定時定量（2餐/天）</li>
+                    </ul>
+                </div>
+                
+                <div class="age-card">
+                    <h4><i class="fas fa-paw"></i> 老年期（7歲以上）</h4>
+                    <ul>
+                        <li>低熱量、易消化配方</li>
+                        <li>添加葡萄糖胺保護關節</li>
+                        <li>抗氧化物延緩老化</li>
+                        <li>少量多餐（2-3餐/天）</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 老年照護 -->
+    <section id="senior" class="health-section">
+        <div class="container">
+            <h2 class="section-title">老年犬照護</h2>
+            
+            <div class="nutrition-content">
+                <div>
+                    <h3>老化徵兆</h3>
+                    <ul class="guide-list">
+                        <li>活動力下降，睡眠時間增加</li>
+                        <li>視力、聽力退化</li>
+                        <li>關節僵硬，行動遲緩</li>
+                        <li>毛髮變白、變稀疏</li>
+                        <li>體重改變（過重或過輕）</li>
+                        <li>認知功能下降</li>
+                    </ul>
+                    
+                    <h3 style="margin-top: 30px;">特殊照護重點</h3>
+                    <ul class="guide-list">
+                        <li><strong>居家環境：</strong>防滑地墊、低矮床墊</li>
+                        <li><strong>運動調整：</strong>短時間、低強度散步</li>
+                        <li><strong>飲食管理：</strong>易消化、低鈉配方</li>
+                        <li><strong>定期檢查：</strong>每半年健康檢查</li>
+                        <li><strong>心理關懷：</strong>更多陪伴和互動</li>
+                    </ul>
+                </div>
+                <div class="health-image">
+                    <img src="images/download-2.jpg" alt="老年犬照護">
+                </div>
+            </div>
+            
+            <div class="health-tip">
+                <h3><i class="fas fa-heart"></i> 陪伴是最好的照護</h3>
+                <p>老年犬需要更多的愛與耐心。雖然牠們動作變慢了，<br>
+                但對主人的愛依然不變。請給予牠們舒適的晚年生活。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 口腔保健 -->
+    <section id="dental" class="health-section">
+        <div class="container">
+            <h2 class="section-title">口腔保健</h2>
+            <p class="section-intro">
+                80%的狗狗在3歲前會出現口腔問題。良好的口腔衛生習慣很重要！
+            </p>
+            
+            <div class="nutrition-content">
+                <div class="health-image">
+                    <img src="images/download.jpg" alt="口腔保健">
+                </div>
+                <div>
+                    <h3>口腔疾病預防</h3>
+                    
+                    <div class="symptom-list">
+                        <h4>口腔問題警訊</h4>
+                        <ul>
+                            <li>口臭</li>
+                            <li>牙齦紅腫或出血</li>
+                            <li>牙結石堆積</li>
+                            <li>進食困難或疼痛</li>
+                            <li>過度流口水</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>日常護理方法</h3>
+                    <ul class="guide-list">
+                        <li><strong>刷牙：</strong>使用犬用牙膏，每週至少3次</li>
+                        <li><strong>潔牙骨：</strong>選擇適合體型的產品</li>
+                        <li><strong>潔牙玩具：</strong>橡膠或繩結玩具</li>
+                        <li><strong>定期檢查：</strong>每年洗牙1-2次</li>
+                        <li><strong>飲食控制：</strong>避免過多軟食</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="emergency-box">
+                <h3><i class="fas fa-exclamation-circle"></i> 緊急就醫情況</h3>
+                <p>如果發現以下情況，請立即就醫：</p>
+                <ul>
+                    <li>牙齒斷裂或脫落</li>
+                    <li>口腔大量出血</li>
+                    <li>臉部腫脹</li>
+                    <li>完全無法進食</li>
+                    <li>極度疼痛（哀鳴、抗拒碰觸）</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 行動呼籲 -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>守護毛孩健康，我們一起努力</h2>
+            <p>小基基寵物犬舍關心每一隻狗狗的健康<br>
+            有任何健康問題，歡迎隨時諮詢！</p>
+            <div class="cta-buttons">
+                <a href="https://lin.ee/kWyAbbF" target="_blank" class="btn-primary">
+                    <i class="fab fa-line"></i> LINE 健康諮詢
+                </a>
+                <a href="adoption-guide.html" class="btn-secondary" style="background: white; color: var(--primary-color);">
+                    查看領養指南
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 小基基寵物犬舍. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LINE 懸浮按鈕 -->
+    <a href="https://lin.ee/kWyAbbF" target="_blank" class="line-float-btn" aria-label="聯絡我們的LINE">
+        <i class="fab fa-line"></i>
+        <span class="line-tooltip">聯絡我們</span>
+    </a>
+
+    <script>
+        // 平滑滾動
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 滾動時更新導航狀態
+        const sections = document.querySelectorAll('.health-section');
+        const navLinks = document.querySelectorAll('.health-nav a');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').slice(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

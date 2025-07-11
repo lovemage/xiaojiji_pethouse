@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理員登入 - 小基基寵物犬舍</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="admin-login">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <img src="../images/logo.png" alt="小基基寵物犬舍" class="login-logo">
+                <h2>管理員登入</h2>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">帳號</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密碼</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn-primary">登入</button>
+            </form>
+            <div class="login-footer">
+                <a href="../index.html">返回首頁</a>
+            </div>
+        </div>
+    </div>
+    <script src="admin-auth.js"></script>
+</body>
+</html>

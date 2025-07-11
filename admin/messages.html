@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訊息管理 - 小基基寵物犬舍</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-panel">
+        <!-- 側邊欄 -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <img src="../images/logo.png" alt="小基基寵物犬舍">
+                <h3>管理系統</h3>
+            </div>
+            <ul class="admin-menu">
+                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 儀表板</a></li>
+                <li><a href="pets.html"><i class="fas fa-dog"></i> 寵物管理</a></li>
+                <li><a href="add-pet.html"><i class="fas fa-plus-circle"></i> 新增寵物</a></li>
+                <li><a href="messages.html" class="active"><i class="fas fa-envelope"></i> 訊息管理</a></li>
+                <li><a href="testimonials.html"><i class="fas fa-star"></i> 客戶評價</a></li>
+                <li><a href="site-settings.html"><i class="fas fa-cog"></i> 網站設定</a></li>
+                <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+            </ul>
+        </aside>
+
+        <!-- 主要內容 -->
+        <main class="admin-content">
+            <div class="admin-header">
+                <h1>訊息管理</h1>
+                <div class="admin-actions">
+                    <button class="btn-secondary" onclick="markAllAsRead()">
+                        <i class="fas fa-check"></i> 全部標記為已讀
+                    </button>
+                    <button class="btn-danger" onclick="deleteAllMessages()">
+                        <i class="fas fa-trash"></i> 清空所有訊息
+                    </button>
+                </div>
+            </div>
+
+            <!-- 統計資訊 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>總訊息數</h3>
+                        <p id="totalMessages">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-envelope-open"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>未讀訊息</h3>
+                        <p id="unreadMessages">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>今日訊息</h3>
+                        <p id="todayMessages">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-week"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>本週訊息</h3>
+                        <p id="weekMessages">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 篩選器 -->
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label for="statusFilter">狀態篩選：</label>
+                    <select id="statusFilter" onchange="filterMessages()">
+                        <option value="all">全部</option>
+                        <option value="unread">未讀</option>
+                        <option value="read">已讀</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="petSizeFilter">犬種大小：</label>
+                    <select id="petSizeFilter" onchange="filterMessages()">
+                        <option value="all">全部</option>
+                        <option value="small">小型犬</option>
+                        <option value="medium">中型犬</option>
+                        <option value="large">大型犬</option>
+                        <option value="undecided">尚未決定</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="dateFilter">時間篩選：</label>
+                    <select id="dateFilter" onchange="filterMessages()">
+                        <option value="all">全部</option>
+                        <option value="today">今日</option>
+                        <option value="week">本週</option>
+                        <option value="month">本月</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 訊息列表 -->
+            <div class="content-section">
+                <div class="messages-container" id="messagesContainer">
+                    <!-- 訊息卡片將在這裡動態載入 -->
+                </div>
+                
+                <!-- 空狀態 -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <i class="fas fa-inbox"></i>
+                    <h3>暫無訊息</h3>
+                    <p>目前沒有客戶諮詢訊息</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 訊息詳情模態框 -->
+    <div id="messageModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>訊息詳情</h3>
+                <button class="close-modal" onclick="closeMessageModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="messageModalBody">
+                <!-- 訊息詳情將在這裡顯示 -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeMessageModal()">關閉</button>
+                <button class="btn-primary" onclick="markAsRead()">標記為已讀</button>
+                <button class="btn-danger" onclick="deleteMessage()">刪除訊息</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="admin-auth.js"></script>
+    <script>
+        let currentMessages = [];
+        let currentMessageId = null;
+
+        // 載入訊息
+        async function loadMessages() {
+            try {
+                const inquiries = await API.getInquiries();
+                currentMessages = inquiries.map(inquiry => ({
+                    ...inquiry,
+                    isRead: inquiry.is_read || false
+                }));
+                
+                updateStats();
+                displayMessages();
+            } catch (error) {
+                console.error('載入訊息失敗:', error);
+            }
+        }
+
+        // 更新統計資訊
+        function updateStats() {
+            const total = currentMessages.length;
+            const unread = currentMessages.filter(m => !m.isRead).length;
+            const today = new Date().toDateString();
+            const todayCount = currentMessages.filter(m => 
+                new Date(m.timestamp).toDateString() === today
+            ).length;
+            
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const weekCount = currentMessages.filter(m => 
+                new Date(m.timestamp) >= weekAgo
+            ).length;
+
+            document.getElementById('totalMessages').textContent = total;
+            document.getElementById('unreadMessages').textContent = unread;
+            document.getElementById('todayMessages').textContent = todayCount;
+            document.getElementById('weekMessages').textContent = weekCount;
+        }
+
+        // 顯示訊息
+        function displayMessages() {
+            const container = document.getElementById('messagesContainer');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (currentMessages.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            container.innerHTML = '';
+
+            currentMessages.forEach(message => {
+                const messageCard = createMessageCard(message);
+                container.appendChild(messageCard);
+            });
+        }
+
+        // 創建訊息卡片
+        function createMessageCard(message) {
+            const card = document.createElement('div');
+            card.className = `message-card ${message.isRead ? 'read' : 'unread'}`;
+            card.onclick = () => openMessageModal(message);
+            
+            const petSizeText = {
+                'small': '小型犬',
+                'medium': '中型犬',
+                'large': '大型犬',
+                'undecided': '尚未決定'
+            };
+
+            const date = new Date(message.timestamp);
+            const formattedDate = date.toLocaleDateString('zh-TW', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            card.innerHTML = `
+                <div class="message-header">
+                    <div class="message-info">
+                        <h4>${message.name}</h4>
+                        <span class="message-time">${formattedDate}</span>
+                    </div>
+                    <div class="message-status">
+                        ${message.isRead ? '<i class="fas fa-envelope-open"></i>' : '<i class="fas fa-envelope"></i>'}
+                    </div>
+                </div>
+                <div class="message-preview">
+                    <p><strong>電話：</strong>${message.phone}</p>
+                    <p><strong>興趣：</strong>${petSizeText[message.petSize] || message.petSize}</p>
+                    <p class="message-text">${message.message ? message.message.substring(0, 100) + (message.message.length > 100 ? '...' : '') : '無留言'}</p>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // 打開訊息模態框
+        function openMessageModal(message) {
+            currentMessageId = message.id;
+            const modal = document.getElementById('messageModal');
+            const modalBody = document.getElementById('messageModalBody');
+            
+            const petSizeText = {
+                'small': '小型犬',
+                'medium': '中型犬',
+                'large': '大型犬',
+                'undecided': '尚未決定'
+            };
+
+            const date = new Date(message.timestamp);
+            const formattedDate = date.toLocaleDateString('zh-TW', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            modalBody.innerHTML = `
+                <div class="message-detail">
+                    <div class="detail-row">
+                        <label>姓名：</label>
+                        <span>${message.name}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>電話：</label>
+                        <span>${message.phone}</span>
+                        <a href="tel:${message.phone}" class="btn-small">撥打</a>
+                    </div>
+                    <div class="detail-row">
+                        <label>LINE ID：</label>
+                        <span>${message.lineId || '未提供'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>興趣犬種：</label>
+                        <span>${petSizeText[message.petSize] || message.petSize}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>提交時間：</label>
+                        <span>${formattedDate}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>狀態：</label>
+                        <span class="status-badge ${message.isRead ? 'read' : 'unread'}">
+                            ${message.isRead ? '已讀' : '未讀'}
+                        </span>
+                    </div>
+                    <div class="detail-row message-content">
+                        <label>留言內容：</label>
+                        <div class="message-text-full">${message.message || '無留言'}</div>
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+        }
+
+        // 關閉訊息模態框
+        function closeMessageModal() {
+            document.getElementById('messageModal').style.display = 'none';
+            currentMessageId = null;
+        }
+
+        // 標記為已讀
+        function markAsRead() {
+            if (currentMessageId !== null) {
+                const inquiries = JSON.parse(localStorage.getItem('inquiries') || '[]');
+                inquiries[currentMessageId].isRead = true;
+                localStorage.setItem('inquiries', JSON.stringify(inquiries));
+                
+                closeMessageModal();
+                loadMessages();
+            }
+        }
+
+        // 刪除訊息
+        function deleteMessage() {
+            if (currentMessageId !== null && confirm('確定要刪除這則訊息嗎？')) {
+                let inquiries = JSON.parse(localStorage.getItem('inquiries') || '[]');
+                inquiries.splice(currentMessageId, 1);
+                localStorage.setItem('inquiries', JSON.stringify(inquiries));
+                
+                closeMessageModal();
+                loadMessages();
+            }
+        }
+
+        // 全部標記為已讀
+        function markAllAsRead() {
+            if (confirm('確定要將所有訊息標記為已讀嗎？')) {
+                const inquiries = JSON.parse(localStorage.getItem('inquiries') || '[]');
+                inquiries.forEach(inquiry => inquiry.isRead = true);
+                localStorage.setItem('inquiries', JSON.stringify(inquiries));
+                loadMessages();
+            }
+        }
+
+        // 清空所有訊息
+        function deleteAllMessages() {
+            if (confirm('確定要清空所有訊息嗎？此操作無法復原！')) {
+                localStorage.removeItem('inquiries');
+                loadMessages();
+            }
+        }
+
+        // 篩選訊息
+        function filterMessages() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const petSizeFilter = document.getElementById('petSizeFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            
+            let filteredMessages = JSON.parse(localStorage.getItem('inquiries') || '[]').map((inquiry, index) => ({
+                id: index,
+                ...inquiry,
+                isRead: inquiry.isRead || false
+            }));
+
+            // 狀態篩選
+            if (statusFilter !== 'all') {
+                filteredMessages = filteredMessages.filter(m => 
+                    statusFilter === 'read' ? m.isRead : !m.isRead
+                );
+            }
+
+            // 犬種大小篩選
+            if (petSizeFilter !== 'all') {
+                filteredMessages = filteredMessages.filter(m => m.petSize === petSizeFilter);
+            }
+
+            // 時間篩選
+            if (dateFilter !== 'all') {
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const weekAgo = new Date(today);
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                const monthAgo = new Date(today);
+                monthAgo.setMonth(monthAgo.getMonth() - 1);
+
+                filteredMessages = filteredMessages.filter(m => {
+                    const messageDate = new Date(m.timestamp);
+                    switch (dateFilter) {
+                        case 'today':
+                            return messageDate >= today;
+                        case 'week':
+                            return messageDate >= weekAgo;
+                        case 'month':
+                            return messageDate >= monthAgo;
+                        default:
+                            return true;
+                    }
+                });
+            }
+
+            currentMessages = filteredMessages;
+            displayMessages();
+        }
+
+        // 登出功能
+        function logout() {
+            if (confirm('確定要登出嗎？')) {
+                localStorage.removeItem('adminLoggedIn');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 頁面載入時初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMessages();
+        });
+    </script>
+
+    <style>
+        .messages-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid #ddd;
+        }
+
+        .message-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .message-card.unread {
+            border-left-color: #e74c3c;
+            background: #fefefe;
+        }
+
+        .message-card.read {
+            border-left-color: #95a5a6;
+            background: #f8f9fa;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .message-info h4 {
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        .message-time {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .message-status i {
+            font-size: 18px;
+            color: #95a5a6;
+        }
+
+        .message-card.unread .message-status i {
+            color: #e74c3c;
+        }
+
+        .message-preview {
+            color: #555;
+        }
+
+        .message-preview p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .message-text {
+            color: #666;
+            font-style: italic;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row label {
+            font-weight: 500;
+            min-width: 100px;
+            color: #2c3e50;
+        }
+
+        .detail-row span {
+            flex: 1;
+        }
+
+        .message-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .message-text-full {
+            margin-top: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge.read {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.unread {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 12px;
+            margin-left: 10px;
+            text-decoration: none;
+            background: #007bff;
+            color: white;
+            border-radius: 4px;
+        }
+
+        .btn-small:hover {
+            background: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .filter-section {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .admin-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</body>
+</html> 

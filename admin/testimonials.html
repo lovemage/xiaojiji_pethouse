@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客戶評價管理 - 小基基寵物犬舍</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-panel">
+        <!-- 側邊欄 -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <img src="../images/logo.png" alt="小基基寵物犬舍">
+                <h3>管理系統</h3>
+            </div>
+            <ul class="admin-menu">
+                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 儀表板</a></li>
+                <li><a href="pets.html"><i class="fas fa-dog"></i> 寵物管理</a></li>
+                <li><a href="add-pet.html"><i class="fas fa-plus-circle"></i> 新增寵物</a></li>
+                <li><a href="site-settings.html"><i class="fas fa-cog"></i> 網站設定</a></li>
+                <li><a href="testimonials.html" class="active"><i class="fas fa-star"></i> 客戶評價</a></li>
+                <li><a href="messages.html"><i class="fas fa-envelope"></i> 訊息管理</a></li>
+                <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+            </ul>
+        </aside>
+
+        <!-- 主要內容 -->
+        <main class="admin-content">
+            <div class="admin-header">
+                <h1>客戶評價管理</h1>
+                <div class="admin-actions">
+                    <button onclick="openTestimonialModal()" class="btn-primary">新增評價</button>
+                </div>
+            </div>
+
+            <!-- 評價列表 -->
+            <div class="content-section">
+                <div id="testimonialsList" class="testimonials-admin-grid">
+                    <!-- 動態載入評價 -->
+                </div>
+            </div>
+
+            <!-- 新增/編輯評價彈窗 -->
+            <div id="testimonialModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close-modal" onclick="closeTestimonialModal()">&times;</span>
+                    <h2 id="modalTitle">新增客戶評價</h2>
+                    
+                    <form id="testimonialForm">
+                        <input type="hidden" id="testimonialId">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="customerName">客戶姓名 *</label>
+                                <input type="text" id="customerName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="petType">寵物類型 *</label>
+                                <input type="text" id="petType" placeholder="例：柯基犬主人" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="rating">評分 *</label>
+                            <select id="rating" required>
+                                <option value="5">5 星</option>
+                                <option value="4">4 星</option>
+                                <option value="3">3 星</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="testimonialText">評價內容 *</label>
+                            <textarea id="testimonialText" rows="4" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="customerAvatar">客戶頭像</label>
+                            <div class="avatar-upload">
+                                <img id="avatarPreview" src="../images/64805.jpg" alt="頭像預覽">
+                                <div class="avatar-options">
+                                    <button type="button" onclick="selectAvatar()" class="btn-secondary">選擇圖片</button>
+                                    <input type="hidden" id="selectedAvatar" value="../images/64805.jpg">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="isActive">狀態</label>
+                            <label class="switch">
+                                <input type="checkbox" id="isActive" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span style="margin-left: 10px;">顯示於網站</span>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">儲存</button>
+                            <button type="button" onclick="closeTestimonialModal()" class="btn-cancel">取消</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 圖片選擇彈窗 -->
+            <div id="avatarModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close-modal" onclick="closeAvatarModal()">&times;</span>
+                    <h2>選擇頭像</h2>
+                    <div class="avatar-grid">
+                        <img src="../images/64805.jpg" onclick="chooseAvatar(this.src)" alt="頭像1">
+                        <img src="../images/download.jpg" onclick="chooseAvatar(this.src)" alt="頭像2">
+                        <img src="../images/download-1.jpg" onclick="chooseAvatar(this.src)" alt="頭像3">
+                        <img src="../images/download-2.jpg" onclick="chooseAvatar(this.src)" alt="頭像4">
+                        <img src="../images/RnWoowUwUaWbUjTraVyj-6FYMm_TH-eUtdIZk7XSGZM.jpg" onclick="chooseAvatar(this.src)" alt="頭像5">
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                .testimonials-admin-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                    gap: 20px;
+                }
+                
+                .testimonial-admin-card {
+                    background-color: var(--light-bg);
+                    padding: 20px;
+                    border-radius: 10px;
+                    border: 1px solid var(--border-color);
+                    position: relative;
+                }
+                
+                .testimonial-admin-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    margin-bottom: 15px;
+                }
+                
+                .testimonial-admin-avatar {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                }
+                
+                .testimonial-admin-info h4 {
+                    margin: 0;
+                    color: var(--primary-color);
+                }
+                
+                .testimonial-admin-info p {
+                    margin: 0;
+                    color: #666;
+                    font-size: 14px;
+                }
+                
+                .testimonial-admin-rating {
+                    color: #ffc107;
+                    margin-bottom: 10px;
+                }
+                
+                .testimonial-admin-text {
+                    font-style: italic;
+                    color: var(--text-color);
+                    margin-bottom: 15px;
+                }
+                
+                .testimonial-admin-actions {
+                    display: flex;
+                    gap: 10px;
+                }
+                
+                .testimonial-status {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    padding: 4px 10px;
+                    border-radius: 15px;
+                    font-size: 12px;
+                }
+                
+                .testimonial-status.active {
+                    background-color: #4caf50;
+                    color: white;
+                }
+                
+                .testimonial-status.inactive {
+                    background-color: #ccc;
+                    color: #666;
+                }
+                
+                .modal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0,0,0,0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1000;
+                }
+                
+                .modal-content {
+                    background-color: white;
+                    padding: 30px;
+                    border-radius: 10px;
+                    max-width: 600px;
+                    width: 90%;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    position: relative;
+                }
+                
+                .close-modal {
+                    position: absolute;
+                    top: 10px;
+                    right: 15px;
+                    font-size: 30px;
+                    cursor: pointer;
+                    color: #666;
+                }
+                
+                .close-modal:hover {
+                    color: #000;
+                }
+                
+                .avatar-upload {
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                }
+                
+                #avatarPreview {
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    border: 2px solid var(--border-color);
+                }
+                
+                .avatar-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                    gap: 15px;
+                    margin-top: 20px;
+                }
+                
+                .avatar-grid img {
+                    width: 100%;
+                    height: 100px;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    border: 3px solid transparent;
+                    transition: all 0.3s;
+                }
+                
+                .avatar-grid img:hover {
+                    border-color: var(--accent-color);
+                    transform: scale(1.05);
+                }
+            </style>
+        </main>
+    </div>
+
+    <script src="admin-auth.js"></script>
+    <script src="admin-testimonials.js"></script>
+</body>
+</html>

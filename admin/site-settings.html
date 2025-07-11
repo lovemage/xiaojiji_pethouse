@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>網站設定 - 小基基寵物犬舍</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-panel">
+        <!-- 側邊欄 -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <img src="../images/logo.png" alt="小基基寵物犬舍">
+                <h3>管理系統</h3>
+            </div>
+            <ul class="admin-menu">
+                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 儀表板</a></li>
+                <li><a href="pets.html"><i class="fas fa-dog"></i> 寵物管理</a></li>
+                <li><a href="add-pet.html"><i class="fas fa-plus-circle"></i> 新增寵物</a></li>
+                <li><a href="site-settings.html" class="active"><i class="fas fa-cog"></i> 網站設定</a></li>
+                <li><a href="testimonials.html"><i class="fas fa-star"></i> 客戶評價</a></li>
+                <li><a href="messages.html"><i class="fas fa-envelope"></i> 訊息管理</a></li>
+                <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+            </ul>
+        </aside>
+
+        <!-- 主要內容 -->
+        <main class="admin-content">
+            <div class="admin-header">
+                <h1>網站設定</h1>
+            </div>
+
+            <!-- 首頁橫幅設定 -->
+            <div class="content-section">
+                <h2>首頁橫幅設定</h2>
+                <form id="heroForm">
+                    <div class="form-group">
+                        <label for="heroImage">目前橫幅圖片</label>
+                        <div class="current-hero-image">
+                            <img id="currentHeroImage" src="../images/pkncb1-golden-retriever-puppy-running-outdoors-in-grass.png" alt="目前橫幅">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newHeroImage">上傳新橫幅圖片</label>
+                        <input type="file" id="newHeroImage" accept="image/*" onchange="previewHeroImage()">
+                        <p class="form-hint">建議尺寸：1920x600px，檔案大小不超過 2MB</p>
+                        <div id="heroImagePreview" class="image-preview"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">更新橫幅圖片</button>
+                </form>
+            </div>
+
+            <!-- 公告設定 -->
+            <div class="content-section">
+                <h2>公告管理</h2>
+                <form id="announcementForm">
+                    <div class="form-group">
+                        <label for="announcementEnabled">啟用公告</label>
+                        <label class="switch">
+                            <input type="checkbox" id="announcementEnabled" onchange="toggleAnnouncement()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div id="announcementFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="announcementType">公告類型</label>
+                            <select id="announcementType">
+                                <option value="info">一般資訊</option>
+                                <option value="promotion">優惠活動</option>
+                                <option value="warning">重要通知</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="announcementTitle">公告標題</label>
+                            <input type="text" id="announcementTitle" placeholder="例：新年優惠活動">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="announcementContent">公告內容</label>
+                            <textarea id="announcementContent" rows="3" placeholder="詳細說明..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="announcementLink">連結（選填）</label>
+                            <input type="url" id="announcementLink" placeholder="https://...">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">儲存公告</button>
+                </form>
+            </div>
+
+            <style>
+                .current-hero-image {
+                    margin: 10px 0;
+                    border: 1px solid var(--border-color);
+                    border-radius: 10px;
+                    overflow: hidden;
+                    max-width: 600px;
+                }
+                
+                .current-hero-image img {
+                    width: 100%;
+                    height: auto;
+                }
+                
+                .form-hint {
+                    color: #666;
+                    font-size: 14px;
+                    margin-top: 5px;
+                }
+                
+                .switch {
+                    position: relative;
+                    display: inline-block;
+                    width: 60px;
+                    height: 34px;
+                }
+                
+                .switch input {
+                    opacity: 0;
+                    width: 0;
+                    height: 0;
+                }
+                
+                .slider {
+                    position: absolute;
+                    cursor: pointer;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: #ccc;
+                    transition: .4s;
+                    border-radius: 34px;
+                }
+                
+                .slider:before {
+                    position: absolute;
+                    content: "";
+                    height: 26px;
+                    width: 26px;
+                    left: 4px;
+                    bottom: 4px;
+                    background-color: white;
+                    transition: .4s;
+                    border-radius: 50%;
+                }
+                
+                input:checked + .slider {
+                    background-color: var(--accent-color);
+                }
+                
+                input:checked + .slider:before {
+                    transform: translateX(26px);
+                }
+            </style>
+        </main>
+    </div>
+
+    <script src="admin-auth.js"></script>
+    <script src="admin-settings.js"></script>
+</body>
+</html>
