@@ -1,3 +1,5 @@
+name: pet-house
+
 services:
   # PostgreSQL 資料庫
   postgres:
