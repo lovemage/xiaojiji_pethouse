@@ -77,6 +77,21 @@
     background: rgba(255,255,255,0.1);
 }
 
+.sidebar-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 3px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.sidebar-logo:hover {
+    border-color: rgba(255,255,255,0.5);
+    transform: scale(1.05);
+}
+
 .sidebar-header h2 {
     color: var(--white);
     font-size: 24px;
