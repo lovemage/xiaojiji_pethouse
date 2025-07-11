@@ -62,6 +62,32 @@ CREATE TABLE IF NOT EXISTS admins (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 建立相簿表
+CREATE TABLE IF NOT EXISTS gallery_images (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    src VARCHAR(500) NOT NULL,
+    category VARCHAR(50) CHECK (category IN ('puppy', 'adult', 'training', 'daily')),
+    is_active BOOLEAN DEFAULT TRUE,
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 建立公告表
+CREATE TABLE IF NOT EXISTS announcements (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    content TEXT NOT NULL,
+    type VARCHAR(50) CHECK (type IN ('info', 'warning', 'success', 'error')) DEFAULT 'info',
+    is_active BOOLEAN DEFAULT TRUE,
+    start_date TIMESTAMP,
+    end_date TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 插入預設寵物資料
 INSERT INTO pets (name, breed, age, gender, color, category, price, description, health, images) VALUES
 ('小黑', '邊境牧羊犬', '3個月大', 'male', '黑白色', 'medium', 35000, '活潑聰明的邊境牧羊犬幼犬，已完成基礎訓練', '健康狀況良好，已接種疫苗', '["images/64805.jpg"]'),
@@ -92,6 +118,23 @@ INSERT INTO site_settings (setting_key, setting_value) VALUES
 INSERT INTO admins (username, password, email, is_active) VALUES
 ('admin', 'xiaojiji2024', 'admin@xiaojiji.com', TRUE);
 
+-- 插入預設相簿資料
+INSERT INTO gallery_images (title, description, src, category, sort_order) VALUES
+('邊境牧羊犬幼犬', '健康活潑的邊境牧羊犬幼犬，3個月大', 'images/64805.jpg', 'puppy', 1),
+('柯基犬幼犬', '萌萌的柯基犬幼犬，2個月大', 'images/download.jpg', 'puppy', 2),
+('黃金獵犬', '溫順友善的黃金獵犬成犬', 'images/download-1.jpg', 'adult', 3),
+('柴犬', '聰明活潑的柴犬成犬', 'images/download-2.jpg', 'adult', 4),
+('犬舍環境', '乾淨整潔的犬舍環境，給狗狗最好的生活空間', 'images/RnWoowUwUaWbUjTraVyj-6FYMm_TH-eUtdIZk7XSGZM.jpg', 'daily', 5),
+('戶外訓練', '狗狗在戶外草地上快樂奔跑的訓練時光', 'images/pkncb1-golden-retriever-puppy-running-outdoors-in-grass.png', 'training', 6),
+('健康檢查', '定期的健康檢查，確保每隻狗狗都健康', 'images/Pets-Health.jpg', 'puppy', 7),
+('日常照護', '專業的日常照護，讓狗狗健康成長', 'images/pets-Health2.jpg', 'daily', 8);
+
+-- 插入預設公告資料
+INSERT INTO announcements (title, content, type, is_active, start_date, end_date) VALUES
+('歡迎來到小基基寵物犬舍', '我們專業培育各種優質犬種，提供健康的幼犬和完善的售後服務。歡迎預約參觀！', 'info', TRUE, CURRENT_TIMESTAMP, NULL),
+('新幼犬到貨通知', '本月新到一批邊境牧羊犬和柯基犬幼犬，健康活潑，歡迎來電預約參觀！', 'success', TRUE, CURRENT_TIMESTAMP, NULL),
+('健康保證承諾', '我們承諾所有幼犬都經過完整的健康檢查和疫苗接種，提供健康保證書。', 'info', TRUE, CURRENT_TIMESTAMP, NULL);
+
 -- 建立索引以提升效能
 CREATE INDEX IF NOT EXISTS idx_pets_category ON pets(category);
 CREATE INDEX IF NOT EXISTS idx_pets_created_at ON pets(created_at);
@@ -100,4 +143,13 @@ CREATE INDEX IF NOT EXISTS idx_inquiries_is_read ON inquiries(is_read);
 CREATE INDEX IF NOT EXISTS idx_testimonials_is_active ON testimonials(is_active);
 CREATE INDEX IF NOT EXISTS idx_testimonials_created_at ON testimonials(created_at);
 CREATE INDEX IF NOT EXISTS idx_admins_username ON admins(username);
-CREATE INDEX IF NOT EXISTS idx_admins_is_active ON admins(is_active); 
+CREATE INDEX IF NOT EXISTS idx_admins_is_active ON admins(is_active);
+CREATE INDEX IF NOT EXISTS idx_gallery_images_category ON gallery_images(category);
+CREATE INDEX IF NOT EXISTS idx_gallery_images_is_active ON gallery_images(is_active);
+CREATE INDEX IF NOT EXISTS idx_gallery_images_sort_order ON gallery_images(sort_order);
+CREATE INDEX IF NOT EXISTS idx_gallery_images_created_at ON gallery_images(created_at);
+CREATE INDEX IF NOT EXISTS idx_announcements_is_active ON announcements(is_active);
+CREATE INDEX IF NOT EXISTS idx_announcements_type ON announcements(type);
+CREATE INDEX IF NOT EXISTS idx_announcements_start_date ON announcements(start_date);
+CREATE INDEX IF NOT EXISTS idx_announcements_end_date ON announcements(end_date);
+CREATE INDEX IF NOT EXISTS idx_announcements_created_at ON announcements(created_at); 
