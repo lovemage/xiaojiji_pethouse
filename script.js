@@ -32,12 +32,16 @@ document.addEventListener('DOMContentLoaded', () => {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+        const href = this.getAttribute('href');
+        // 檢查 href 是否不只是 '#'
+        if (href && href.length > 1) {
+            const target = document.querySelector(href);
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
         }
     });
 });
@@ -178,6 +182,102 @@ function showPetDetails(petId) {
         }
     } catch (error) {
         console.error('載入寵物詳細資料失敗:', error);
+    }
+}
+
+// 顯示靜態寵物詳細資訊
+function showStaticPetDetails(petId) {
+    const staticPetData = {
+        'static-1': {
+            name: '小黑',
+            breed: '邊境牧羊犬',
+            age: '3個月大',
+            gender: 'male',
+            color: '黑白色',
+            price: 35000,
+            description: '活潑聰明的邊境牧羊犬幼犬，已完成基礎疫苗接種，個性溫和親人，適合家庭飼養。',
+            health: '已完成六合一疫苗、狂犬病疫苗接種，定期健康檢查，健康狀況良好。',
+            image: 'images/64805.jpg'
+        },
+        'static-2': {
+            name: '小花',
+            breed: '柯基犬',
+            age: '2個月大',
+            gender: 'female',
+            color: '三色',
+            price: 38000,
+            description: '可愛的柯基犬幼犬，短腿萌萌的外型深受喜愛，個性活潑好動。',
+            health: '已完成基礎疫苗接種，健康檢查報告良好，無遺傳疾病。',
+            image: 'images/download.jpg'
+        },
+        'static-3': {
+            name: '露西',
+            breed: '黃金獵犬',
+            age: '4個月大',
+            gender: 'female',
+            color: '金黃色',
+            price: 45000,
+            description: '溫順友善的黃金獵犬，非常適合與小朋友相處，是最佳的家庭伴侶犬。',
+            health: '完整疫苗接種記錄，定期獸醫健檢，健康狀況優良。',
+            image: 'images/download-1.jpg'
+        },
+        'static-4': {
+            name: '小白',
+            breed: '柴犬',
+            age: '4個月大',
+            gender: 'male',
+            color: '白色',
+            price: 32000,
+            description: '聰明活潑的柴犬，忠誠度高，是很好的看家犬，同時也很親人。',
+            health: '已完成所有必要疫苗接種，健康檢查報告完整，品質保證。',
+            image: 'images/download-2.jpg'
+        }
+    };
+    
+    const pet = staticPetData[petId];
+    if (pet) {
+        // 建立詳細資訊視窗
+        const modal = document.createElement('div');
+        modal.className = 'pet-modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="modal-pet-image">
+                    <img src="${pet.image}" alt="${pet.name}" style="width: 100%; max-width: 300px; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 20px;">
+                </div>
+                <h2>${pet.name}</h2>
+                <div class="modal-info">
+                    <p><strong>品種：</strong>${pet.breed}</p>
+                    <p><strong>年齡：</strong>${pet.age}</p>
+                    <p><strong>性別：</strong>${pet.gender === 'male' ? '公犬' : '母犬'}</p>
+                    <p><strong>毛色：</strong>${pet.color}</p>
+                    <p><strong>價格：</strong>NT$ ${parseInt(pet.price).toLocaleString()}</p>
+                    <p><strong>描述：</strong>${pet.description}</p>
+                    <p><strong>健康資訊：</strong>${pet.health}</p>
+                </div>
+                <div class="modal-contact">
+                    <h3>有興趣嗎？立即聯絡我們！</h3>
+                    <a href="https://lin.ee/kWyAbbF" target="_blank" class="btn-primary">
+                        <i class="fab fa-line"></i> LINE 聯絡
+                    </a>
+                    <p>或撥打電話：0910-808-283</p>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // 關閉按鈕
+        modal.querySelector('.close-modal').onclick = () => {
+            modal.remove();
+        };
+        
+        // 點擊背景關閉
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        };
     }
 }
 
