@@ -1,0 +1,37 @@
+services:
+  # PostgreSQL 資料庫
+  postgres:
+    image: postgres:15-alpine
+    container_name: pet_house_db
+    environment:
+      POSTGRES_DB: pet_house
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: xiaojiji2024
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+  # Node.js 應用程式
+  app:
+    build: .
+    container_name: pet_house_app
+    environment:
+      DATABASE_URL: postgresql://admin:xiaojiji2024@postgres:5432/pet_house
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./uploads:/app/uploads
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    command: npm run dev
+
+volumes:
+  postgres_data: 
