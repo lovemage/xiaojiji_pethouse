@@ -227,34 +227,31 @@ app.delete('/api/testimonials/:id', async (req, res) => {
 // 網站設定相關 API
 app.get('/api/settings', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM site_settings');
+    const result = await pool.query('SELECT * FROM site_settings ORDER BY setting_key');
     const settings = {};
     result.rows.forEach(row => {
       settings[row.setting_key] = row.setting_value;
     });
     res.json(settings);
   } catch (err) {
-    console.error('獲取設定錯誤:', err);
+    console.error('獲取網站設定錯誤:', err);
     res.status(500).json({ error: '伺服器錯誤' });
   }
 });
 
-app.post('/api/settings', async (req, res) => {
+app.put('/api/settings/:key', async (req, res) => {
   try {
-    const { key, value } = req.body;
+    const { key } = req.params;
+    const { value } = req.body;
     
-    const result = await pool.query(
-      `INSERT INTO site_settings (setting_key, setting_value) 
-       VALUES ($1, $2) 
-       ON CONFLICT (setting_key) 
-       DO UPDATE SET setting_value = $2, updated_at = CURRENT_TIMESTAMP 
-       RETURNING *`,
+    await pool.query(
+      'INSERT INTO site_settings (setting_key, setting_value, updated_at) VALUES ($1, $2, CURRENT_TIMESTAMP) ON CONFLICT (setting_key) DO UPDATE SET setting_value = $2, updated_at = CURRENT_TIMESTAMP',
       [key, value]
     );
     
-    res.json(result.rows[0]);
+    res.json({ success: true, message: '設定更新成功' });
   } catch (err) {
-    console.error('更新設定錯誤:', err);
+    console.error('更新網站設定錯誤:', err);
     res.status(500).json({ error: '伺服器錯誤' });
   }
 });

@@ -80,6 +80,7 @@ INSERT INTO testimonials (name, pet_type, rating, text, avatar, is_active) VALUE
 INSERT INTO site_settings (setting_key, setting_value) VALUES
 ('site_title', '小基基寵物犬舍'),
 ('site_description', '專業邊境牧羊犬培育'),
+('site_logo', 'images/logo.png'),
 ('contact_phone', '0910-808-283'),
 ('contact_line', '@corgidog'),
 ('contact_address', '高雄市鳳山區文龍東路666號'),

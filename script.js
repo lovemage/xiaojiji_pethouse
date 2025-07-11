@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeCategoryFilters();
     initializeGallery(); // 初始化相簿功能
     loadGalleryImages(); // 載入相簿圖片
+    loadSiteSettings(); // 載入網站設定
+    initAdminAccess(); // 初始化管理員入口
 });
 
 // 平滑滾動
@@ -168,11 +170,11 @@ function showPetDetails(petId) {
             };
             
             // 點擊背景關閉
-            modal.onclick = (e) => {
+            modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
                     modal.remove();
                 }
-            };
+            });
         }
     } catch (error) {
         console.error('載入寵物詳細資料失敗:', error);
@@ -245,20 +247,58 @@ document.querySelectorAll('.dog-card').forEach(card => {
 });
 
 // 載入網站設定
-function loadSiteSettings() {
-    const siteSettings = JSON.parse(localStorage.getItem('siteSettings') || '{}');
-    
-    // 更新橫幅圖片
-    if (siteSettings.heroImage) {
-        const heroSection = document.querySelector('.hero');
-        if (heroSection) {
-            heroSection.style.backgroundImage = `linear-gradient(rgba(70,130,180,0.7), rgba(70,130,180,0.5)), url('${siteSettings.heroImage}')`;
+async function loadSiteSettings() {
+    try {
+        const response = await fetch('/api/settings');
+        if (response.ok) {
+            const siteSettings = await response.json();
+            
+            // 更新 logo
+            if (siteSettings.site_logo) {
+                const logos = document.querySelectorAll('img[alt*="小基基寵物犬舍"], .logo img, #adminLogo');
+                logos.forEach(logo => {
+                    logo.src = siteSettings.site_logo;
+                });
+            }
+            
+            // 更新橫幅圖片
+            if (siteSettings.hero_image) {
+                const heroSection = document.querySelector('.hero');
+                if (heroSection) {
+                    heroSection.style.backgroundImage = `linear-gradient(rgba(70,130,180,0.7), rgba(70,130,180,0.5)), url('${siteSettings.hero_image}')`;
+                }
+            }
+            
+            // 顯示公告
+            if (siteSettings.announcement_enabled === 'true') {
+                const announcement = {
+                    type: siteSettings.announcement_type || 'info',
+                    title: siteSettings.announcement_title || '',
+                    content: siteSettings.announcement_content || '',
+                    link: siteSettings.announcement_link || ''
+                };
+                showAnnouncement(announcement);
+            }
+            
+            return siteSettings;
         }
-    }
-    
-    // 顯示公告
-    if (siteSettings.announcement && siteSettings.announcement.enabled) {
-        showAnnouncement(siteSettings.announcement);
+    } catch (error) {
+        console.error('載入網站設定失敗:', error);
+        // 如果 API 失敗，回退到 localStorage
+        const siteSettings = JSON.parse(localStorage.getItem('siteSettings') || '{}');
+        
+        // 更新橫幅圖片
+        if (siteSettings.heroImage) {
+            const heroSection = document.querySelector('.hero');
+            if (heroSection) {
+                heroSection.style.backgroundImage = `linear-gradient(rgba(70,130,180,0.7), rgba(70,130,180,0.5)), url('${siteSettings.heroImage}')`;
+            }
+        }
+        
+        // 顯示公告
+        if (siteSettings.announcement && siteSettings.announcement.enabled) {
+            showAnnouncement(siteSettings.announcement);
+        }
     }
 }
 
