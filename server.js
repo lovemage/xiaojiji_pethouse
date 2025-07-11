@@ -288,6 +288,32 @@ app.post('/api/admin/login', async (req, res) => {
   }
 });
 
+// 資料庫初始化端點 (僅供開發和部署使用)
+app.post('/api/init-database', async (req, res) => {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    
+    // 讀取初始化腳本
+    const initSqlPath = path.join(__dirname, 'database', 'init.sql');
+    const initSql = fs.readFileSync(initSqlPath, 'utf8');
+    
+    // 執行初始化腳本
+    await pool.query(initSql);
+    
+    res.json({ 
+      success: true, 
+      message: '資料庫初始化成功' 
+    });
+  } catch (err) {
+    console.error('資料庫初始化錯誤:', err);
+    res.status(500).json({ 
+      error: '資料庫初始化失敗',
+      details: err.message 
+    });
+  }
+});
+
 app.get('/api/admin/profile', async (req, res) => {
   try {
     const { username } = req.query;
