@@ -26,6 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loadGalleryImages(); // 載入相簿圖片
     loadSiteSettings(); // 載入網站設定
     initAdminAccess(); // 初始化管理員入口
+    loadPetsFromDatabase(); // 從資料庫載入寵物資料
+    loadTestimonials(); // 載入客戶評價
 });
 
 // 平滑滾動
@@ -85,7 +87,64 @@ window.addEventListener('scroll', () => {
     lastScroll = currentScroll;
 });
 
-// 載入寵物資料
+// 從資料庫載入寵物資料
+async function loadPetsFromDatabase() {
+    try {
+        const response = await fetch('/api/pets');
+        if (response.ok) {
+            const pets = await response.json();
+            const dogsGrid = document.querySelector('.dogs-grid');
+            
+            if (pets.length > 0 && dogsGrid) {
+                // 清空現有的示範資料
+                dogsGrid.innerHTML = '';
+                
+                // 顯示資料庫中的寵物資料
+                pets.forEach(pet => {
+                    const dogCard = document.createElement('div');
+                    dogCard.className = 'dog-card';
+                    dogCard.dataset.category = `${pet.category} ${pet.gender}`;
+                    
+                    // 犬型中文名稱
+                    const categoryName = {
+                        small: '小型犬',
+                        medium: '中型犬',
+                        large: '大型犬'
+                    }[pet.category] || '';
+                    
+                    // 處理圖片
+                    const imageUrl = pet.images && pet.images.length > 0 ? pet.images[0] : 'images/64805.jpg';
+                    
+                    dogCard.innerHTML = `
+                        <img src="${imageUrl}" alt="${pet.name}">
+                        <div class="dog-info">
+                            <h3>${pet.name}</h3>
+                            <p>${pet.breed} | ${pet.age} | ${pet.gender === 'male' ? '公犬' : '母犬'}</p>
+                            <p class="category-tag">${categoryName}</p>
+                            <p class="price">NT$ ${parseInt(pet.price).toLocaleString()}</p>
+                            <a href="#" class="btn-secondary" onclick="showPetDetails(${pet.id})">了解更多</a>
+                        </div>
+                    `;
+                    
+                    dogsGrid.appendChild(dogCard);
+                });
+                
+                // 重新初始化分類按鈕事件
+                initializeCategoryFilters();
+            }
+        } else {
+            console.error('載入寵物資料失敗:', response.status);
+            // 如果 API 失敗，回退到 localStorage
+            loadPetsFromStorage();
+        }
+    } catch (error) {
+        console.error('載入寵物資料失敗:', error);
+        // 如果 API 失敗，回退到 localStorage
+        loadPetsFromStorage();
+    }
+}
+
+// 載入寵物資料（localStorage 備用版本）
 function loadPetsFromStorage() {
     try {
         const pets = JSON.parse(localStorage.getItem('pets') || '[]');
@@ -134,7 +193,94 @@ function loadPetsFromStorage() {
 }
 
 // 顯示寵物詳細資訊
-function showPetDetails(petId) {
+async function showPetDetails(petId) {
+    try {
+        // 先嘗試從 API 載入
+        const response = await fetch(`/api/pets/${petId}`);
+        let pet = null;
+        
+        if (response.ok) {
+            pet = await response.json();
+        } else {
+            // 如果 API 失敗，回退到 localStorage
+            const pets = JSON.parse(localStorage.getItem('pets') || '[]');
+            pet = pets.find(p => p.id === petId);
+        }
+        
+        if (pet) {
+            // 建立詳細資訊視窗
+            const modal = document.createElement('div');
+            modal.className = 'pet-modal';
+            
+            // 處理多張圖片
+            const images = pet.images && pet.images.length > 0 ? pet.images : ['images/64805.jpg'];
+            const imageGallery = images.map((img, index) => 
+                `<img src="${img}" alt="${pet.name}" style="width: 100%; max-width: 300px; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; ${index > 0 ? 'display: none;' : ''}" class="modal-pet-image" data-index="${index}">`
+            ).join('');
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <div class="modal-pet-images">
+                        ${imageGallery}
+                        ${images.length > 1 ? `
+                            <div class="image-nav">
+                                <button onclick="changeModalImage(-1)">‹</button>
+                                <span class="image-counter">1 / ${images.length}</span>
+                                <button onclick="changeModalImage(1)">›</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <h2>${pet.name}</h2>
+                    <div class="modal-info">
+                        <p><strong>品種：</strong>${pet.breed}</p>
+                        <p><strong>年齡：</strong>${pet.age}</p>
+                        <p><strong>性別：</strong>${pet.gender === 'male' ? '公犬' : '母犬'}</p>
+                        <p><strong>毛色：</strong>${pet.color}</p>
+                        <p><strong>價格：</strong>NT$ ${parseInt(pet.price).toLocaleString()}</p>
+                        <p><strong>描述：</strong>${pet.description}</p>
+                        <p><strong>健康資訊：</strong>${pet.health || '請聯絡我們了解更多'}</p>
+                    </div>
+                    <div class="modal-contact">
+                        <h3>有興趣嗎？立即聯絡我們！</h3>
+                        <div class="contact-buttons">
+                            <a href="https://lin.ee/kWyAbbF" target="_blank" class="btn-line">
+                                <i class="fab fa-line"></i>
+                                <span>LINE 聯絡</span>
+                            </a>
+                            <a href="/contact-form.html" class="btn-form">
+                                <i class="fas fa-edit"></i>
+                                <span>填寫諮詢表單</span>
+                            </a>
+                        </div>
+                        <p>或撥打電話：0910-808-283</p>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 關閉按鈕
+            modal.querySelector('.close-modal').onclick = () => {
+                modal.remove();
+            };
+            
+            // 點擊背景關閉
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+    } catch (error) {
+        console.error('載入寵物詳細資料失敗:', error);
+        // 如果完全失敗，嘗試 localStorage
+        showPetDetailsFromStorage(petId);
+    }
+}
+
+// 從 localStorage 顯示寵物詳細資訊（備用版本）
+function showPetDetailsFromStorage(petId) {
     try {
         const pets = JSON.parse(localStorage.getItem('pets') || '[]');
         const pet = pets.find(p => p.id === petId);
@@ -158,9 +304,16 @@ function showPetDetails(petId) {
                     </div>
                     <div class="modal-contact">
                         <h3>有興趣嗎？立即聯絡我們！</h3>
-                        <a href="https://lin.ee/kWyAbbF" target="_blank" class="btn-primary">
-                            <i class="fab fa-line"></i> LINE 聯絡
-                        </a>
+                        <div class="contact-buttons">
+                            <a href="https://lin.ee/kWyAbbF" target="_blank" class="btn-line">
+                                <i class="fab fa-line"></i>
+                                <span>LINE 聯絡</span>
+                            </a>
+                            <a href="/contact-form.html" class="btn-form">
+                                <i class="fas fa-edit"></i>
+                                <span>填寫諮詢表單</span>
+                            </a>
+                        </div>
                         <p>或撥打電話：0910-808-283</p>
                     </div>
                 </div>
@@ -257,9 +410,16 @@ function showStaticPetDetails(petId) {
                 </div>
                 <div class="modal-contact">
                     <h3>有興趣嗎？立即聯絡我們！</h3>
-                    <a href="https://lin.ee/kWyAbbF" target="_blank" class="btn-primary">
-                        <i class="fab fa-line"></i> LINE 聯絡
-                    </a>
+                    <div class="contact-buttons">
+                        <a href="https://lin.ee/kWyAbbF" target="_blank" class="btn-line">
+                            <i class="fab fa-line"></i>
+                            <span>LINE 聯絡</span>
+                        </a>
+                        <a href="/contact-form.html" class="btn-form">
+                            <i class="fas fa-edit"></i>
+                            <span>填寫諮詢表單</span>
+                        </a>
+                    </div>
                     <p>或撥打電話：0910-808-283</p>
                 </div>
             </div>
@@ -435,7 +595,54 @@ function toggleSocialMenu() {
 }
 
 // 載入客戶評價
-function loadTestimonials() {
+async function loadTestimonials() {
+    try {
+        const response = await fetch('/api/testimonials');
+        let testimonials = [];
+        
+        if (response.ok) {
+            testimonials = await response.json();
+        } else {
+            // 如果 API 失敗，回退到 localStorage
+            testimonials = JSON.parse(localStorage.getItem('testimonials') || '[]');
+        }
+        
+        const activeTestimonials = testimonials.filter(t => t.is_active || t.isActive);
+        
+        if (activeTestimonials.length > 0) {
+            const testimonialsGrid = document.querySelector('.testimonials-grid');
+            if (testimonialsGrid) {
+                testimonialsGrid.innerHTML = '';
+                
+                activeTestimonials.forEach(testimonial => {
+                    const card = document.createElement('div');
+                    card.className = 'testimonial-card';
+                    card.innerHTML = `
+                        <div class="stars">
+                            ${generateStars(testimonial.rating)}
+                        </div>
+                        <p class="testimonial-text">"${testimonial.content || testimonial.text}"</p>
+                        <div class="testimonial-author">
+                            <img src="${testimonial.avatar || 'images/64805.jpg'}" alt="${testimonial.customer_name || testimonial.name}" class="author-img">
+                            <div class="author-info">
+                                <h4>${testimonial.customer_name || testimonial.name}</h4>
+                                <p>${testimonial.pet_type || testimonial.petType}</p>
+                            </div>
+                        </div>
+                    `;
+                    testimonialsGrid.appendChild(card);
+                });
+            }
+        }
+    } catch (error) {
+        console.error('載入客戶評價失敗:', error);
+        // 如果完全失敗，嘗試 localStorage
+        loadTestimonialsFromStorage();
+    }
+}
+
+// 從 localStorage 載入客戶評價（備用版本）
+function loadTestimonialsFromStorage() {
     const testimonials = JSON.parse(localStorage.getItem('testimonials') || '[]');
     const activeTestimonials = testimonials.filter(t => t.isActive);
     
@@ -841,5 +1048,34 @@ async function loadGalleryImages() {
         console.log('相簿圖片載入完成');
     } catch (error) {
         console.error('載入相簿圖片失敗:', error);
+    }
+}
+
+// 寵物詳情彈窗圖片切換功能
+let currentModalImageIndex = 0;
+let modalImages = [];
+
+function changeModalImage(direction) {
+    const images = document.querySelectorAll('.modal-pet-image');
+    if (images.length <= 1) return;
+    
+    // 隱藏當前圖片
+    images[currentModalImageIndex].style.display = 'none';
+    
+    // 計算新的索引
+    currentModalImageIndex += direction;
+    if (currentModalImageIndex < 0) {
+        currentModalImageIndex = images.length - 1;
+    } else if (currentModalImageIndex >= images.length) {
+        currentModalImageIndex = 0;
+    }
+    
+    // 顯示新圖片
+    images[currentModalImageIndex].style.display = 'block';
+    
+    // 更新計數器
+    const counter = document.querySelector('.image-counter');
+    if (counter) {
+        counter.textContent = `${currentModalImageIndex + 1} / ${images.length}`;
     }
 }

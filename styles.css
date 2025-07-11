@@ -88,8 +88,10 @@ body {
 }
 
 .nav-brand .subtitle {
-    font-size: 12px;
+    font-size: 11px;
     color: #666;
+    font-weight: 400;
+    letter-spacing: 0.5px;
 }
 
 .nav-toggle {
@@ -1160,6 +1162,75 @@ button {
     color: #666;
 }
 
+/* 產品詳情視窗按鈕樣式 */
+.contact-buttons {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-line,
+.btn-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    min-width: 140px;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-line {
+    background: linear-gradient(135deg, #00B900 0%, #00D000 100%);
+    color: white;
+    border: 2px solid #00B900;
+}
+
+.btn-line:hover {
+    background: linear-gradient(135deg, #00D000 0%, #00F000 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 185, 0, 0.3);
+}
+
+.btn-form {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    color: white;
+    border: 2px solid var(--primary-color);
+}
+
+.btn-form:hover {
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(70, 130, 180, 0.3);
+}
+
+.btn-line i,
+.btn-form i {
+    font-size: 18px;
+}
+
+/* 手機版按鈕樣式 */
+@media (max-width: 768px) {
+    .contact-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-line,
+    .btn-form {
+        width: 100%;
+        min-width: auto;
+        padding: 15px 20px;
+    }
+}
+
 /* 公告欄 */
 .announcement-bar {
     position: relative;
@@ -1415,7 +1486,7 @@ button {
         left: -100%;
         top: 0;
         flex-direction: column;
-        background: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         width: 250px;
