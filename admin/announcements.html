@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公告管理 - 小基基寵物犬舍</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-panel">
+        <!-- 側邊欄 -->
+        <nav class="admin-sidebar">
+            <div class="sidebar-header">
+                <img src="../images/logo.png" alt="小基基寵物犬舍" class="sidebar-logo">
+                <h2>管理系統</h2>
+            </div>
+            <ul class="admin-menu">
+                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 儀表板</a></li>
+                <li><a href="pets.html"><i class="fas fa-dog"></i> 寵物管理</a></li>
+                <li><a href="add-pet.html"><i class="fas fa-plus-circle"></i> 新增寵物</a></li>
+                <li><a href="messages.html"><i class="fas fa-envelope"></i> 訊息管理</a></li>
+                <li><a href="testimonials.html"><i class="fas fa-star"></i> 客戶評價</a></li>
+                <li><a href="gallery.html"><i class="fas fa-images"></i> 相簿管理</a></li>
+                <li><a href="announcements.html" class="active"><i class="fas fa-bullhorn"></i> 公告管理</a></li>
+                <li><a href="site-settings.html"><i class="fas fa-cog"></i> 網站設定</a></li>
+                <li><a href="admin-settings.html"><i class="fas fa-user-cog"></i> 管理員設定</a></li>
+                <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
+            </ul>
+        </nav>
+
+        <!-- 主要內容 -->
+        <main class="admin-content">
+            <div class="admin-header">
+                <h1>公告管理</h1>
+                <div class="admin-actions">
+                    <button class="btn-primary" onclick="showAddModal()">
+                        <i class="fas fa-plus"></i> 新增公告
+                    </button>
+                </div>
+            </div>
+
+            <!-- 公告列表 -->
+            <div class="content-section">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>標題</th>
+                                <th>類型</th>
+                                <th>狀態</th>
+                                <th>開始時間</th>
+                                <th>結束時間</th>
+                                <th>建立時間</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="announcementsTable">
+                            <!-- 動態載入 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 新增/編輯公告彈窗 -->
+    <div id="announcementModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">新增公告</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="announcementForm">
+                <div class="form-group">
+                    <label for="title">標題 *</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">內容 *</label>
+                    <textarea id="content" name="content" rows="6" required></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="type">類型</label>
+                        <select id="type" name="type">
+                            <option value="info">資訊</option>
+                            <option value="warning">警告</option>
+                            <option value="success">成功</option>
+                            <option value="error">錯誤</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="is_active">狀態</label>
+                        <select id="is_active" name="is_active">
+                            <option value="true">啟用</option>
+                            <option value="false">停用</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="start_date">開始時間</label>
+                        <input type="datetime-local" id="start_date" name="start_date">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="end_date">結束時間</label>
+                        <input type="datetime-local" id="end_date" name="end_date">
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn-primary">儲存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="admin-auth.js"></script>
+    <script src="admin-announcements.js"></script>
+</body>
+</html> 
