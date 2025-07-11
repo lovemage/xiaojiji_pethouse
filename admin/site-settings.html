@@ -11,10 +11,10 @@
 <body>
     <div class="admin-panel">
         <!-- 側邊欄 -->
-        <nav class="admin-sidebar">
-            <div class="sidebar-header">
-                <img src="../images/logo.png" alt="小基基寵物犬舍" class="sidebar-logo">
-                <h2>管理系統</h2>
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <img src="../images/logo.png" alt="小基基寵物犬舍">
+                <h3>管理系統</h3>
             </div>
             <ul class="admin-menu">
                 <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 儀表板</a></li>
@@ -28,34 +28,12 @@
                 <li><a href="admin-settings.html"><i class="fas fa-user-cog"></i> 管理員設定</a></li>
                 <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
             </ul>
-        </nav>
+        </aside>
 
         <!-- 主要內容 -->
         <main class="admin-content">
             <div class="admin-header">
                 <h1>網站設定</h1>
-            </div>
-
-            <!-- Logo 設定 -->
-            <div class="content-section">
-                <h2>Logo 設定</h2>
-                <form id="logoForm">
-                    <div class="form-group">
-                        <label for="logoImage">目前 Logo</label>
-                        <div class="current-logo">
-                            <img id="currentLogo" src="../images/logo.png" alt="目前 Logo">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="newLogo">上傳新 Logo</label>
-                        <input type="file" id="newLogo" accept="image/*" onchange="previewLogo()">
-                        <p class="form-hint">建議尺寸：正方形，檔案大小不超過 1MB</p>
-                        <div id="logoPreview" class="image-preview"></div>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary">更新 Logo</button>
-                </form>
             </div>
 
             <!-- 首頁橫幅設定 -->
@@ -123,24 +101,6 @@
             </div>
 
             <style>
-                .current-logo {
-                    margin: 10px 0;
-                    border: 1px solid var(--border-color);
-                    border-radius: 10px;
-                    overflow: hidden;
-                    max-width: 150px;
-                    text-align: center;
-                    background: #f9f9f9;
-                    padding: 20px;
-                }
-                
-                .current-logo img {
-                    width: 100px;
-                    height: 100px;
-                    object-fit: cover;
-                    border-radius: 50%;
-                }
-                
                 .current-hero-image {
                     margin: 10px 0;
                     border: 1px solid var(--border-color);
@@ -152,11 +112,6 @@
                 .current-hero-image img {
                     width: 100%;
                     height: auto;
-                }
-                
-                .image-preview {
-                    margin-top: 10px;
-                    text-align: center;
                 }
                 
                 .form-hint {
@@ -214,6 +169,7 @@
     </div>
 
     <script src="admin-auth.js"></script>
+    <script src="../js/api.js"></script>
     <script src="admin-settings.js"></script>
 </body>
 </html>

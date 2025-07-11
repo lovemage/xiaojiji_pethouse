@@ -87,15 +87,26 @@ app.put('/api/pets/:id', upload.array('images', 5), async (req, res) => {
     const { name, breed, birthdate, age, gender, color, category, price, description, health } = req.body;
     
     // 處理上傳的圖片
-    const images = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+    let updateQuery = `UPDATE pets SET name = $1, breed = $2, birthdate = $3, age = $4, gender = $5, 
+                       color = $6, category = $7, price = $8, description = $9, health = $10, 
+                       updated_at = CURRENT_TIMESTAMP`;
+    let params = [name, breed, birthdate, age, gender, color, category, price, description, health];
     
-    const result = await pool.query(
-      `UPDATE pets SET name = $1, breed = $2, birthdate = $3, age = $4, gender = $5, 
-       color = $6, category = $7, price = $8, description = $9, health = $10, 
-       images = $11, updated_at = CURRENT_TIMESTAMP 
-       WHERE id = $12 RETURNING *`,
-      [name, breed, birthdate, age, gender, color, category, price, description, health, JSON.stringify(images), id]
-    );
+    // 如果有新上傳的圖片，更新圖片欄位
+    if (req.files && req.files.length > 0) {
+      const images = req.files.map(file => `/uploads/${file.filename}`);
+      updateQuery += `, images = $11 WHERE id = $12 RETURNING *`;
+      params.push(JSON.stringify(images), id);
+    } else {
+      updateQuery += ` WHERE id = $11 RETURNING *`;
+      params.push(id);
+    }
+    
+    const result = await pool.query(updateQuery, params);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: '寵物不存在' });
+    }
     
     res.json(result.rows[0]);
   } catch (err) {
@@ -138,6 +149,27 @@ app.post('/api/inquiries', async (req, res) => {
     res.json(result.rows[0]);
   } catch (err) {
     console.error('新增諮詢錯誤:', err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+app.put('/api/inquiries/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { is_read } = req.body;
+    
+    const result = await pool.query(
+      'UPDATE inquiries SET is_read = $1 WHERE id = $2 RETURNING *',
+      [is_read, id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: '訊息不存在' });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('更新訊息錯誤:', err);
     res.status(500).json({ error: '伺服器錯誤' });
   }
 });
@@ -227,31 +259,200 @@ app.delete('/api/testimonials/:id', async (req, res) => {
 // 網站設定相關 API
 app.get('/api/settings', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM site_settings ORDER BY setting_key');
+    const result = await pool.query('SELECT * FROM site_settings');
     const settings = {};
     result.rows.forEach(row => {
       settings[row.setting_key] = row.setting_value;
     });
     res.json(settings);
   } catch (err) {
-    console.error('獲取網站設定錯誤:', err);
+    console.error('獲取設定錯誤:', err);
     res.status(500).json({ error: '伺服器錯誤' });
   }
 });
 
-app.put('/api/settings/:key', async (req, res) => {
+app.post('/api/settings', async (req, res) => {
   try {
-    const { key } = req.params;
-    const { value } = req.body;
+    const { key, value } = req.body;
     
-    await pool.query(
-      'INSERT INTO site_settings (setting_key, setting_value, updated_at) VALUES ($1, $2, CURRENT_TIMESTAMP) ON CONFLICT (setting_key) DO UPDATE SET setting_value = $2, updated_at = CURRENT_TIMESTAMP',
+    const result = await pool.query(
+      `INSERT INTO site_settings (setting_key, setting_value) 
+       VALUES ($1, $2) 
+       ON CONFLICT (setting_key) 
+       DO UPDATE SET setting_value = $2, updated_at = CURRENT_TIMESTAMP 
+       RETURNING *`,
       [key, value]
     );
     
-    res.json({ success: true, message: '設定更新成功' });
+    res.json(result.rows[0]);
   } catch (err) {
-    console.error('更新網站設定錯誤:', err);
+    console.error('更新設定錯誤:', err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+// 相簿相關 API
+app.get('/api/gallery', async (req, res) => {
+  try {
+    const { category } = req.query;
+    let query = 'SELECT * FROM gallery_images WHERE is_active = true';
+    let params = [];
+    
+    if (category && category !== 'all') {
+      query += ' AND category = $1';
+      params.push(category);
+    }
+    
+    query += ' ORDER BY sort_order ASC, created_at DESC';
+    
+    const result = await pool.query(query, params);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('獲取相簿資料錯誤:', err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+app.post('/api/gallery', upload.single('image'), async (req, res) => {
+  try {
+    const { title, description, category, sortOrder } = req.body;
+    
+    // 處理上傳的圖片
+    const src = req.file ? `/uploads/${req.file.filename}` : req.body.src;
+    
+    const result = await pool.query(
+      'INSERT INTO gallery_images (title, description, src, category, sort_order) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [title, description, src, category, sortOrder || 0]
+    );
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('新增相簿圖片錯誤:', err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+app.put('/api/gallery/:id', upload.single('image'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, category, sortOrder, isActive } = req.body;
+    
+    // 如果有新上傳的圖片，使用新圖片，否則保持原圖片
+    let updateQuery = `UPDATE gallery_images SET title = $1, description = $2, category = $3, 
+                       sort_order = $4, is_active = $5, updated_at = CURRENT_TIMESTAMP`;
+    let params = [title, description, category, sortOrder || 0, isActive !== undefined ? isActive : true];
+    
+    if (req.file) {
+      updateQuery += `, src = $6 WHERE id = $7 RETURNING *`;
+      params.push(`/uploads/${req.file.filename}`, id);
+    } else {
+      updateQuery += ` WHERE id = $6 RETURNING *`;
+      params.push(id);
+    }
+    
+    const result = await pool.query(updateQuery, params);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: '圖片不存在' });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('更新相簿圖片錯誤:', err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+app.delete('/api/gallery/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const result = await pool.query('DELETE FROM gallery_images WHERE id = $1 RETURNING *', [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: '圖片不存在' });
+    }
+    
+    res.json({ message: '相簿圖片已刪除' });
+  } catch (err) {
+    console.error('刪除相簿圖片錯誤:', err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+// 公告相關 API
+app.get('/api/announcements', async (req, res) => {
+  try {
+    const { active } = req.query;
+    let query = 'SELECT * FROM announcements';
+    let params = [];
+    
+    if (active === 'true') {
+      query += ' WHERE is_active = true AND (start_date IS NULL OR start_date <= CURRENT_DATE) AND (end_date IS NULL OR end_date >= CURRENT_DATE)';
+    }
+    
+    query += ' ORDER BY created_at DESC';
+    
+    const result = await pool.query(query, params);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('獲取公告資料錯誤:', err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+app.post('/api/announcements', async (req, res) => {
+  try {
+    const { title, content, type, startDate, endDate } = req.body;
+    
+    const result = await pool.query(
+      'INSERT INTO announcements (title, content, type, start_date, end_date) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [title, content, type || 'info', startDate || null, endDate || null]
+    );
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('新增公告錯誤:', err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+app.put('/api/announcements/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, content, type, startDate, endDate, isActive } = req.body;
+    
+    const result = await pool.query(
+      `UPDATE announcements SET title = $1, content = $2, type = $3, start_date = $4, 
+       end_date = $5, is_active = $6, updated_at = CURRENT_TIMESTAMP 
+       WHERE id = $7 RETURNING *`,
+      [title, content, type, startDate || null, endDate || null, isActive, id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: '公告不存在' });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('更新公告錯誤:', err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+app.delete('/api/announcements/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const result = await pool.query('DELETE FROM announcements WHERE id = $1 RETURNING *', [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: '公告不存在' });
+    }
+    
+    res.json({ message: '公告已刪除' });
+  } catch (err) {
+    console.error('刪除公告錯誤:', err);
     res.status(500).json({ error: '伺服器錯誤' });
   }
 });

@@ -1,264 +1,283 @@
 // 公告管理 JavaScript
 
-let currentEditId = null;
+let announcements = [];
 
-// 頁面載入完成後初始化
+// 頁面載入時執行
 document.addEventListener('DOMContentLoaded', function() {
     loadAnnouncements();
+    
+    // 綁定表單提交事件
+    document.getElementById('addAnnouncementForm').addEventListener('submit', handleAddAnnouncement);
+    document.getElementById('editAnnouncementForm').addEventListener('submit', handleEditAnnouncement);
 });
 
-// 載入公告列表
+// 載入公告
 async function loadAnnouncements() {
     try {
-        const response = await fetch('/api/announcements');
-        if (!response.ok) {
-            throw new Error('載入公告失敗');
-        }
-        
-        const announcements = await response.json();
-        renderAnnouncementsTable(announcements);
+        announcements = await API.getAnnouncements();
+        displayAnnouncements();
+        console.log('載入了', announcements.length, '個公告');
     } catch (error) {
-        console.error('載入公告錯誤:', error);
-        showMessage('載入公告失敗: ' + error.message, 'error');
+        console.error('載入公告失敗:', error);
+        showNotification('載入公告失敗', 'error');
     }
 }
 
-// 渲染公告表格
-function renderAnnouncementsTable(announcements) {
-    const tbody = document.getElementById('announcementsTable');
+// 顯示公告
+function displayAnnouncements() {
+    const grid = document.getElementById('announcementsGrid');
+    const filter = document.getElementById('statusFilter').value;
     
-    if (announcements.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center">暫無公告資料</td></tr>';
+    // 篩選公告
+    let filteredAnnouncements = announcements;
+    if (filter === 'active') {
+        filteredAnnouncements = announcements.filter(a => a.is_active);
+    } else if (filter === 'inactive') {
+        filteredAnnouncements = announcements.filter(a => !a.is_active);
+    }
+    
+    // 排序：置頂的在前面
+    filteredAnnouncements.sort((a, b) => {
+        if (a.is_pinned && !b.is_pinned) return -1;
+        if (!a.is_pinned && b.is_pinned) return 1;
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+    
+    if (filteredAnnouncements.length === 0) {
+        grid.innerHTML = '<div class="no-data">目前沒有公告</div>';
         return;
     }
     
-    tbody.innerHTML = announcements.map(announcement => `
-        <tr>
-            <td class="announcement-title">${announcement.title}</td>
-            <td>
-                <span class="type-badge type-${announcement.type}">
-                    ${getTypeText(announcement.type)}
-                </span>
-            </td>
-            <td>
-                <span class="status-badge ${announcement.is_active ? 'status-active' : 'status-inactive'}">
-                    ${announcement.is_active ? '啟用' : '停用'}
-                </span>
-            </td>
-            <td>${formatDateTime(announcement.start_date)}</td>
-            <td>${formatDateTime(announcement.end_date)}</td>
-            <td>${formatDateTime(announcement.created_at)}</td>
-            <td class="actions">
-                <button class="btn-edit" onclick="editAnnouncement(${announcement.id})" title="編輯">
-                    <i class="fas fa-edit"></i>
+    grid.innerHTML = filteredAnnouncements.map(announcement => `
+        <div class="announcement-card ${announcement.is_active ? 'active' : 'inactive'} ${announcement.is_pinned ? 'pinned' : ''}">
+            <div class="announcement-header">
+                <div class="announcement-type type-${announcement.type}">
+                    <i class="fas fa-${getTypeIcon(announcement.type)}"></i>
+                    ${getTypeName(announcement.type)}
+                </div>
+                <div class="announcement-status">
+                    ${announcement.is_pinned ? '<span class="pin-badge"><i class="fas fa-thumbtack"></i> 置頂</span>' : ''}
+                    <span class="status-badge ${announcement.is_active ? 'active' : 'inactive'}">
+                        ${announcement.is_active ? '啟用' : '停用'}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="announcement-content">
+                <h3>${announcement.title}</h3>
+                <p class="announcement-text">${announcement.content}</p>
+                
+                <div class="announcement-dates">
+                    ${announcement.start_date ? `<span><i class="fas fa-calendar-alt"></i> 開始: ${formatDate(announcement.start_date)}</span>` : ''}
+                    ${announcement.end_date ? `<span><i class="fas fa-calendar-alt"></i> 結束: ${formatDate(announcement.end_date)}</span>` : ''}
+                </div>
+                
+                <div class="announcement-meta">
+                    <span><i class="fas fa-clock"></i> 建立於 ${formatDateTime(announcement.created_at)}</span>
+                    ${announcement.updated_at !== announcement.created_at ? 
+                        `<span><i class="fas fa-edit"></i> 更新於 ${formatDateTime(announcement.updated_at)}</span>` : ''}
+                </div>
+            </div>
+            
+            <div class="announcement-actions">
+                <button class="btn-secondary" onclick="editAnnouncement(${announcement.id})">
+                    <i class="fas fa-edit"></i> 編輯
                 </button>
-                <button class="btn-delete" onclick="deleteAnnouncement(${announcement.id})" title="刪除">
-                    <i class="fas fa-trash"></i>
+                <button class="btn-danger" onclick="deleteAnnouncement(${announcement.id})">
+                    <i class="fas fa-trash"></i> 刪除
                 </button>
-                <button class="btn-toggle" onclick="toggleAnnouncementStatus(${announcement.id}, ${!announcement.is_active})" title="${announcement.is_active ? '停用' : '啟用'}">
-                    <i class="fas fa-${announcement.is_active ? 'eye-slash' : 'eye'}"></i>
-                </button>
-            </td>
-        </tr>
+            </div>
+        </div>
     `).join('');
 }
 
-// 取得類型文字
-function getTypeText(type) {
-    const typeMap = {
-        'info': '資訊',
+// 獲取類型圖標
+function getTypeIcon(type) {
+    const icons = {
+        'general': 'info-circle',
+        'promotion': 'tag',
+        'notice': 'exclamation-triangle',
+        'update': 'sync-alt',
+        'info': 'info-circle',
+        'warning': 'exclamation-triangle',
+        'success': 'check-circle',
+        'error': 'times-circle'
+    };
+    return icons[type] || 'info-circle';
+}
+
+// 獲取類型名稱
+function getTypeName(type) {
+    const names = {
+        'general': '一般資訊',
+        'promotion': '優惠活動',
+        'notice': '重要通知',
+        'update': '系統更新',
+        'info': '一般資訊',
         'warning': '警告',
         'success': '成功',
         'error': '錯誤'
     };
-    return typeMap[type] || type;
+    return names[type] || '一般資訊';
+}
+
+// 格式化日期
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('zh-TW');
 }
 
 // 格式化日期時間
 function formatDateTime(dateString) {
-    if (!dateString) return '-';
     const date = new Date(dateString);
-    return date.toLocaleString('zh-TW', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    return date.toLocaleString('zh-TW');
 }
 
-// 顯示新增公告彈窗
-function showAddModal() {
-    currentEditId = null;
-    document.getElementById('modalTitle').textContent = '新增公告';
-    document.getElementById('announcementForm').reset();
-    document.getElementById('announcementModal').style.display = 'block';
+// 篩選公告
+function filterAnnouncements() {
+    displayAnnouncements();
 }
 
-// 編輯公告
-async function editAnnouncement(id) {
-    try {
-        const response = await fetch(`/api/announcements/${id}`);
-        if (!response.ok) {
-            throw new Error('載入公告資料失敗');
-        }
-        
-        const announcement = await response.json();
-        currentEditId = id;
-        
-        // 填入表單
-        document.getElementById('title').value = announcement.title;
-        document.getElementById('content').value = announcement.content;
-        document.getElementById('type').value = announcement.type;
-        document.getElementById('is_active').value = announcement.is_active.toString();
-        
-        // 處理日期時間
-        if (announcement.start_date) {
-            document.getElementById('start_date').value = formatDateTimeForInput(announcement.start_date);
-        }
-        if (announcement.end_date) {
-            document.getElementById('end_date').value = formatDateTimeForInput(announcement.end_date);
-        }
-        
-        document.getElementById('modalTitle').textContent = '編輯公告';
-        document.getElementById('announcementModal').style.display = 'block';
-        
-    } catch (error) {
-        console.error('載入公告資料錯誤:', error);
-        showMessage('載入公告資料失敗: ' + error.message, 'error');
-    }
+// 開啟新增公告模態框
+function openAddAnnouncementModal() {
+    document.getElementById('addAnnouncementModal').style.display = 'block';
+    document.getElementById('addAnnouncementForm').reset();
 }
 
-// 格式化日期時間供 input 使用
-function formatDateTimeForInput(dateString) {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
+// 關閉新增公告模態框
+function closeAddAnnouncementModal() {
+    document.getElementById('addAnnouncementModal').style.display = 'none';
 }
 
-// 刪除公告
-async function deleteAnnouncement(id) {
-    if (!confirm('確定要刪除這個公告嗎？')) {
-        return;
-    }
+// 處理新增公告
+async function handleAddAnnouncement(event) {
+    event.preventDefault();
     
-    try {
-        const response = await fetch(`/api/announcements/${id}`, {
-            method: 'DELETE'
-        });
-        
-        if (!response.ok) {
-            throw new Error('刪除公告失敗');
-        }
-        
-        showMessage('公告刪除成功', 'success');
-        loadAnnouncements();
-    } catch (error) {
-        console.error('刪除公告錯誤:', error);
-        showMessage('刪除公告失敗: ' + error.message, 'error');
-    }
-}
-
-// 切換公告狀態
-async function toggleAnnouncementStatus(id, newStatus) {
-    try {
-        const response = await fetch(`/api/announcements/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                is_active: newStatus
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error('更新公告狀態失敗');
-        }
-        
-        showMessage(`公告已${newStatus ? '啟用' : '停用'}`, 'success');
-        loadAnnouncements();
-    } catch (error) {
-        console.error('更新公告狀態錯誤:', error);
-        showMessage('更新公告狀態失敗: ' + error.message, 'error');
-    }
-}
-
-// 關閉彈窗
-function closeModal() {
-    document.getElementById('announcementModal').style.display = 'none';
-    currentEditId = null;
-}
-
-// 表單提交處理
-document.getElementById('announcementForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
+    const formData = new FormData(event.target);
     const announcementData = {
         title: formData.get('title'),
         content: formData.get('content'),
         type: formData.get('type'),
-        is_active: formData.get('is_active') === 'true',
-        start_date: formData.get('start_date') || null,
-        end_date: formData.get('end_date') || null
+        startDate: formData.get('startDate') || null,
+        endDate: formData.get('endDate') || null
     };
     
     try {
-        const url = currentEditId ? `/api/announcements/${currentEditId}` : '/api/announcements';
-        const method = currentEditId ? 'PUT' : 'POST';
-        
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(announcementData)
-        });
-        
-        if (!response.ok) {
-            throw new Error(currentEditId ? '更新公告失敗' : '新增公告失敗');
-        }
-        
-        showMessage(currentEditId ? '公告更新成功' : '公告新增成功', 'success');
-        closeModal();
-        loadAnnouncements();
-        
+        const newAnnouncement = await API.createAnnouncement(announcementData);
+        announcements.unshift(newAnnouncement);
+        displayAnnouncements();
+        closeAddAnnouncementModal();
+        showNotification('公告新增成功', 'success');
     } catch (error) {
-        console.error('儲存公告錯誤:', error);
-        showMessage('儲存公告失敗: ' + error.message, 'error');
+        console.error('新增公告失敗:', error);
+        showNotification('新增公告失敗', 'error');
     }
-});
+}
 
-// 顯示訊息
-function showMessage(message, type = 'info') {
-    // 創建訊息元素
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `admin-message admin-message-${type}`;
-    messageDiv.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'}-circle"></i>
-        ${message}
+// 編輯公告
+function editAnnouncement(id) {
+    const announcement = announcements.find(a => a.id === id);
+    if (!announcement) return;
+    
+    // 填入表單
+    document.getElementById('editAnnouncementId').value = announcement.id;
+    document.getElementById('editAnnouncementTitle').value = announcement.title;
+    document.getElementById('editAnnouncementContent').value = announcement.content;
+    document.getElementById('editAnnouncementType').value = announcement.type;
+    document.getElementById('editStartDate').value = announcement.start_date ? announcement.start_date.split('T')[0] : '';
+    document.getElementById('editEndDate').value = announcement.end_date ? announcement.end_date.split('T')[0] : '';
+    document.getElementById('editIsActive').checked = announcement.is_active;
+    document.getElementById('editIsPinned').checked = announcement.is_pinned;
+    
+    // 顯示模態框
+    document.getElementById('editAnnouncementModal').style.display = 'block';
+}
+
+// 關閉編輯公告模態框
+function closeEditAnnouncementModal() {
+    document.getElementById('editAnnouncementModal').style.display = 'none';
+}
+
+// 處理編輯公告
+async function handleEditAnnouncement(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const id = parseInt(formData.get('id'));
+    const announcementData = {
+        title: formData.get('title'),
+        content: formData.get('content'),
+        type: formData.get('type'),
+        startDate: formData.get('startDate') || null,
+        endDate: formData.get('endDate') || null,
+        isActive: formData.get('isActive') === 'on',
+        isPinned: formData.get('isPinned') === 'on'
+    };
+    
+    try {
+        const updatedAnnouncement = await API.updateAnnouncement(id, announcementData);
+        
+        // 更新本地資料
+        const index = announcements.findIndex(a => a.id === id);
+        if (index !== -1) {
+            announcements[index] = updatedAnnouncement;
+            displayAnnouncements();
+            closeEditAnnouncementModal();
+            showNotification('公告更新成功', 'success');
+        }
+    } catch (error) {
+        console.error('更新公告失敗:', error);
+        showNotification('更新公告失敗', 'error');
+    }
+}
+
+// 刪除公告
+async function deleteAnnouncement(id) {
+    if (!confirm('確定要刪除這個公告嗎？')) return;
+    
+    try {
+        await API.deleteAnnouncement(id);
+        announcements = announcements.filter(a => a.id !== id);
+        displayAnnouncements();
+        showNotification('公告刪除成功', 'success');
+    } catch (error) {
+        console.error('刪除公告失敗:', error);
+        showNotification('刪除公告失敗', 'error');
+    }
+}
+
+// 顯示通知
+function showNotification(message, type = 'info') {
+    // 創建通知元素
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
+        <span>${message}</span>
     `;
     
     // 添加到頁面
-    document.body.appendChild(messageDiv);
+    document.body.appendChild(notification);
     
-    // 3秒後自動移除
+    // 顯示動畫
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    // 自動移除
     setTimeout(() => {
-        if (messageDiv.parentNode) {
-            messageDiv.parentNode.removeChild(messageDiv);
-        }
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
 
-// 點擊彈窗外部關閉
+// 點擊模態框背景關閉
 window.onclick = function(event) {
-    const modal = document.getElementById('announcementModal');
-    if (event.target === modal) {
-        closeModal();
+    const addModal = document.getElementById('addAnnouncementModal');
+    const editModal = document.getElementById('editAnnouncementModal');
+    
+    if (event.target === addModal) {
+        closeAddAnnouncementModal();
     }
-} 
+    if (event.target === editModal) {
+        closeEditAnnouncementModal();
+    }
+}; 

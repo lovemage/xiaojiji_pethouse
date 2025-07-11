@@ -12,79 +12,33 @@ document.addEventListener('DOMContentLoaded', () => {
 // 載入相簿圖片
 async function loadGalleryImages() {
     try {
-        // 目前使用靜態數據，之後可以從 API 載入
-        galleryImages = [
-            {
-                id: 1,
-                src: '../images/64805.jpg',
-                title: '邊境牧羊犬幼犬',
-                description: '健康活潑的邊境牧羊犬幼犬，3個月大',
-                category: 'puppy',
-                createdAt: '2024-01-15'
-            },
-            {
-                id: 2,
-                src: '../images/download.jpg',
-                title: '柯基犬幼犬',
-                description: '萌萌的柯基犬幼犬，2個月大',
-                category: 'puppy',
-                createdAt: '2024-01-14'
-            },
-            {
-                id: 3,
-                src: '../images/download-1.jpg',
-                title: '黃金獵犬',
-                description: '溫順友善的黃金獵犬成犬',
-                category: 'adult',
-                createdAt: '2024-01-13'
-            },
-            {
-                id: 4,
-                src: '../images/download-2.jpg',
-                title: '柴犬',
-                description: '聰明活潑的柴犬成犬',
-                category: 'adult',
-                createdAt: '2024-01-12'
-            },
-            {
-                id: 5,
-                src: '../images/RnWoowUwUaWbUjTraVyj-6FYMm_TH-eUtdIZk7XSGZM.jpg',
-                title: '犬舍環境',
-                description: '乾淨整潔的犬舍環境，給狗狗最好的生活空間',
-                category: 'daily',
-                createdAt: '2024-01-11'
-            },
-            {
-                id: 6,
-                src: '../images/pkncb1-golden-retriever-puppy-running-outdoors-in-grass.png',
-                title: '戶外訓練',
-                description: '狗狗在戶外草地上快樂奔跑的訓練時光',
-                category: 'training',
-                createdAt: '2024-01-10'
-            },
-            {
-                id: 7,
-                src: '../images/Pets-Health.jpg',
-                title: '健康檢查',
-                description: '定期的健康檢查，確保每隻狗狗都健康',
-                category: 'puppy',
-                createdAt: '2024-01-09'
-            },
-            {
-                id: 8,
-                src: '../images/pets-Health2.jpg',
-                title: '日常照護',
-                description: '專業的日常照護，讓狗狗健康成長',
-                category: 'daily',
-                createdAt: '2024-01-08'
-            }
-        ];
+        // 從資料庫 API 載入相簿資料
+        const images = await API.getGalleryImages();
+        
+        // 轉換資料格式以符合現有代碼
+        galleryImages = images.map(img => ({
+            id: img.id,
+            src: img.src,
+            title: img.title,
+            description: img.description,
+            category: img.category,
+            createdAt: img.created_at,
+            sortOrder: img.sort_order,
+            isActive: img.is_active
+        }));
         
         displayGalleryImages();
+        console.log('從資料庫載入了', galleryImages.length, '張圖片');
         
     } catch (error) {
         console.error('載入相簿圖片失敗:', error);
         showNotification('載入相簿圖片失敗', 'error');
+        
+        // 如果 API 失敗，顯示錯誤訊息
+        const grid = document.getElementById('adminGalleryGrid');
+        if (grid) {
+            grid.innerHTML = '<div class="no-data">載入圖片失敗，請檢查網路連接</div>';
+        }
     }
 }
 
@@ -107,12 +61,12 @@ function displayGalleryImages() {
         imageCard.className = 'gallery-card';
         imageCard.innerHTML = `
             <div class="gallery-image">
-                <img src="${image.src}" alt="${image.title}">
+                <img src="../${image.src}" alt="${image.title}">
                 <div class="image-overlay">
-                    <button class="btn-icon" onclick="editImage(${image.id})" title="編輯">
+                    <button class="btn-icon edit-btn" data-id="${image.id}" title="編輯">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn-icon btn-danger" onclick="deleteImage(${image.id})" title="刪除">
+                    <button class="btn-icon btn-danger delete-btn" data-id="${image.id}" title="刪除">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -124,8 +78,31 @@ function displayGalleryImages() {
                 <small class="date">上傳時間: ${formatDate(image.createdAt)}</small>
             </div>
         `;
+        
+        // 添加事件監聽器
+        const editBtn = imageCard.querySelector('.edit-btn');
+        const deleteBtn = imageCard.querySelector('.delete-btn');
+        
+        editBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const imageId = parseInt(e.currentTarget.dataset.id);
+            console.log('編輯按鈕被點擊，圖片ID:', imageId);
+            editImage(imageId);
+        });
+        
+        deleteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const imageId = parseInt(e.currentTarget.dataset.id);
+            console.log('刪除按鈕被點擊，圖片ID:', imageId);
+            deleteImage(imageId);
+        });
+        
         grid.appendChild(imageCard);
     });
+    
+    console.log('顯示了', filteredImages.length, '張圖片');
 }
 
 // 初始化篩選器
@@ -158,6 +135,12 @@ function initializeForms() {
     // 圖片預覽
     const imageFile = document.getElementById('imageFile');
     imageFile.addEventListener('change', handleImagePreview);
+    
+    // 編輯圖片預覽
+    const editImageFile = document.getElementById('editImageFile');
+    if (editImageFile) {
+        editImageFile.addEventListener('change', handleEditImagePreview);
+    }
 }
 
 // 處理圖片預覽
@@ -169,6 +152,22 @@ function handleImagePreview(event) {
         const reader = new FileReader();
         reader.onload = function(e) {
             preview.innerHTML = `<img src="${e.target.result}" alt="預覽圖片">`;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.innerHTML = '';
+    }
+}
+
+// 處理編輯圖片預覽
+function handleEditImagePreview(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById('editImagePreview');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `<img src="${e.target.result}" alt="新圖片預覽">`;
         };
         reader.readAsDataURL(file);
     } else {
@@ -192,7 +191,6 @@ function closeAddImageModal() {
 async function handleAddImage(event) {
     event.preventDefault();
     
-    const formData = new FormData();
     const fileInput = document.getElementById('imageFile');
     const title = document.getElementById('imageTitle').value;
     const description = document.getElementById('imageDescription').value;
@@ -204,51 +202,84 @@ async function handleAddImage(event) {
     }
     
     try {
-        // 模擬新增圖片（實際應該上傳到伺服器）
-        const newImage = {
-            id: Date.now(),
-            src: URL.createObjectURL(fileInput.files[0]),
-            title: title,
-            description: description,
-            category: category,
-            createdAt: new Date().toISOString().split('T')[0]
-        };
+        // 創建 FormData 用於上傳
+        const formData = new FormData();
+        formData.append('image', fileInput.files[0]);
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('category', category);
+        formData.append('sortOrder', galleryImages.length + 1);
         
-        galleryImages.unshift(newImage);
+        // 調用 API 新增圖片
+        const newImage = await API.createGalleryImage(formData);
+        
+        // 更新本地資料
+        galleryImages.unshift({
+            id: newImage.id,
+            src: newImage.src,
+            title: newImage.title,
+            description: newImage.description,
+            category: newImage.category,
+            createdAt: newImage.created_at,
+            sortOrder: newImage.sort_order,
+            isActive: newImage.is_active
+        });
+        
         displayGalleryImages();
         closeAddImageModal();
         showNotification('圖片新增成功', 'success');
         
     } catch (error) {
         console.error('新增圖片失敗:', error);
-        showNotification('新增圖片失敗', 'error');
+        showNotification('新增圖片失敗：' + (error.message || '未知錯誤'), 'error');
     }
 }
 
 // 編輯圖片
 function editImage(imageId) {
+    console.log('編輯圖片被點擊，ID:', imageId); // 調試信息
+    
     const image = galleryImages.find(img => img.id === imageId);
-    if (!image) return;
+    if (!image) {
+        console.error('找不到圖片，ID:', imageId);
+        showNotification('找不到指定的圖片', 'error');
+        return;
+    }
     
-    // 填入表單數據
-    document.getElementById('editImageId').value = image.id;
-    document.getElementById('editImageTitle').value = image.title;
-    document.getElementById('editImageDescription').value = image.description;
-    document.getElementById('editImageCategory').value = image.category;
+    console.log('找到圖片:', image); // 調試信息
     
-    // 顯示目前圖片
-    document.getElementById('currentImage').innerHTML = `
-        <img src="${image.src}" alt="${image.title}" style="max-width: 200px; height: auto;">
-    `;
-    
-    // 顯示彈窗
-    document.getElementById('editImageModal').style.display = 'block';
+    try {
+        // 填入表單數據
+        document.getElementById('editImageId').value = image.id;
+        document.getElementById('editImageTitle').value = image.title;
+        document.getElementById('editImageDescription').value = image.description;
+        document.getElementById('editImageCategory').value = image.category;
+        
+        // 顯示目前圖片
+        document.getElementById('currentImage').innerHTML = `
+            <img src="../${image.src}" alt="${image.title}" style="max-width: 200px; height: auto; border-radius: 5px;">
+        `;
+        
+        // 顯示彈窗
+        const modal = document.getElementById('editImageModal');
+        if (modal) {
+            modal.style.display = 'block';
+            console.log('編輯彈窗已顯示'); // 調試信息
+        } else {
+            console.error('找不到編輯彈窗元素');
+        }
+        
+    } catch (error) {
+        console.error('編輯圖片時發生錯誤:', error);
+        showNotification('編輯圖片時發生錯誤', 'error');
+    }
 }
 
 // 關閉編輯圖片彈窗
 function closeEditImageModal() {
     document.getElementById('editImageModal').style.display = 'none';
     document.getElementById('editImageForm').reset();
+    document.getElementById('editImagePreview').innerHTML = '';
 }
 
 // 處理編輯圖片
@@ -259,26 +290,47 @@ async function handleEditImage(event) {
     const title = document.getElementById('editImageTitle').value;
     const description = document.getElementById('editImageDescription').value;
     const category = document.getElementById('editImageCategory').value;
+    const imageFile = document.getElementById('editImageFile').files[0];
     
     try {
-        // 更新圖片資料
+        // 創建 FormData 用於更新
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('category', category);
+        formData.append('isActive', true);
+        
+        // 如果有選擇新圖片，添加到 FormData
+        if (imageFile) {
+            formData.append('image', imageFile);
+            console.log('已添加新圖片到 FormData:', imageFile.name);
+        }
+        
+        // 調用 API 更新圖片
+        const updatedImage = await API.updateGalleryImage(imageId, formData);
+        
+        // 更新本地資料
         const imageIndex = galleryImages.findIndex(img => img.id === imageId);
         if (imageIndex !== -1) {
             galleryImages[imageIndex] = {
-                ...galleryImages[imageIndex],
-                title: title,
-                description: description,
-                category: category
+                id: updatedImage.id,
+                src: updatedImage.src,
+                title: updatedImage.title,
+                description: updatedImage.description,
+                category: updatedImage.category,
+                createdAt: updatedImage.created_at,
+                sortOrder: updatedImage.sort_order,
+                isActive: updatedImage.is_active
             };
             
             displayGalleryImages();
             closeEditImageModal();
-            showNotification('圖片更新成功', 'success');
+            showNotification(imageFile ? '圖片和資料更新成功' : '圖片資料更新成功', 'success');
         }
         
     } catch (error) {
         console.error('更新圖片失敗:', error);
-        showNotification('更新圖片失敗', 'error');
+        showNotification('更新圖片失敗：' + (error.message || '未知錯誤'), 'error');
     }
 }
 
@@ -287,14 +339,17 @@ async function deleteImage(imageId) {
     if (!confirm('確定要刪除這張圖片嗎？')) return;
     
     try {
-        // 從陣列中移除
+        // 調用 API 刪除圖片
+        await API.deleteGalleryImage(imageId);
+        
+        // 從本地資料中移除
         galleryImages = galleryImages.filter(img => img.id !== imageId);
         displayGalleryImages();
         showNotification('圖片刪除成功', 'success');
         
     } catch (error) {
         console.error('刪除圖片失敗:', error);
-        showNotification('刪除圖片失敗', 'error');
+        showNotification('刪除圖片失敗：' + (error.message || '未知錯誤'), 'error');
     }
 }
 

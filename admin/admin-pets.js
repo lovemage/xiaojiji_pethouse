@@ -151,64 +151,74 @@ function previewImages() {
 
 // 儲存寵物資料
 if (document.getElementById('petForm')) {
-    document.getElementById('petForm').addEventListener('submit', function(e) {
+    document.getElementById('petForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
         try {
             const formData = new FormData(e.target);
-            const pets = JSON.parse(localStorage.getItem('pets') || '[]');
             
-            // 生成新的 ID
-            const newId = pets.length > 0 ? Math.max(...pets.map(p => p.id)) + 1 : 1;
-            
-            // 處理圖片預覽（因為無法實際上傳，使用預設圖片）
+            // 檢查是否有上傳圖片
             const imageFiles = document.getElementById('petImages').files;
-            const images = [];
-            if (imageFiles.length > 0) {
-                // 在實際應用中，這裡會上傳圖片並獲得 URL
-                // 目前使用預設圖片
-                images.push('../images/64805.jpg');
+            
+            // 如果沒有上傳圖片，使用預設圖片
+            if (imageFiles.length === 0) {
+                try {
+                    // 創建一個預設圖片的 blob
+                    const response = await fetch('../images/64805.jpg');
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const defaultFile = new File([blob], '64805.jpg', { type: 'image/jpeg' });
+                        formData.append('images', defaultFile);
+                    } else {
+                        console.warn('無法載入預設圖片，將不附加圖片');
+                    }
+                } catch (error) {
+                    console.warn('載入預設圖片時發生錯誤:', error);
+                }
             }
             
-            const newPet = {
-                id: newId,
-                name: formData.get('name'),
-                breed: formData.get('breed'),
-                birthdate: formData.get('birthdate'),
-                age: formData.get('age'),
-                gender: formData.get('gender'),
-                color: formData.get('color'),
-                category: formData.get('category'),
-                price: parseFloat(formData.get('price')),
-                description: formData.get('description'),
-                health: formData.get('health'),
-                images: images,
-                createdAt: new Date().toISOString()
-            };
+            // 使用 API 新增寵物
+            const result = await API.createPet(formData);
             
-            pets.push(newPet);
-            localStorage.setItem('pets', JSON.stringify(pets));
+            showNotification('寵物資料已儲存！', 'success');
             
-            alert('寵物資料已儲存！');
-            window.location.href = 'pets.html';
+            // 延遲跳轉，讓用戶看到成功訊息
+            setTimeout(() => {
+                window.location.href = 'pets.html';
+            }, 1500);
+            
         } catch (error) {
             console.error('儲存寵物資料失敗:', error);
-            alert('儲存失敗，請稍後再試。');
+            showNotification('儲存失敗，請稍後再試。', 'error');
         }
     });
 }
 
 // 載入寵物列表
-function loadPets() {
+async function loadPets() {
     try {
-        const pets = JSON.parse(localStorage.getItem('pets') || '[]');
+        const pets = await API.getPets();
         const tbody = document.getElementById('petsTableBody');
         if (!tbody) return;
         
         tbody.innerHTML = '';
         pets.forEach(pet => {
             const tr = document.createElement('tr');
-            const imageUrl = pet.images && pet.images.length > 0 ? pet.images[0] : '../images/64805.jpg';
+            
+            // 處理圖片
+            let images = [];
+            if (pet.images) {
+                if (typeof pet.images === 'string') {
+                    try {
+                        images = JSON.parse(pet.images);
+                    } catch (e) {
+                        images = [pet.images];
+                    }
+                } else if (Array.isArray(pet.images)) {
+                    images = pet.images;
+                }
+            }
+            const imageUrl = images.length > 0 ? `../${images[0]}` : '../images/64805.jpg';
             
             tr.innerHTML = `
                 <td>
@@ -221,7 +231,7 @@ function loadPets() {
                 <td>NT$ ${parseInt(pet.price).toLocaleString()}</td>
                 <td>
                     <div class="table-actions">
-                        <a href="edit-pet.html?id=${pet.id}" class="btn-edit">編輯</a>
+                        <button onclick="editPet(${pet.id})" class="btn-edit">編輯</button>
                         <button onclick="deletePet(${pet.id})" class="btn-delete">刪除</button>
                     </div>
                 </td>
@@ -230,21 +240,22 @@ function loadPets() {
         });
     } catch (error) {
         console.error('載入寵物列表失敗:', error);
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #999;">載入失敗，請重新整理頁面</td></tr>';
+        }
     }
 }
 
 // 刪除寵物
-function deletePet(id) {
+async function deletePet(id) {
     if (confirm('確定要刪除這隻寵物嗎？')) {
         try {
-            const pets = JSON.parse(localStorage.getItem('pets') || '[]');
-            const updatedPets = pets.filter(pet => pet.id !== id);
-            localStorage.setItem('pets', JSON.stringify(updatedPets));
+            await API.deletePet(id);
             loadPets();
-            alert('寵物已刪除！');
+            showNotification('寵物已刪除！', 'success');
         } catch (error) {
             console.error('刪除寵物失敗:', error);
-            alert('刪除失敗，請稍後再試。');
+            showNotification('刪除失敗，請稍後再試。', 'error');
         }
     }
 }
@@ -297,9 +308,270 @@ function loadDashboardStats() {
     }
 }
 
+// 編輯寵物
+async function editPet(id) {
+    try {
+        const pets = await API.getPets();
+        const pet = pets.find(p => p.id === id);
+        
+        if (!pet) {
+            showNotification('找不到指定的寵物', 'error');
+            return;
+        }
+        
+        // 創建編輯表單彈窗
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.style.cssText = `
+            display: block;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        `;
+        modal.innerHTML = `
+            <div class="modal-content" style="
+                background-color: #fefefe;
+                margin: 5% auto;
+                padding: 20px;
+                border: 1px solid #888;
+                border-radius: 10px;
+                width: 80%;
+                max-width: 600px;
+                max-height: 80vh;
+                overflow-y: auto;
+                position: relative;
+            ">
+                <span class="close" onclick="this.parentElement.parentElement.remove()" style="
+                    color: #aaa;
+                    float: right;
+                    font-size: 28px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    position: absolute;
+                    right: 15px;
+                    top: 10px;
+                ">&times;</span>
+                <h2 style="margin-top: 0;">編輯寵物資料</h2>
+                <style>
+                    .edit-form-group {
+                        margin-bottom: 15px;
+                    }
+                    .edit-form-group label {
+                        display: block;
+                        margin-bottom: 5px;
+                        font-weight: bold;
+                        color: #333;
+                    }
+                    .edit-form-group input,
+                    .edit-form-group select,
+                    .edit-form-group textarea {
+                        width: 100%;
+                        padding: 8px 12px;
+                        border: 1px solid #ddd;
+                        border-radius: 4px;
+                        font-size: 14px;
+                        box-sizing: border-box;
+                        font-family: inherit;
+                    }
+                    .edit-form-group input:focus,
+                    .edit-form-group select:focus,
+                    .edit-form-group textarea:focus {
+                        outline: none;
+                        border-color: #007cba;
+                        box-shadow: 0 0 0 2px rgba(0, 124, 186, 0.1);
+                    }
+                    .form-actions {
+                        margin-top: 20px;
+                        text-align: right;
+                    }
+                    .form-actions button {
+                        margin-left: 10px;
+                        padding: 10px 20px;
+                        border: none;
+                        border-radius: 4px;
+                        font-size: 14px;
+                        cursor: pointer;
+                        transition: background-color 0.3s;
+                    }
+                    .btn-primary {
+                        background-color: #007cba;
+                        color: white;
+                    }
+                    .btn-primary:hover {
+                        background-color: #005a87;
+                    }
+                    .btn-secondary {
+                        background-color: #6c757d;
+                        color: white;
+                    }
+                    .btn-secondary:hover {
+                        background-color: #545b62;
+                    }
+                </style>
+                <form id="editPetForm">
+                    <input type="hidden" id="editPetId" value="${pet.id}">
+                    
+                    <div class="edit-form-group">
+                        <label for="editPetName">寵物名稱</label>
+                        <input type="text" id="editPetName" value="${pet.name}" required>
+                    </div>
+                    
+                    <div class="edit-form-group">
+                        <label for="editPetBreed">品種</label>
+                        <input type="text" id="editPetBreed" value="${pet.breed}" required>
+                    </div>
+                    
+                    <div class="edit-form-group">
+                        <label for="editPetAge">年齡</label>
+                        <input type="text" id="editPetAge" value="${pet.age}" required>
+                    </div>
+                    
+                    <div class="edit-form-group">
+                        <label for="editPetGender">性別</label>
+                        <select id="editPetGender" required>
+                            <option value="male" ${pet.gender === 'male' ? 'selected' : ''}>公犬</option>
+                            <option value="female" ${pet.gender === 'female' ? 'selected' : ''}>母犬</option>
+                        </select>
+                    </div>
+                    
+                    <div class="edit-form-group">
+                        <label for="editPetColor">毛色</label>
+                        <input type="text" id="editPetColor" value="${pet.color}" required>
+                    </div>
+                    
+                    <div class="edit-form-group">
+                        <label for="editPetCategory">分類</label>
+                        <select id="editPetCategory" required>
+                            <option value="small" ${pet.category === 'small' ? 'selected' : ''}>小型犬</option>
+                            <option value="medium" ${pet.category === 'medium' ? 'selected' : ''}>中型犬</option>
+                            <option value="large" ${pet.category === 'large' ? 'selected' : ''}>大型犬</option>
+                        </select>
+                    </div>
+                    
+                    <div class="edit-form-group">
+                        <label for="editPetPrice">價格</label>
+                        <input type="number" id="editPetPrice" value="${pet.price}" required>
+                    </div>
+                    
+                    <div class="edit-form-group">
+                        <label for="editPetDescription">描述</label>
+                        <textarea id="editPetDescription" rows="3" required>${pet.description}</textarea>
+                    </div>
+                    
+                    <div class="edit-form-group">
+                        <label for="editPetHealth">健康狀況</label>
+                        <textarea id="editPetHealth" rows="3">${pet.health || ''}</textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">更新寵物</button>
+                        <button type="button" class="btn-secondary" onclick="this.closest('.modal').remove()">取消</button>
+                    </div>
+                </form>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // 處理表單提交
+        document.getElementById('editPetForm').addEventListener('submit', handleEditPet);
+        
+        // 點擊背景關閉
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+        
+    } catch (error) {
+        console.error('載入寵物資料失敗:', error);
+        showNotification('載入寵物資料失敗', 'error');
+    }
+}
+
+// 處理編輯寵物
+async function handleEditPet(event) {
+    event.preventDefault();
+    
+    const petId = parseInt(document.getElementById('editPetId').value);
+    
+    // 創建 FormData 對象
+    const formData = new FormData();
+    formData.append('name', document.getElementById('editPetName').value);
+    formData.append('breed', document.getElementById('editPetBreed').value);
+    formData.append('age', document.getElementById('editPetAge').value);
+    formData.append('gender', document.getElementById('editPetGender').value);
+    formData.append('color', document.getElementById('editPetColor').value);
+    formData.append('category', document.getElementById('editPetCategory').value);
+    formData.append('price', parseFloat(document.getElementById('editPetPrice').value));
+    formData.append('description', document.getElementById('editPetDescription').value);
+    formData.append('health', document.getElementById('editPetHealth').value);
+    
+    try {
+        await API.updatePet(petId, formData);
+        loadPets();
+        document.querySelector('.modal').remove();
+        showNotification('寵物資料更新成功！', 'success');
+    } catch (error) {
+        console.error('更新寵物資料失敗:', error);
+        showNotification('更新失敗，請稍後再試。', 'error');
+    }
+}
+
+// 顯示通知
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    // 添加樣式
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        z-index: 10000;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+    `;
+    
+    // 根據類型設置背景色
+    if (type === 'success') {
+        notification.style.backgroundColor = '#28a745';
+    } else if (type === 'error') {
+        notification.style.backgroundColor = '#dc3545';
+    } else {
+        notification.style.backgroundColor = '#007bff';
+    }
+    
+    document.body.appendChild(notification);
+    
+    // 顯示動畫
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // 自動移除
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
+
 // 頁面載入時執行
 document.addEventListener('DOMContentLoaded', function() {
-    initializePetsData(); // 載入預設寵物資料
     loadPets();
     loadDashboardStats();
 });

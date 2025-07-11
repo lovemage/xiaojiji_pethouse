@@ -88,10 +88,8 @@ body {
 }
 
 .nav-brand .subtitle {
-    font-size: 11px;
+    font-size: 12px;
     color: #666;
-    font-weight: 400;
-    letter-spacing: 0.5px;
 }
 
 .nav-toggle {
@@ -455,22 +453,12 @@ button {
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0.3;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(173, 216, 230, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(173, 216, 230, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(173, 216, 230, 0.05) 0%, transparent 50%);
+    pointer-events: none;
     z-index: 0;
-    /* 背景圖案 */
-    --size: 80px; /* control the size */
-    --color: var(--accent-color);
-    --l: var(--color) 20%, #0000 0;
-    --bg: 35%, rgba(173, 216, 230, 0.27) 0 45%, var(--color) 0;
-    background: linear-gradient(
-        45deg,
-        var(--l) 45%,
-        var(--color) 0 70%,
-        #db777700 0
-      ),
-      linear-gradient(-45deg, var(--l) var(--bg) 70%, #0000 0),
-      linear-gradient(45deg, var(--color) var(--bg));
-    background-size: var(--size) var(--size);
 }
 
 .health-section .container {
@@ -482,32 +470,39 @@ button {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 30px;
-    margin-bottom: 40px;
+    margin-top: 50px;
 }
 
 .health-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     padding: 30px;
     border-radius: 20px;
-    text-align: center;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid rgba(173, 216, 230, 0.3);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 320px;
 }
 
 .health-card::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(173, 216, 230, 0.1) 0%, transparent 70%);
-    transform: rotate(45deg);
-    transition: all 0.5s;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        rgba(173, 216, 230, 0.1) 0%, 
+        rgba(255, 255, 255, 0.1) 50%, 
+        rgba(173, 216, 230, 0.05) 100%);
     opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
 }
 
 .health-card:hover::before {
@@ -516,70 +511,81 @@ button {
 
 .health-card:hover {
     transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(70, 130, 180, 0.15);
-    border-color: var(--accent-color);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    border-color: rgba(173, 216, 230, 0.8);
 }
 
 .health-icon {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, var(--accent-color) 0%, rgba(173, 216, 230, 0.6) 100%);
-    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(173, 216, 230, 0.8), rgba(173, 216, 230, 0.6));
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 20px;
-    font-size: 36px;
+    font-size: 32px;
     color: var(--primary-color);
+    margin-bottom: 20px;
+    transition: all 0.4s ease;
     position: relative;
-    box-shadow: 0 8px 20px rgba(173, 216, 230, 0.4);
-    transition: all 0.3s;
+    overflow: hidden;
 }
 
 .health-card:hover .health-icon {
-    transform: scale(1.1) rotate(10deg);
-    box-shadow: 0 12px 30px rgba(173, 216, 230, 0.6);
+    transform: scale(1.1) rotate(5deg);
+    background: linear-gradient(135deg, rgba(173, 216, 230, 1), rgba(173, 216, 230, 0.8));
 }
 
 .health-icon::after {
     content: '';
     position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent);
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+    opacity: 0;
 }
 
 .health-card h3 {
-    color: var(--primary-color);
     font-size: 24px;
     margin-bottom: 15px;
+    color: var(--primary-color);
 }
 
 .health-card p {
+    color: #666;
+    line-height: 1.6;
     margin-bottom: 15px;
-    color: var(--text-color);
 }
 
 .health-card ul {
     list-style: none;
-    text-align: left;
-    max-width: 200px;
-    margin: 0 auto;
+    padding: 0;
+    margin-bottom: 20px;
+    flex-grow: 1;
 }
 
 .health-card li {
-    padding: 5px 0;
-    padding-left: 20px;
+    padding: 8px 0;
+    color: #555;
     position: relative;
-    color: #666;
+    padding-left: 25px;
 }
 
 .health-card li::before {
-    content: "✓";
+    content: '✓';
     position: absolute;
     left: 0;
-    color: var(--primary-color);
+    color: var(--secondary-color);
+    font-weight: bold;
+}
+
+.health-card .btn-secondary {
+    margin-top: auto;
+    align-self: flex-start;
 }
 
 .health-notice {
@@ -918,9 +924,18 @@ button {
 }
 
 .contact-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contact-form-full {
+    max-width: 600px;
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
 }
 
 .contact-info-box h3 {
@@ -933,13 +948,15 @@ button {
     text-align: center;
 }
 
-.contact-form h3 {
+.contact-form h3,
+.contact-form-full h3 {
     font-size: 28px;
     margin-bottom: 15px;
     color: var(--primary-color);
 }
 
-.contact-form > p {
+.contact-form > p,
+.contact-form-full > p {
     color: #666;
     margin-bottom: 25px;
     font-size: 16px;
@@ -1034,7 +1051,7 @@ button {
 
 .footer-content {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 1.5fr 2fr 1fr 1fr;
     gap: 40px;
     margin-bottom: 30px;
 }
@@ -1060,6 +1077,44 @@ button {
 
 .footer-section a:hover {
     opacity: 0.8;
+}
+
+.footer-contact-list {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-contact-list li {
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer-contact-list i {
+    width: 20px;
+    text-align: center;
+    opacity: 0.8;
+}
+
+.footer-contact-list a {
+    color: var(--white);
+    text-decoration: none;
+}
+
+.footer-contact-list a:hover {
+    text-decoration: underline;
+}
+
+.license-info {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.license-info p {
+    margin: 5px 0;
+    opacity: 0.9;
 }
 
 .footer-social {
@@ -1155,80 +1210,32 @@ button {
 .modal-contact .btn-primary {
     margin: 10px 0;
     display: inline-block;
+    background-color: #00B900 !important;
+    color: white !important;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 16px;
+    box-shadow: 0 4px 15px rgba(0, 185, 0, 0.3);
+}
+
+.modal-contact .btn-primary:hover {
+    background-color: #009900 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 185, 0, 0.4);
+}
+
+.modal-contact .btn-primary i {
+    margin-right: 8px;
+    font-size: 18px;
 }
 
 .modal-contact p {
     margin: 10px 0;
     color: #666;
-}
-
-/* 產品詳情視窗按鈕樣式 */
-.contact-buttons {
-    display: flex;
-    gap: 15px;
-    margin: 20px 0;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.btn-line,
-.btn-form {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 20px;
-    border-radius: 25px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    min-width: 140px;
-    gap: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.btn-line {
-    background: linear-gradient(135deg, #00B900 0%, #00D000 100%);
-    color: white;
-    border: 2px solid #00B900;
-}
-
-.btn-line:hover {
-    background: linear-gradient(135deg, #00D000 0%, #00F000 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 185, 0, 0.3);
-}
-
-.btn-form {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
-    color: white;
-    border: 2px solid var(--primary-color);
-}
-
-.btn-form:hover {
-    background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(70, 130, 180, 0.3);
-}
-
-.btn-line i,
-.btn-form i {
-    font-size: 18px;
-}
-
-/* 手機版按鈕樣式 */
-@media (max-width: 768px) {
-    .contact-buttons {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .btn-line,
-    .btn-form {
-        width: 100%;
-        min-width: auto;
-        padding: 15px 20px;
-    }
 }
 
 /* 公告欄 */
@@ -1459,6 +1466,269 @@ button {
     border-bottom: 5px solid transparent;
 }
 
+/* 健康卡片動作區域 */
+.health-card-action {
+    margin-top: auto;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.btn-health-info {
+    background: linear-gradient(135deg, var(--primary-color), #5a9bd4);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(70, 130, 180, 0.3);
+    text-transform: none;
+    letter-spacing: 0.5px;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.btn-health-info:hover {
+    background: linear-gradient(135deg, #5a9bd4, var(--primary-color));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(70, 130, 180, 0.4);
+}
+
+.btn-health-info:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(70, 130, 180, 0.3);
+}
+
+.btn-health-info i {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+.btn-health-info:hover i {
+    transform: scale(1.1);
+}
+
+/* 疫苗接種和健康手冊彈窗樣式 */
+.vaccine-timeline {
+    margin-top: 20px;
+}
+
+.vaccine-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 12px;
+    border-left: 4px solid var(--primary-color);
+    transition: transform 0.3s ease;
+}
+
+.vaccine-item:hover {
+    transform: translateX(5px);
+}
+
+.vaccine-age {
+    background: var(--primary-color);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    margin-right: 20px;
+    min-width: 80px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(70, 130, 180, 0.3);
+}
+
+.vaccine-info h4 {
+    color: #2c3e50;
+    margin: 0 0 8px 0;
+    font-size: 16px;
+}
+
+.vaccine-info p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.benefit-item {
+    text-align: center;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.benefit-item:hover {
+    transform: translateY(-5px);
+}
+
+.benefit-item i {
+    font-size: 32px;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.benefit-item h4 {
+    color: #2c3e50;
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.benefit-item p {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+}
+
+.vaccine-guarantee ul {
+    list-style: none;
+    padding: 0;
+}
+
+.vaccine-guarantee li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 10px;
+    background: rgba(70, 130, 180, 0.1);
+    border-radius: 8px;
+}
+
+.vaccine-guarantee li i {
+    color: #28a745;
+    margin-right: 12px;
+    font-size: 16px;
+}
+
+/* 健康手冊樣式 */
+.handbook-sections {
+    margin-top: 20px;
+}
+
+.handbook-section {
+    display: flex;
+    margin-bottom: 25px;
+    padding: 25px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.handbook-section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.section-icon {
+    background: linear-gradient(135deg, var(--primary-color), #5a9bd4);
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(70, 130, 180, 0.3);
+}
+
+.section-icon i {
+    font-size: 24px;
+}
+
+.section-content h4 {
+    color: #2c3e50;
+    margin: 0 0 10px 0;
+    font-size: 18px;
+}
+
+.section-content p {
+    color: #666;
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.section-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.section-content li {
+    color: #555;
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+    font-size: 14px;
+}
+
+.section-content li::before {
+    content: "•";
+    color: var(--primary-color);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.service-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.service-item {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.service-item:hover {
+    transform: translateY(-3px);
+}
+
+.service-item i {
+    font-size: 32px;
+    color: var(--primary-color);
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.service-item h4 {
+    color: #2c3e50;
+    margin: 0 0 5px 0;
+    font-size: 16px;
+}
+
+.service-item p {
+    color: #666;
+    margin: 0;
+    font-size: 14px;
+}
+
 /* 響應式設計 */
 @media (max-width: 768px) {
     .top-bar .container {
@@ -1486,7 +1756,7 @@ button {
         left: -100%;
         top: 0;
         flex-direction: column;
-        background: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, 0.5);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         width: 250px;
@@ -1581,8 +1851,26 @@ button {
         text-align: center;
     }
     
+    .footer-section {
+        margin-bottom: 30px;
+    }
+    
+    .footer-contact-list {
+        text-align: left;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+    
     .footer-social {
         justify-content: center;
+    }
+    
+    .contact-content {
+        padding: 20px;
+    }
+    
+    .contact-form-full {
+        padding: 30px 20px;
     }
     
     .social-float-menu {
@@ -1623,5 +1911,38 @@ button {
     .contact-methods {
         flex-direction: column;
         align-items: center;
+    }
+
+    .btn-health-info {
+        padding: 10px 20px;
+        font-size: 13px;
+        min-width: 110px;
+    }
+
+    .vaccine-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .vaccine-age {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    
+    .handbook-section {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .section-icon {
+        margin: 0 auto 20px auto;
+    }
+    
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .service-features {
+        grid-template-columns: 1fr;
     }
 }

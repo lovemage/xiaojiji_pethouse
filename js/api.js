@@ -70,6 +70,13 @@ class API {
         });
     }
 
+    static async updateInquiry(id, updateData) {
+        return await this.request(`/inquiries/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(updateData)
+        });
+    }
+
     static async markInquiryAsRead(id) {
         return await this.request(`/inquiries/${id}/read`, {
             method: 'PUT'
@@ -116,6 +123,58 @@ class API {
         return await this.request('/settings', {
             method: 'POST',
             body: JSON.stringify({ key, value })
+        });
+    }
+
+    // 相簿相關 API
+    static async getGalleryImages(category = null) {
+        const endpoint = category ? `/gallery?category=${category}` : '/gallery';
+        return await this.request(endpoint);
+    }
+
+    static async createGalleryImage(imageData) {
+        return await this.request('/gallery', {
+            method: 'POST',
+            body: imageData // FormData
+        });
+    }
+
+    static async updateGalleryImage(id, imageData) {
+        return await this.request(`/gallery/${id}`, {
+            method: 'PUT',
+            body: imageData // FormData
+        });
+    }
+
+    static async deleteGalleryImage(id) {
+        return await this.request(`/gallery/${id}`, {
+            method: 'DELETE'
+        });
+    }
+
+    // 公告相關 API
+    static async getAnnouncements(activeOnly = false) {
+        const endpoint = activeOnly ? '/announcements?active=true' : '/announcements';
+        return await this.request(endpoint);
+    }
+
+    static async createAnnouncement(announcementData) {
+        return await this.request('/announcements', {
+            method: 'POST',
+            body: JSON.stringify(announcementData)
+        });
+    }
+
+    static async updateAnnouncement(id, announcementData) {
+        return await this.request(`/announcements/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(announcementData)
+        });
+    }
+
+    static async deleteAnnouncement(id) {
+        return await this.request(`/announcements/${id}`, {
+            method: 'DELETE'
         });
     }
 }

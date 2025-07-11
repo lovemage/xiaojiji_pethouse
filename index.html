@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小基基寵物犬舍 - 特寵業字第W1141071號</title>
-    <meta name="description" content="小基基寵物犬舍專業培育邊境牧羊犬，提供健康可愛的寵物犬，擁有政府特寵業執照W1141071號">
+    <title>小基基寵物犬舍 - 專業邊境牧羊犬培育</title>
+    <meta name="description" content="小基基寵物犬舍專業培育邊境牧羊犬，提供健康可愛的寵物犬，擁有政府特寵業執照">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -44,23 +44,9 @@
             </button>
             <ul class="nav-menu">
                 <li><a href="#home">首頁</a></li>
-                <li><a href="#about">關於我們</a></li>
-                <li class="dropdown">
-                    <a href="#dogs">幼犬出售區</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#small">小型犬</a></li>
-                        <li><a href="#medium">中型犬</a></li>
-                        <li><a href="#large">大型犬</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#health">健康專區</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="pet-health.html">寵物健康資訊</a></li>
-                        <li><a href="adoption-guide.html">領養後注意事項</a></li>
-                    </ul>
-                </li>
-                <li><a href="#gallery">相簿</a></li>
+                <li><a href="#dogs">幼犬出售區</a></li>
+                <li><a href="#health">健康專區</a></li>
+                <li><a href="#gallery">寶貝相簿</a></li>
                 <li><a href="#testimonials">客戶評價</a></li>
                 <li><a href="#contact">聯絡我們</a></li>
             </ul>
@@ -110,13 +96,13 @@
                 <button class="category-btn" data-category="large">大型犬</button>
             </div>
             <div class="dogs-grid">
-                                    <div class="dog-card" data-category="medium male">
+                <div class="dog-card" data-category="medium male">
                     <img src="images/64805.jpg" alt="邊境牧羊犬幼犬">
                     <div class="dog-info">
                         <h3>小黑</h3>
                         <p>邊境牧羊犬 | 3個月大 | 公犬</p>
                         <p class="price">NT$ 35,000</p>
-                        <a href="javascript:void(0)" class="btn-secondary" onclick="showStaticPetDetails('static-1')">了解更多</a>
+                        <a href="#" class="btn-secondary">了解更多</a>
                     </div>
                 </div>
                 <div class="dog-card" data-category="small female">
@@ -125,7 +111,7 @@
                         <h3>小花</h3>
                         <p>柯基犬 | 2個月大 | 母犬</p>
                         <p class="price">NT$ 38,000</p>
-                        <a href="javascript:void(0)" class="btn-secondary" onclick="showStaticPetDetails('static-2')">了解更多</a>
+                        <a href="#" class="btn-secondary">了解更多</a>
                     </div>
                 </div>
                 <div class="dog-card" data-category="large female">
@@ -134,7 +120,7 @@
                         <h3>露西</h3>
                         <p>黃金獵犬 | 4個月大 | 母犬</p>
                         <p class="price">NT$ 45,000</p>
-                        <a href="javascript:void(0)" class="btn-secondary" onclick="showStaticPetDetails('static-3')">了解更多</a>
+                        <a href="#" class="btn-secondary">了解更多</a>
                     </div>
                 </div>
                 <div class="dog-card" data-category="medium male">
@@ -143,7 +129,7 @@
                         <h3>小白</h3>
                         <p>柴犬 | 4個月大 | 公犬</p>
                         <p class="price">NT$ 32,000</p>
-                        <a href="javascript:void(0)" class="btn-secondary" onclick="showStaticPetDetails('static-4')">了解更多</a>
+                        <a href="#" class="btn-secondary">了解更多</a>
                     </div>
                 </div>
             </div>
@@ -166,7 +152,12 @@
                         <li>狂犬病疫苗</li>
                         <li>犬瘟熱疫苗</li>
                     </ul>
-                    <a href="pet-health.html" class="btn-secondary" style="margin-top: 15px; display: inline-block;">了解更多</a>
+                    <div class="health-card-action">
+                        <button class="btn-health-info" onclick="showVaccineInfo()">
+                            <i class="fas fa-info-circle"></i>
+                            瞭解更多
+                        </button>
+                    </div>
                 </div>
                 <div class="health-card">
                     <div class="health-icon">
@@ -203,7 +194,12 @@
                         <li>飲食建議指南</li>
                         <li>終身飼養諮詢服務</li>
                     </ul>
-                    <a href="adoption-guide.html" class="btn-secondary" style="margin-top: 15px; display: inline-block;">查看領養指南</a>
+                    <div class="health-card-action">
+                        <button class="btn-health-info" onclick="showHealthHandbookInfo()">
+                            <i class="fas fa-book-open"></i>
+                            瞭解更多
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="health-notice">
@@ -212,10 +208,10 @@
         </div>
     </section>
 
-    <!-- 相簿 -->
+    <!-- 寶貝相簿 -->
     <section id="gallery" class="gallery-section">
         <div class="container">
-            <h2 class="section-title">精彩相簿</h2>
+            <h2 class="section-title">寶貝相簿</h2>
             
             <!-- 相簿分類篩選 -->
             <div class="gallery-categories">
@@ -386,22 +382,7 @@
         <div class="container">
             <h2 class="section-title">聯絡我們</h2>
             <div class="contact-content">
-                <div class="contact-info-box">
-                    <h3>聯絡資訊</h3>
-                    <ul class="contact-list">
-                        <li><i class="fas fa-map-marker-alt"></i> 高雄市鳳山區文龍東路666號</li>
-                        <li><i class="fas fa-phone"></i> 0910-808-283</li>
-                        <li><i class="fas fa-envelope"></i> info@xiaojiji-kennel.com</li>
-                        <li><i class="fab fa-line"></i> <a href="https://lin.ee/kWyAbbF" target="_blank" style="color: inherit;">LINE ID: @corgidog</a></li>
-                        <li><i class="fas fa-clock"></i> 營業時間：下午13:00 ~ 晚上21:00</li>
-                        <li><i class="fas fa-car"></i> 門口可停車呦</li>
-                    </ul>
-                    <div class="license-info">
-                        <p><strong>特寵業字第W1141071號</strong></p>
-                        <p>統一編號：00879221</p>
-                    </div>
-                </div>
-                <div class="contact-form">
+                <div class="contact-form-full">
                     <h3>想要諮詢嗎？</h3>
                     <p>我們提供完整的購買諮詢服務，歡迎填寫表單與我們聯繫！</p>
                     <a href="contact-form.html" class="btn-primary">填寫諮詢表單</a>
@@ -427,21 +408,33 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>小基基寵物犬舍</h3>
-                    <p>特寵業字第W1141071號</p>
                     <p>專業邊境牧羊犬培育中心</p>
                     <p>給您最健康、最聰明的毛孩子</p>
+                    <div class="license-info">
+                        <p><strong>特寵業字第W1141071號</strong></p>
+                        <p>統一編號：00879221</p>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>聯絡資訊</h4>
+                    <ul class="footer-contact-list">
+                        <li><i class="fas fa-map-marker-alt"></i> 高雄市鳳山區文龍東路666號</li>
+                        <li><i class="fas fa-phone"></i> 0910-808-283</li>
+                        <li><i class="fas fa-envelope"></i> info@xiaojiji-kennel.com</li>
+                        <li><i class="fab fa-line"></i> <a href="https://lin.ee/kWyAbbF" target="_blank">LINE ID: @corgidog</a></li>
+                        <li><i class="fas fa-clock"></i> 營業時間：下午13:00 ~ 晚上21:00</li>
+                        <li><i class="fas fa-car"></i> 門口可停車呦</li>
+                    </ul>
                 </div>
                 <div class="footer-section">
                     <h4>快速連結</h4>
                     <ul>
-                        <li><a href="#about">關於我們</a></li>
+                        <li><a href="#home">首頁</a></li>
                         <li><a href="#dogs">幼犬出售區</a></li>
                         <li><a href="#health">健康專區</a></li>
-                        <li><a href="pet-health.html">寵物健康資訊</a></li>
-                        <li><a href="adoption-guide.html">領養指南</a></li>
-                        <li><a href="#gallery">精彩相簿</a></li>
+                        <li><a href="#gallery">寶貝相簿</a></li>
                         <li><a href="#testimonials">客戶評價</a></li>
-                        <li><a href="#contact">聯絡方式</a></li>
+                        <li><a href="#contact">聯絡我們</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -483,5 +476,34 @@
 
     <script src="js/api.js"></script>
     <script src="script.js"></script>
+    <script>
+        // 頁面載入完成後載入公告和其他設定
+        document.addEventListener('DOMContentLoaded', function() {
+            // 延遲一點確保所有腳本都載入完成
+            setTimeout(() => {
+                if (typeof loadSiteSettings === 'function') {
+                    loadSiteSettings();
+                } else {
+                    console.error('loadSiteSettings 函數未定義');
+                }
+                
+                // 載入公告
+                if (typeof loadAnnouncements === 'function') {
+                    loadAnnouncements();
+                }
+                
+                // 載入其他功能
+                if (typeof loadPetsFromStorage === 'function') {
+                    loadPetsFromStorage();
+                }
+                if (typeof loadTestimonials === 'function') {
+                    loadTestimonials();
+                }
+                if (typeof initAdminAccess === 'function') {
+                    initAdminAccess();
+                }
+            }, 100);
+        });
+    </script>
 </body>
 </html>

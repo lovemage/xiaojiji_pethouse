@@ -45,7 +45,7 @@ function loadRecentPets() {
         tr.innerHTML = `
             <td>
                 ${pet.images && pet.images.length > 0 ? 
-                    `<img src="${pet.images[0]}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">` : 
+                    `<img src="../${pet.images[0]}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">` : 
                     '<span style="color: #999;">無圖片</span>'}
             </td>
             <td>${pet.name}</td>

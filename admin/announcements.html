@@ -11,10 +11,10 @@
 <body>
     <div class="admin-panel">
         <!-- 側邊欄 -->
-        <nav class="admin-sidebar">
-            <div class="sidebar-header">
-                <img src="../images/logo.png" alt="小基基寵物犬舍" class="sidebar-logo">
-                <h2>管理系統</h2>
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <img src="../images/logo.png" alt="小基基寵物犬舍">
+                <h3>管理系統</h3>
             </div>
             <ul class="admin-menu">
                 <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 儀表板</a></li>
@@ -28,96 +28,142 @@
                 <li><a href="admin-settings.html"><i class="fas fa-user-cog"></i> 管理員設定</a></li>
                 <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 登出</a></li>
             </ul>
-        </nav>
+        </aside>
 
         <!-- 主要內容 -->
         <main class="admin-content">
             <div class="admin-header">
-                <h1>公告管理</h1>
-                <div class="admin-actions">
-                    <button class="btn-primary" onclick="showAddModal()">
-                        <i class="fas fa-plus"></i> 新增公告
-                    </button>
-                </div>
+                <h1><i class="fas fa-bullhorn"></i> 公告管理</h1>
+                <button class="btn-primary" onclick="openAddAnnouncementModal()">
+                    <i class="fas fa-plus"></i> 新增公告
+                </button>
             </div>
 
             <!-- 公告列表 -->
             <div class="content-section">
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>標題</th>
-                                <th>類型</th>
-                                <th>狀態</th>
-                                <th>開始時間</th>
-                                <th>結束時間</th>
-                                <th>建立時間</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="announcementsTable">
-                            <!-- 動態載入 -->
-                        </tbody>
-                    </table>
+                <div class="section-header">
+                    <h2>公告列表</h2>
+                    <div class="section-actions">
+                        <select id="statusFilter" onchange="filterAnnouncements()">
+                            <option value="all">全部狀態</option>
+                            <option value="active">啟用</option>
+                            <option value="inactive">停用</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="announcements-grid" id="announcementsGrid">
+                    <!-- 公告項目將在這裡動態載入 -->
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- 新增/編輯公告彈窗 -->
-    <div id="announcementModal" class="modal">
+    <!-- 新增公告模態框 -->
+    <div id="addAnnouncementModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">新增公告</h2>
-                <span class="close" onclick="closeModal()">&times;</span>
+                <h3><i class="fas fa-plus"></i> 新增公告</h3>
+                <span class="close" onclick="closeAddAnnouncementModal()">&times;</span>
             </div>
-            <form id="announcementForm">
+            <form id="addAnnouncementForm">
                 <div class="form-group">
-                    <label for="title">標題 *</label>
-                    <input type="text" id="title" name="title" required>
+                    <label for="announcementTitle">公告標題</label>
+                    <input type="text" id="announcementTitle" name="title" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="content">內容 *</label>
-                    <textarea id="content" name="content" rows="6" required></textarea>
+                    <label for="announcementContent">公告內容</label>
+                    <textarea id="announcementContent" name="content" rows="5" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="announcementType">公告類型</label>
+                    <select id="announcementType" name="type">
+                        <option value="general">一般資訊</option>
+                        <option value="promotion">優惠活動</option>
+                        <option value="notice">重要通知</option>
+                        <option value="update">系統更新</option>
+                    </select>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="type">類型</label>
-                        <select id="type" name="type">
-                            <option value="info">資訊</option>
-                            <option value="warning">警告</option>
-                            <option value="success">成功</option>
-                            <option value="error">錯誤</option>
-                        </select>
+                        <label for="startDate">開始日期</label>
+                        <input type="date" id="startDate" name="startDate">
                     </div>
-                    
                     <div class="form-group">
-                        <label for="is_active">狀態</label>
-                        <select id="is_active" name="is_active">
-                            <option value="true">啟用</option>
-                            <option value="false">停用</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="start_date">開始時間</label>
-                        <input type="datetime-local" id="start_date" name="start_date">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="end_date">結束時間</label>
-                        <input type="datetime-local" id="end_date" name="end_date">
+                        <label for="endDate">結束日期</label>
+                        <input type="date" id="endDate" name="endDate">
                     </div>
                 </div>
                 
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeModal()">取消</button>
-                    <button type="submit" class="btn-primary">儲存</button>
+                    <button type="button" class="btn-secondary" onclick="closeAddAnnouncementModal()">取消</button>
+                    <button type="submit" class="btn-primary">新增公告</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 編輯公告模態框 -->
+    <div id="editAnnouncementModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> 編輯公告</h3>
+                <span class="close" onclick="closeEditAnnouncementModal()">&times;</span>
+            </div>
+            <form id="editAnnouncementForm">
+                <input type="hidden" id="editAnnouncementId" name="id">
+                
+                <div class="form-group">
+                    <label for="editAnnouncementTitle">公告標題</label>
+                    <input type="text" id="editAnnouncementTitle" name="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editAnnouncementContent">公告內容</label>
+                    <textarea id="editAnnouncementContent" name="content" rows="5" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editAnnouncementType">公告類型</label>
+                    <select id="editAnnouncementType" name="type">
+                        <option value="general">一般資訊</option>
+                        <option value="promotion">優惠活動</option>
+                        <option value="notice">重要通知</option>
+                        <option value="update">系統更新</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editStartDate">開始日期</label>
+                        <input type="date" id="editStartDate" name="startDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="editEndDate">結束日期</label>
+                        <input type="date" id="editEndDate" name="endDate">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="editIsActive" name="isActive">
+                        啟用公告
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="editIsPinned" name="isPinned">
+                        置頂公告
+                    </label>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeEditAnnouncementModal()">取消</button>
+                    <button type="submit" class="btn-primary">更新公告</button>
                 </div>
             </form>
         </div>
