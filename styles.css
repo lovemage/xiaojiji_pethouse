@@ -1305,6 +1305,34 @@ button {
     display: inline-block;
 }
 
+/* LINE 綠色按鈕樣式 */
+.btn-line-green {
+    background: linear-gradient(135deg, #00B900 0%, #00A300 100%) !important;
+    color: white !important;
+    border: none !important;
+    transform: scale(1.2) !important;
+    box-shadow: 0 4px 15px rgba(0, 185, 0, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-line-green:hover {
+    background: linear-gradient(135deg, #00A300 0%, #009100 100%) !important;
+    transform: scale(1.25) translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(0, 185, 0, 0.4) !important;
+    color: white !important;
+}
+
+.btn-line-green:active {
+    transform: scale(1.18) translateY(0px) !important;
+    box-shadow: 0 3px 10px rgba(0, 185, 0, 0.3) !important;
+}
+
+.btn-line-green i {
+    color: white !important;
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
 /* 公告欄 */
 .announcement-bar {
     position: relative;
