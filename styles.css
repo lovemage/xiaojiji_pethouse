@@ -414,7 +414,7 @@ button {
 .dog-info .breed {
     color: #007cba;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 24px; /* 原本是16px，調整為24px與名稱一致 */
     margin-bottom: 12px;
 }
 
