@@ -149,6 +149,32 @@ function previewImages() {
     }
 }
 
+// 預覽編輯圖片
+function previewEditImages() {
+    const input = document.getElementById('editPetImages');
+    const preview = document.getElementById('editImagePreview');
+    preview.innerHTML = '';
+    
+    if (input.files) {
+        Array.from(input.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.cssText = `
+                    width: 80px;
+                    height: 80px;
+                    object-fit: cover;
+                    border-radius: 5px;
+                    border: 1px solid #ddd;
+                `;
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+}
+
 // 儲存寵物資料
 if (document.getElementById('petForm')) {
     document.getElementById('petForm').addEventListener('submit', async function(e) {
@@ -501,6 +527,18 @@ async function editPet(id) {
                         <textarea id="editPetHealth" rows="3">${pet.health || ''}</textarea>
                     </div>
                     
+                    <div class="edit-form-group">
+                        <label for="editPetImages">更新圖片</label>
+                        <input type="file" id="editPetImages" name="images" multiple accept="image/*" onchange="previewEditImages()">
+                        <div class="image-preview" id="editImagePreview" style="
+                            display: flex;
+                            gap: 10px;
+                            margin-top: 10px;
+                            flex-wrap: wrap;
+                        "></div>
+                        <small style="color: #666; font-size: 12px;">留空則保持原有圖片</small>
+                    </div>
+                    
                     <div class="form-actions">
                         <button type="submit" class="btn-primary">更新寵物</button>
                         <button type="button" class="btn-secondary" onclick="this.closest('.modal').remove()">取消</button>
@@ -544,6 +582,15 @@ async function handleEditPet(event) {
     formData.append('price', parseFloat(document.getElementById('editPetPrice').value));
     formData.append('description', document.getElementById('editPetDescription').value);
     formData.append('health', document.getElementById('editPetHealth').value);
+    
+    // 處理圖片上傳
+    const imageFiles = document.getElementById('editPetImages').files;
+    if (imageFiles && imageFiles.length > 0) {
+        // 如果有選擇新圖片，添加到 FormData
+        Array.from(imageFiles).forEach(file => {
+            formData.append('images', file);
+        });
+    }
     
     try {
         await API.updatePet(petId, formData);
