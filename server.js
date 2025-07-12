@@ -356,11 +356,21 @@ app.put('/api/gallery/:id', upload.single('image'), async (req, res) => {
     
     console.log('更新相簿圖片請求:', { id, title, description, category, sortOrder, isActive });
     console.log('是否有新圖片:', !!req.file);
+    console.log('req.body:', req.body);
+    
+    // 驗證必要參數
+    if (!title || !description || !category) {
+      return res.status(400).json({ error: '缺少必要參數' });
+    }
+    
+    // 處理參數
+    const processedSortOrder = parseInt(sortOrder) || 0;
+    const processedIsActive = isActive !== undefined ? (isActive === 'true' || isActive === true) : true;
     
     // 如果有新上傳的圖片，使用新圖片，否則保持原圖片
     let updateQuery = `UPDATE gallery_images SET title = $1, description = $2, category = $3, 
                        sort_order = $4, is_active = $5, updated_at = CURRENT_TIMESTAMP`;
-    let params = [title, description, category, sortOrder || 0, isActive !== undefined ? isActive : true];
+    let params = [title, description, category, processedSortOrder, processedIsActive];
     
     if (req.file) {
       updateQuery += `, src = $6 WHERE id = $7 RETURNING *`;
@@ -383,6 +393,7 @@ app.put('/api/gallery/:id', upload.single('image'), async (req, res) => {
     res.json(result.rows[0]);
   } catch (err) {
     console.error('更新相簿圖片錯誤:', err);
+    console.error('錯誤堆疊:', err.stack);
     res.status(500).json({ error: '伺服器錯誤', details: err.message });
   }
 });
@@ -531,6 +542,120 @@ app.get('/api/init-database', async (req, res) => {
     console.error('資料庫初始化錯誤:', err);
     res.status(500).json({ 
       error: '資料庫初始化失敗',
+      details: err.message 
+    });
+  }
+});
+
+// 檢查相簿圖片格式端點
+app.get('/api/check-gallery', async (req, res) => {
+  try {
+    // 查詢所有相簿圖片
+    const result = await pool.query('SELECT id, title, src, created_at FROM gallery_images ORDER BY created_at DESC');
+    
+    let base64Count = 0;
+    let staticFileCount = 0;
+    let oldFormatCount = 0;
+    let images = [];
+    
+    result.rows.forEach(image => {
+      const srcPreview = image.src.length > 50 ? image.src.substring(0, 50) + '...' : image.src;
+      let type = '';
+      
+      if (image.src.startsWith('data:')) {
+        base64Count++;
+        type = 'Base64';
+      } else if (image.src.startsWith('images/')) {
+        staticFileCount++;
+        type = '靜態檔案';
+      } else {
+        // 檢查是否為舊格式
+        const isOldUploadFile = !image.src.startsWith('data:') && 
+                               !image.src.startsWith('images/') && 
+                               !image.src.startsWith('uploads/') &&
+                               /\.(jpg|jpeg|png|gif|webp)$/i.test(image.src);
+        if (isOldUploadFile) {
+          oldFormatCount++;
+          type = '舊格式(會被刪除)';
+        } else {
+          type = '其他格式';
+        }
+      }
+      
+      images.push({
+        id: image.id,
+        title: image.title,
+        src: srcPreview,
+        type: type,
+        created_at: image.created_at
+      });
+    });
+    
+    res.json({
+      success: true,
+      total: result.rows.length,
+      statistics: {
+        base64: base64Count,
+        staticFile: staticFileCount,
+        oldFormat: oldFormatCount
+      },
+      images: images,
+      warning: oldFormatCount > 0 ? `有 ${oldFormatCount} 張圖片會被清理腳本刪除` : null
+    });
+    
+  } catch (err) {
+    console.error('檢查相簿圖片錯誤:', err);
+    res.status(500).json({ 
+      error: '檢查失敗',
+      details: err.message 
+    });
+  }
+});
+
+// 清理舊格式相簿圖片端點
+app.get('/api/clean-gallery', async (req, res) => {
+  try {
+    // 查詢所有相簿圖片
+    const result = await pool.query('SELECT id, title, src FROM gallery_images');
+    console.log('找到', result.rows.length, '張圖片');
+    
+    let deletedCount = 0;
+    
+    for (const image of result.rows) {
+      // 更安全的刪除條件：只刪除明確是舊檔案格式的圖片
+      // 1. 不是 Base64 格式 (data:)
+      // 2. 不是靜態檔案 (images/)
+      // 3. 包含檔案擴展名但不在 uploads/ 目錄中 (這些是舊的上傳檔案)
+      const isOldUploadFile = !image.src.startsWith('data:') && 
+                             !image.src.startsWith('images/') && 
+                             !image.src.startsWith('uploads/') &&
+                             /\.(jpg|jpeg|png|gif|webp)$/i.test(image.src);
+      
+      if (isOldUploadFile) {
+        console.log('刪除舊格式圖片:', image.id, image.title, image.src);
+        
+        await pool.query('DELETE FROM gallery_images WHERE id = $1', [image.id]);
+        deletedCount++;
+      } else {
+        console.log('保留圖片:', image.id, image.title, image.src.startsWith('data:') ? '[Base64]' : image.src);
+      }
+    }
+    
+    console.log('清理完成，共刪除', deletedCount, '張舊格式圖片');
+    
+    // 查詢剩餘的圖片
+    const remainingResult = await pool.query('SELECT id, title, src FROM gallery_images');
+    
+    res.json({ 
+      success: true, 
+      message: `清理完成，共刪除 ${deletedCount} 張舊格式圖片`,
+      remaining: remainingResult.rows.length,
+      deleted: deletedCount
+    });
+  } catch (err) {
+    console.error('清理舊格式圖片錯誤:', err);
+    res.status(500).json({ 
+      error: '清理失敗',
       details: err.message 
     });
   }
