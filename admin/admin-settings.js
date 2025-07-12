@@ -11,7 +11,7 @@ async function loadSettings() {
         console.error('載入設定失敗:', error);
         // 如果 API 失敗，嘗試從 localStorage 載入
         siteSettings = JSON.parse(localStorage.getItem('siteSettings') || '{}');
-        loadCurrentSettings();
+    loadCurrentSettings();
     }
 }
 
@@ -116,7 +116,7 @@ document.getElementById('announcementForm').addEventListener('submit', async fun
     } catch (error) {
         console.error('儲存失敗:', error);
         // 如果 API 失敗，使用 localStorage 作為備份
-        localStorage.setItem('siteSettings', JSON.stringify(siteSettings));
+    localStorage.setItem('siteSettings', JSON.stringify(siteSettings));
         alert('公告設定已儲存（本地儲存）！');
     }
 });

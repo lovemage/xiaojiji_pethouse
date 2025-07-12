@@ -50,6 +50,25 @@ const upload = multer({
 
 // API 路由
 
+// 資料庫連接測試
+app.get('/api/health', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT NOW()');
+    res.json({ 
+      status: 'healthy',
+      database: 'connected',
+      timestamp: result.rows[0].now
+    });
+  } catch (err) {
+    console.error('資料庫連接錯誤:', err);
+    res.status(500).json({ 
+      status: 'error',
+      database: 'disconnected',
+      error: err.message
+    });
+  }
+});
+
 // 寵物相關 API
 app.get('/api/pets', async (req, res) => {
   try {
@@ -88,7 +107,7 @@ app.put('/api/pets/:id', upload.array('images', 5), async (req, res) => {
     
     // 處理上傳的圖片
     let updateQuery = `UPDATE pets SET name = $1, breed = $2, birthdate = $3, age = $4, gender = $5, 
-                       color = $6, category = $7, price = $8, description = $9, health = $10, 
+       color = $6, category = $7, price = $8, description = $9, health = $10, 
                        updated_at = CURRENT_TIMESTAMP`;
     let params = [name, breed, birthdate, age, gender, color, category, price, description, health];
     

@@ -184,7 +184,7 @@ if (document.getElementById('petForm')) {
             
             // 延遲跳轉，讓用戶看到成功訊息
             setTimeout(() => {
-                window.location.href = 'pets.html';
+            window.location.href = 'pets.html';
             }, 1500);
             
         } catch (error) {

@@ -249,18 +249,18 @@ function editImage(imageId) {
     console.log('找到圖片:', image); // 調試信息
     
     try {
-        // 填入表單數據
-        document.getElementById('editImageId').value = image.id;
-        document.getElementById('editImageTitle').value = image.title;
-        document.getElementById('editImageDescription').value = image.description;
-        document.getElementById('editImageCategory').value = image.category;
-        
-        // 顯示目前圖片
-        document.getElementById('currentImage').innerHTML = `
+    // 填入表單數據
+    document.getElementById('editImageId').value = image.id;
+    document.getElementById('editImageTitle').value = image.title;
+    document.getElementById('editImageDescription').value = image.description;
+    document.getElementById('editImageCategory').value = image.category;
+    
+    // 顯示目前圖片
+    document.getElementById('currentImage').innerHTML = `
             <img src="../${image.src}" alt="${image.title}" style="max-width: 200px; height: auto; border-radius: 5px;">
-        `;
-        
-        // 顯示彈窗
+    `;
+    
+    // 顯示彈窗
         const modal = document.getElementById('editImageModal');
         if (modal) {
             modal.style.display = 'block';

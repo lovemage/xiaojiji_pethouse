@@ -75,6 +75,19 @@ CREATE TABLE IF NOT EXISTS gallery_images (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 建立公告表
+CREATE TABLE IF NOT EXISTS announcements (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    content TEXT NOT NULL,
+    type VARCHAR(20) CHECK (type IN ('info', 'warning', 'success', 'danger')) DEFAULT 'info',
+    start_date DATE,
+    end_date DATE,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 插入預設寵物資料
 INSERT INTO pets (name, breed, age, gender, color, category, price, description, health, images) VALUES
 ('小黑', '邊境牧羊犬', '3個月大', 'male', '黑白色', 'medium', 35000, '活潑聰明的邊境牧羊犬幼犬，已完成基礎訓練', '健康狀況良好，已接種疫苗', '["images/64805.jpg"]'),
@@ -115,6 +128,12 @@ INSERT INTO gallery_images (title, description, src, category, sort_order) VALUE
 ('健康檢查', '定期的健康檢查，確保每隻狗狗都健康', 'images/Pets-Health.jpg', 'puppy', 7),
 ('日常照護', '專業的日常照護，讓狗狗健康成長', 'images/pets-Health2.jpg', 'daily', 8);
 
+-- 插入預設公告資料
+INSERT INTO announcements (title, content, type, is_active) VALUES
+('歡迎來到小基基寵物犬舍', '我們是專業的邊境牧羊犬培育犬舍，提供健康活潑的幼犬。所有幼犬都有完整的健康檢查與疫苗接種記錄。歡迎預約參觀！', 'info', TRUE),
+('營業時間調整公告', '即日起營業時間調整為：下午13:00 ~ 晚上21:00，造成不便敬請見諒。', 'warning', TRUE),
+('新一批幼犬到來！', '本月新到一批可愛的邊境牧羊犬與柯基犬幼犬，歡迎LINE預約看狗狗。', 'success', TRUE);
+
 -- 建立索引以提升效能
 CREATE INDEX IF NOT EXISTS idx_pets_category ON pets(category);
 CREATE INDEX IF NOT EXISTS idx_pets_created_at ON pets(created_at);
@@ -127,4 +146,8 @@ CREATE INDEX IF NOT EXISTS idx_admins_is_active ON admins(is_active);
 CREATE INDEX IF NOT EXISTS idx_gallery_images_category ON gallery_images(category);
 CREATE INDEX IF NOT EXISTS idx_gallery_images_is_active ON gallery_images(is_active);
 CREATE INDEX IF NOT EXISTS idx_gallery_images_sort_order ON gallery_images(sort_order);
-CREATE INDEX IF NOT EXISTS idx_gallery_images_created_at ON gallery_images(created_at); 
+CREATE INDEX IF NOT EXISTS idx_gallery_images_created_at ON gallery_images(created_at);
+CREATE INDEX IF NOT EXISTS idx_announcements_is_active ON announcements(is_active);
+CREATE INDEX IF NOT EXISTS idx_announcements_created_at ON announcements(created_at);
+CREATE INDEX IF NOT EXISTS idx_announcements_start_date ON announcements(start_date);
+CREATE INDEX IF NOT EXISTS idx_announcements_end_date ON announcements(end_date); 
