@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS gallery_images (
     id SERIAL PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
     description TEXT,
-    src VARCHAR(500) NOT NULL,
+    src TEXT NOT NULL,
     category VARCHAR(50) CHECK (category IN ('puppy', 'adult', 'training', 'daily')),
     is_active BOOLEAN DEFAULT TRUE,
     sort_order INTEGER DEFAULT 0,
