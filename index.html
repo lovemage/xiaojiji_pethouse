@@ -3,12 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小基基寵物犬舍 - 專業邊境牧羊犬培育</title>
-    <meta name="description" content="小基基寵物犬舍專業培育邊境牧羊犬，提供健康可愛的寵物犬，擁有政府特寵業執照">
+    <title>小基基寵物犬舍 - 給您最健康的毛孩子</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <meta name="description" content="小基基寵物犬社提供健康可愛的寵物犬寶貝，擁有政府特寵業執照">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- 歡迎彈跳視窗 -->
+    <div id="welcomePopup" class="popup-overlay">
+        <div class="popup-content">
+            <button class="popup-close" onclick="closeWelcomePopup()">&times;</button>
+            <img src="images/pet-pop.png" alt="歡迎來到小基基寵物犬舍" class="popup-image">
+            <div class="popup-cta">
+                <a href="https://lin.ee/kWyAbbF" target="_blank" class="btn-primary btn-line-green popup-line-btn">
+                    <i class="fab fa-line"></i> 加入 LINE 了解更多
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- 頂部聯絡資訊欄 -->
     <div class="top-bar">
         <div class="container">
@@ -56,9 +70,9 @@
     <!-- 主要橫幅 -->
     <section class="hero" style="background-image: linear-gradient(rgba(70,130,180,0.7), rgba(70,130,180,0.5)), url('images/pkncb1-golden-retriever-puppy-running-outdoors-in-grass.png');">
         <div class="hero-content">
-            <h2>歡迎來到小基基寵物犬舍</h2>
-            <p>專業培育健康、聰明、可愛的邊境牧羊犬</p>
-            <p>擁有政府特寵業執照，品質保證</p>
+            <h2 id="heroTitle">歡迎來到小基基寵物犬舍</h2>
+            <p id="heroSubtitle1">提供健康、聰明、可愛的寵物犬</p>
+            <p id="heroSubtitle2">擁有政府特寵業執照，品質保證</p>
             <a href="https://lin.ee/kWyAbbF" target="_blank" class="btn-primary btn-line-green"><i class="fab fa-line"></i> LINE 諮詢</a>
         </div>
     </section>
@@ -69,7 +83,7 @@
             <h2 class="section-title">關於小基基寵物犬舍</h2>
             <div class="about-content">
                 <div class="about-text">
-                    <p>小基基寵物犬舍成立於2015年，專注於邊境牧羊犬的專業培育。我們堅持以愛心和專業照顧每一隻狗狗，確保牠們健康成長。</p>
+                    <p>小基基寵物犬舍成立於2015年，我們堅持以愛心和專業照顧每一隻狗狗，確保牠們健康成長。</p>
                     <ul class="features">
                         <li><i class="fas fa-check-circle"></i> 政府合法特寵業執照</li>
                         <li><i class="fas fa-check-circle"></i> 專業獸醫定期健檢</li>
@@ -400,7 +414,6 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>小基基寵物犬舍</h3>
-                    <p>專業邊境牧羊犬培育中心</p>
                     <p>給您最健康、最聰明的毛孩子</p>
                     <div class="license-info">
                         <p><strong>特寵業字第W1141071號</strong></p>
@@ -468,6 +481,84 @@
 
     <script src="js/api.js"></script>
     <script src="script.js"></script>
+    <script>
+        // 載入 Hero 文字設定
+        async function loadHeroText() {
+            try {
+                const settings = await API.getSettings();
+                if (settings.heroText) {
+                    const heroText = typeof settings.heroText === 'string' 
+                        ? JSON.parse(settings.heroText) 
+                        : settings.heroText;
+                    
+                    if (heroText.title) {
+                        document.getElementById('heroTitle').textContent = heroText.title;
+                    }
+                    if (heroText.subtitle1) {
+                        document.getElementById('heroSubtitle1').textContent = heroText.subtitle1;
+                    }
+                    if (heroText.subtitle2) {
+                        document.getElementById('heroSubtitle2').textContent = heroText.subtitle2;
+                    }
+                }
+            } catch (error) {
+                console.error('載入 Hero 文字失敗:', error);
+                // 如果 API 失敗，嘗試從 localStorage 載入
+                const localSettings = JSON.parse(localStorage.getItem('siteSettings') || '{}');
+                if (localSettings.heroText) {
+                    const heroText = typeof localSettings.heroText === 'string' 
+                        ? JSON.parse(localSettings.heroText) 
+                        : localSettings.heroText;
+                    
+                    if (heroText.title) {
+                        document.getElementById('heroTitle').textContent = heroText.title;
+                    }
+                    if (heroText.subtitle1) {
+                        document.getElementById('heroSubtitle1').textContent = heroText.subtitle1;
+                    }
+                    if (heroText.subtitle2) {
+                        document.getElementById('heroSubtitle2').textContent = heroText.subtitle2;
+                    }
+                }
+            }
+        }
+        
+        // 頁面載入時執行
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeroText();
+        });
+    </script>
+    
+    <script>
+        // 歡迎彈跳視窗控制
+        function showWelcomePopup() {
+            // 檢查是否為首次訪問
+            if (!localStorage.getItem('welcomePopupShown')) {
+                const popup = document.getElementById('welcomePopup');
+                popup.classList.add('show');
+                // 記錄已顯示過彈跳視窗
+                localStorage.setItem('welcomePopupShown', 'true');
+            }
+        }
+        
+        function closeWelcomePopup() {
+            const popup = document.getElementById('welcomePopup');
+            popup.classList.remove('show');
+        }
+        
+        // 點擊背景關閉彈跳視窗
+        document.getElementById('welcomePopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeWelcomePopup();
+            }
+        });
+        
+        // 頁面載入時顯示彈跳視窗
+        window.addEventListener('load', function() {
+            // 延遲 1 秒顯示，讓使用者先看到網站內容
+            setTimeout(showWelcomePopup, 1000);
+        });
+    </script>
     <script>
         // 頁面載入完成後載入公告和其他設定
         document.addEventListener('DOMContentLoaded', function() {

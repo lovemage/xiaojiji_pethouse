@@ -2041,3 +2041,132 @@ button {
         grid-template-columns: 1fr;
     }
 }
+
+/* 歡迎彈跳視窗樣式 */
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(70, 130, 180, 0.85);
+    z-index: 10000;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.popup-overlay.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background: var(--white);
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.4s ease-out;
+    border: 3px solid var(--accent-color);
+}
+
+.popup-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--white);
+    border: 2px solid var(--border-color);
+    font-size: 28px;
+    color: var(--text-color);
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.popup-close:hover {
+    background-color: var(--secondary-color);
+    color: var(--white);
+    border-color: var(--secondary-color);
+}
+
+.popup-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px 12px 0 0;
+}
+
+.popup-cta {
+    padding: 30px;
+    text-align: center;
+    background: linear-gradient(135deg, var(--light-bg) 0%, var(--white) 100%);
+    border-radius: 0 0 12px 12px;
+    border-top: 2px solid var(--border-color);
+}
+
+.popup-line-btn {
+    font-size: 18px;
+    padding: 15px 30px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    background: #00c853;
+    color: white;
+    border-radius: 25px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 200, 83, 0.3);
+}
+
+.popup-line-btn:hover {
+    transform: scale(1.2);
+    box-shadow: 0 6px 20px rgba(0, 200, 83, 0.4);
+    background: #00b248;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* 響應式設計 */
+@media (max-width: 480px) {
+    .popup-content {
+        width: 95%;
+        margin: 10px;
+    }
+    
+    .popup-cta {
+        padding: 20px;
+    }
+    
+    .popup-line-btn {
+        font-size: 16px;
+        padding: 12px 20px;
+    }
+}

@@ -887,8 +887,8 @@ async function loadSiteSettings() {
                 const addressItem = el.parentElement;
                 if (addressItem) addressItem.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${settings.contact_address}`;
             });
-        }
-        
+    }
+    
         // 更新執照資訊
         if (settings.license_number) {
             const licenseElements = document.querySelectorAll('.license-info p');

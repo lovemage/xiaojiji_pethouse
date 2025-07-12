@@ -22,6 +22,22 @@ function loadCurrentSettings() {
         document.getElementById('currentHeroImage').src = siteSettings.heroImage;
     }
     
+    // 載入 Hero 文字設定
+    if (siteSettings.heroText) {
+        const heroText = typeof siteSettings.heroText === 'string' 
+            ? JSON.parse(siteSettings.heroText) 
+            : siteSettings.heroText;
+            
+        document.getElementById('heroTitle').value = heroText.title || '歡迎來到小基基寵物犬舍';
+        document.getElementById('heroSubtitle1').value = heroText.subtitle1 || '提供健康、聰明、可愛的寵物犬';
+        document.getElementById('heroSubtitle2').value = heroText.subtitle2 || '擁有政府特寵業執照，品質保證';
+    } else {
+        // 設定預設值
+        document.getElementById('heroTitle').value = '歡迎來到小基基寵物犬舍';
+        document.getElementById('heroSubtitle1').value = '提供健康、聰明、可愛的寵物犬';
+        document.getElementById('heroSubtitle2').value = '擁有政府特寵業執照，品質保證';
+    }
+    
     // 載入公告設定
     if (siteSettings.announcement) {
         const announcement = typeof siteSettings.announcement === 'string' 
@@ -55,6 +71,29 @@ function previewHeroImage() {
         preview.innerHTML = '';
     }
 }
+
+// 儲存 Hero 文字設定
+document.getElementById('heroTextForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const heroTextData = {
+        title: document.getElementById('heroTitle').value,
+        subtitle1: document.getElementById('heroSubtitle1').value,
+        subtitle2: document.getElementById('heroSubtitle2').value,
+        updatedAt: new Date().toISOString()
+    };
+    
+    try {
+        await API.updateSetting('heroText', JSON.stringify(heroTextData));
+        siteSettings.heroText = heroTextData;
+        alert('橫幅文字已更新！');
+    } catch (error) {
+        console.error('儲存失敗:', error);
+        // 如果 API 失敗，使用 localStorage 作為備份
+        localStorage.setItem('siteSettings', JSON.stringify(siteSettings));
+        alert('橫幅文字已更新（本地儲存）！');
+    }
+});
 
 // 上傳橫幅圖片
 document.getElementById('heroForm').addEventListener('submit', async function(e) {

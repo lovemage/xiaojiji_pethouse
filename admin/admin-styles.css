@@ -951,7 +951,7 @@ input:checked + .slider:before {
         gap: 15px;
         text-align: center;
     }
-
+    
     .admin-gallery-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 15px;
@@ -985,9 +985,9 @@ input:checked + .slider:before {
     overflow: auto;
     background-color: rgba(0,0,0,0.5);
     animation: fadeIn 0.3s ease;
-}
-
-.modal-content {
+    }
+    
+    .modal-content {
     background-color: white;
     margin: 5% auto;
     padding: 0;
@@ -998,7 +998,7 @@ input:checked + .slider:before {
     overflow-y: auto;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     animation: slideIn 0.3s ease;
-}
+    }
 
 .modal-header {
     background-color: var(--primary-color);
@@ -1012,9 +1012,9 @@ input:checked + .slider:before {
 
 .modal-header h2 {
     margin: 0;
-    font-size: 24px;
-}
-
+        font-size: 24px;
+    }
+    
 .close {
     color: white;
     font-size: 28px;
@@ -1030,15 +1030,15 @@ input:checked + .slider:before {
 .close:focus {
     color: #ccc;
     text-decoration: none;
-}
-
-.modal form {
+    }
+    
+    .modal form {
     padding: 30px;
 }
 
 .modal .form-group {
     margin-bottom: 20px;
-}
+    }
 
 .modal .form-group label {
     display: block;
@@ -1083,11 +1083,11 @@ input:checked + .slider:before {
 }
 
 @keyframes slideIn {
-    from { 
+    from {
         opacity: 0;
         transform: translateY(-50px);
     }
-    to { 
+    to {
         opacity: 1;
         transform: translateY(0);
     }

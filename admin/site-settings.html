@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>網站設定 - 小基基寵物犬舍</title>
+    <link rel="icon" type="image/png" href="../images/logo.png">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="admin-styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -39,7 +40,31 @@
             <!-- 首頁橫幅設定 -->
             <div class="content-section">
                 <h2>首頁橫幅設定</h2>
+                
+                <!-- Hero 文字設定 -->
+                <form id="heroTextForm" style="margin-bottom: 30px;">
+                    <h3>橫幅文字設定</h3>
+                    <div class="form-group">
+                        <label for="heroTitle">主標題</label>
+                        <input type="text" id="heroTitle" placeholder="歡迎來到小基基寵物犬舍" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="heroSubtitle1">副標題 1</label>
+                        <input type="text" id="heroSubtitle1" placeholder="提供健康、聰明、可愛的寵物犬" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="heroSubtitle2">副標題 2</label>
+                        <input type="text" id="heroSubtitle2" placeholder="擁有政府特寵業執照，品質保證" class="form-control">
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">更新文字內容</button>
+                </form>
+                
+                <!-- Hero 圖片設定 -->
                 <form id="heroForm">
+                    <h3>橫幅圖片設定</h3>
                     <div class="form-group">
                         <label for="heroImage">目前橫幅圖片</label>
                         <div class="current-hero-image">
