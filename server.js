@@ -506,7 +506,7 @@ app.post('/api/admin/login', async (req, res) => {
 });
 
 // 資料庫初始化端點 (僅供開發和部署使用)
-app.post('/api/init-database', async (req, res) => {
+app.get('/api/init-database', async (req, res) => {
   try {
     const fs = require('fs');
     const path = require('path');
