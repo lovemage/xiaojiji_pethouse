@@ -256,8 +256,9 @@ function editImage(imageId) {
     document.getElementById('editImageCategory').value = image.category;
     
     // 顯示目前圖片
+    const imageSrc = image.src.startsWith('data:') ? image.src : `../${image.src}`;
     document.getElementById('currentImage').innerHTML = `
-            <img src="../${image.src}" alt="${image.title}" style="max-width: 200px; height: auto; border-radius: 5px;">
+            <img src="${imageSrc}" alt="${image.title}" style="max-width: 200px; height: auto; border-radius: 5px;">
     `;
     
     // 顯示彈窗

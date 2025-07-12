@@ -354,6 +354,9 @@ app.put('/api/gallery/:id', upload.single('image'), async (req, res) => {
     const { id } = req.params;
     const { title, description, category, sortOrder, isActive } = req.body;
     
+    console.log('更新相簿圖片請求:', { id, title, description, category, sortOrder, isActive });
+    console.log('是否有新圖片:', !!req.file);
+    
     // 如果有新上傳的圖片，使用新圖片，否則保持原圖片
     let updateQuery = `UPDATE gallery_images SET title = $1, description = $2, category = $3, 
                        sort_order = $4, is_active = $5, updated_at = CURRENT_TIMESTAMP`;
@@ -367,16 +370,20 @@ app.put('/api/gallery/:id', upload.single('image'), async (req, res) => {
       params.push(id);
     }
     
+    console.log('執行 SQL 查詢:', updateQuery);
+    console.log('參數:', params.map((p, i) => i === 5 && typeof p === 'string' && p.startsWith('data:') ? '[Base64 圖片]' : p));
+    
     const result = await pool.query(updateQuery, params);
     
     if (result.rows.length === 0) {
       return res.status(404).json({ error: '圖片不存在' });
     }
     
+    console.log('更新成功:', result.rows[0].id);
     res.json(result.rows[0]);
   } catch (err) {
     console.error('更新相簿圖片錯誤:', err);
-    res.status(500).json({ error: '伺服器錯誤' });
+    res.status(500).json({ error: '伺服器錯誤', details: err.message });
   }
 });
 
