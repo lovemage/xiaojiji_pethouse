@@ -40,15 +40,84 @@
             </div>
 
             <div class="content-section">
+                <!-- 前台顯示設定 -->
+                <div class="display-settings-section">
+                    <h3><i class="fas fa-eye"></i> 前台卡片顯示設定</h3>
+                    <div class="settings-grid">
+                        <div class="setting-item">
+                            <label class="switch">
+                                <input type="checkbox" id="showName" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span class="setting-label">顯示寵物名稱</span>
+                        </div>
+                        <div class="setting-item">
+                            <label class="switch">
+                                <input type="checkbox" id="showBreed" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span class="setting-label">顯示品種</span>
+                        </div>
+                        <div class="setting-item">
+                            <label class="switch">
+                                <input type="checkbox" id="showDescription" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span class="setting-label">顯示描述</span>
+                        </div>
+                        <div class="setting-item">
+                            <label class="switch">
+                                <input type="checkbox" id="showAge">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="setting-label">顯示年齡</span>
+                        </div>
+                        <div class="setting-item">
+                            <label class="switch">
+                                <input type="checkbox" id="showGender">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="setting-label">顯示性別</span>
+                        </div>
+                        <div class="setting-item">
+                            <label class="switch">
+                                <input type="checkbox" id="showPrice">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="setting-label">顯示價格</span>
+                        </div>
+                        <div class="setting-item">
+                            <label class="switch">
+                                <input type="checkbox" id="showHealth">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="setting-label">顯示健康資訊</span>
+                        </div>
+                        <div class="setting-item">
+                            <label class="switch">
+                                <input type="checkbox" id="showColor">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="setting-label">顯示毛色</span>
+                        </div>
+                    </div>
+                    <div class="settings-actions">
+                        <button id="saveDisplaySettings" class="btn-primary">
+                            <i class="fas fa-save"></i> 儲存設定
+                        </button>
+                        <button id="previewChanges" class="btn-secondary">
+                            <i class="fas fa-eye"></i> 預覽效果
+                        </button>
+                    </div>
+                </div>
+
                 <table class="data-table">
                     <thead>
                         <tr>
                             <th>圖片</th>
                             <th>名稱</th>
                             <th>品種</th>
-                            <th>年齡</th>
-                            <th>性別</th>
-                            <th>價格</th>
+                            <th>描述</th>
                             <th>操作</th>
                         </tr>
                     </thead>

@@ -358,7 +358,7 @@ function getCategoryName(category) {
     const categoryNames = {
         puppy: '幼犬',
         adult: '成犬',
-        training: '訓練',
+
         daily: '日常'
     };
     return categoryNames[category] || category;

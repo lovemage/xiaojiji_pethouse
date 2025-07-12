@@ -226,9 +226,7 @@ async function loadPets() {
                 </td>
                 <td>${pet.name}</td>
                 <td>${pet.breed}</td>
-                <td>${pet.age}</td>
-                <td>${pet.gender === 'male' ? '公犬' : '母犬'}</td>
-                <td>NT$ ${parseInt(pet.price).toLocaleString()}</td>
+                <td>${pet.description || '無描述'}</td>
                 <td>
                     <div class="table-actions">
                         <button onclick="editPet(${pet.id})" class="btn-edit">編輯</button>
@@ -292,8 +290,7 @@ function loadDashboardStats() {
                     </td>
                     <td>${pet.name}</td>
                     <td>${pet.breed}</td>
-                    <td>${pet.age}</td>
-                    <td>NT$ ${parseInt(pet.price).toLocaleString()}</td>
+                    <td>${pet.description || '無描述'}</td>
                     <td>
                         <div class="table-actions">
                             <a href="edit-pet.html?id=${pet.id}" class="btn-edit">編輯</a>
@@ -422,7 +419,44 @@ async function editPet(id) {
                     
                     <div class="edit-form-group">
                         <label for="editPetBreed">品種</label>
-                        <input type="text" id="editPetBreed" value="${pet.breed}" required>
+                        <select id="editPetBreed" required>
+                            <option value="">請選擇品種</option>
+                            <optgroup label="大型犬">
+                                <option value="黃金獵犬" ${pet.breed === '黃金獵犬' ? 'selected' : ''}>黃金獵犬</option>
+                                <option value="邊境牧羊犬" ${pet.breed === '邊境牧羊犬' ? 'selected' : ''}>邊境牧羊犬</option>
+                                <option value="哈士奇" ${pet.breed === '哈士奇' ? 'selected' : ''}>哈士奇</option>
+                                <option value="拉布拉多" ${pet.breed === '拉布拉多' ? 'selected' : ''}>拉布拉多</option>
+                                <option value="鬆獅犬" ${pet.breed === '鬆獅犬' ? 'selected' : ''}>鬆獅犬</option>
+                                <option value="巨型貴賓" ${pet.breed === '巨型貴賓' ? 'selected' : ''}>巨型貴賓</option>
+                                <option value="薩摩耶" ${pet.breed === '薩摩耶' ? 'selected' : ''}>薩摩耶</option>
+                            </optgroup>
+                            <optgroup label="中型犬">
+                                <option value="柴犬" ${pet.breed === '柴犬' ? 'selected' : ''}>柴犬</option>
+                                <option value="柯基犬" ${pet.breed === '柯基犬' ? 'selected' : ''}>柯基犬</option>
+                                <option value="法國鬥牛犬" ${pet.breed === '法國鬥牛犬' ? 'selected' : ''}>法國鬥牛犬</option>
+                                <option value="巴哥犬" ${pet.breed === '巴哥犬' ? 'selected' : ''}>巴哥犬</option>
+                                <option value="米格魯" ${pet.breed === '米格魯' ? 'selected' : ''}>米格魯</option>
+                                <option value="查理士" ${pet.breed === '查理士' ? 'selected' : ''}>查理士</option>
+                            </optgroup>
+                            <optgroup label="小型犬">
+                                <option value="比熊犬" ${pet.breed === '比熊犬' ? 'selected' : ''}>比熊犬</option>
+                                <option value="狐狸犬" ${pet.breed === '狐狸犬' ? 'selected' : ''}>狐狸犬</option>
+                                <option value="長毛臘腸犬" ${pet.breed === '長毛臘腸犬' ? 'selected' : ''}>長毛臘腸犬</option>
+                                <option value="短毛臘腸犬" ${pet.breed === '短毛臘腸犬' ? 'selected' : ''}>短毛臘腸犬</option>
+                                <option value="傑克羅素" ${pet.breed === '傑克羅素' ? 'selected' : ''}>傑克羅素</option>
+                                <option value="狐狸博美" ${pet.breed === '狐狸博美' ? 'selected' : ''}>狐狸博美</option>
+                                <option value="西施犬" ${pet.breed === '西施犬' ? 'selected' : ''}>西施犬</option>
+                                <option value="雪納瑞" ${pet.breed === '雪納瑞' ? 'selected' : ''}>雪納瑞</option>
+                                <option value="騎士比熊" ${pet.breed === '騎士比熊' ? 'selected' : ''}>騎士比熊</option>
+                                <option value="可卡布" ${pet.breed === '可卡布' ? 'selected' : ''}>可卡布</option>
+                                <option value="瑪爾濟斯" ${pet.breed === '瑪爾濟斯' ? 'selected' : ''}>瑪爾濟斯</option>
+                                <option value="貴賓" ${pet.breed === '貴賓' ? 'selected' : ''}>貴賓</option>
+                                <option value="約克夏" ${pet.breed === '約克夏' ? 'selected' : ''}>約克夏</option>
+                                <option value="博美" ${pet.breed === '博美' ? 'selected' : ''}>博美</option>
+                                <option value="瑪爾泰迪" ${pet.breed === '瑪爾泰迪' ? 'selected' : ''}>瑪爾泰迪</option>
+                                <option value="吉娃娃" ${pet.breed === '吉娃娃' ? 'selected' : ''}>吉娃娃</option>
+                            </optgroup>
+                        </select>
                     </div>
                     
                     <div class="edit-form-group">
@@ -570,8 +604,110 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
+// 顯示設定管理
+const displaySettings = {
+    showName: true,
+    showBreed: true,
+    showDescription: true,
+    showAge: false,
+    showGender: false,
+    showPrice: false,
+    showHealth: false,
+    showColor: false
+};
+
+// 載入顯示設定
+function loadDisplaySettings() {
+    const saved = localStorage.getItem('petDisplaySettings');
+    if (saved) {
+        Object.assign(displaySettings, JSON.parse(saved));
+    }
+    
+    // 更新開關狀態
+    Object.keys(displaySettings).forEach(key => {
+        const checkbox = document.getElementById(key);
+        if (checkbox) {
+            checkbox.checked = displaySettings[key];
+        }
+    });
+}
+
+// 儲存顯示設定
+function saveDisplaySettings() {
+    Object.keys(displaySettings).forEach(key => {
+        const checkbox = document.getElementById(key);
+        if (checkbox) {
+            displaySettings[key] = checkbox.checked;
+        }
+    });
+    
+    localStorage.setItem('petDisplaySettings', JSON.stringify(displaySettings));
+    showNotification('前台顯示設定已儲存！', 'success');
+    
+    // 通知前台更新
+    updateFrontendDisplay();
+}
+
+// 更新前台顯示
+function updateFrontendDisplay() {
+    // 將設定同步到前台
+    localStorage.setItem('frontendDisplaySettings', JSON.stringify(displaySettings));
+    
+    // 如果前台頁面在同一個域名下，可以嘗試刷新
+    try {
+        if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({
+                type: 'updateDisplaySettings',
+                settings: displaySettings
+            }, '*');
+        }
+    } catch (e) {
+        console.log('無法直接通知前台頁面更新');
+    }
+}
+
+// 預覽效果
+function previewChanges() {
+    // 收集當前設定
+    const currentSettings = {};
+    Object.keys(displaySettings).forEach(key => {
+        const checkbox = document.getElementById(key);
+        if (checkbox) {
+            currentSettings[key] = checkbox.checked;
+        }
+    });
+    
+    // 打開新視窗預覽
+    const previewWindow = window.open('/', '_blank');
+    
+    // 等待頁面載入後應用設定
+    setTimeout(() => {
+        if (previewWindow && !previewWindow.closed) {
+            previewWindow.postMessage({
+                type: 'previewDisplaySettings',
+                settings: currentSettings
+            }, '*');
+        }
+    }, 2000);
+    
+    showNotification('預覽視窗已開啟，請查看效果', 'info');
+}
+
 // 頁面載入時執行
 document.addEventListener('DOMContentLoaded', function() {
     loadPets();
     loadDashboardStats();
+    loadDisplaySettings();
+    
+    // 綁定事件監聽器
+    const saveBtn = document.getElementById('saveDisplaySettings');
+    const previewBtn = document.getElementById('previewChanges');
+    
+    if (saveBtn) {
+        saveBtn.addEventListener('click', saveDisplaySettings);
+    }
+    
+    if (previewBtn) {
+        previewBtn.addEventListener('click', previewChanges);
+    }
 });

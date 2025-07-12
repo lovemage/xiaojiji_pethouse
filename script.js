@@ -79,9 +79,139 @@ window.addEventListener('scroll', () => {
     lastScroll = currentScroll;
 });
 
+// 監聽管理員設定更新
+window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'updateDisplaySettings') {
+        // 更新localStorage中的設定
+        localStorage.setItem('frontendDisplaySettings', JSON.stringify(event.data.settings));
+        // 重新載入寵物卡片
+        loadPetsFromStorage();
+        console.log('前台顯示設定已更新');
+    } else if (event.data && event.data.type === 'previewDisplaySettings') {
+        // 預覽模式，臨時應用設定
+        previewDisplaySettings(event.data.settings);
+    }
+});
+
+// 預覽顯示設定
+function previewDisplaySettings(settings) {
+    // 添加預覽提示
+    showPreviewNotification();
+    
+    // 臨時應用設定
+    const originalSettings = loadFrontendDisplaySettings();
+    
+    // 重新生成卡片
+    regeneratePetCards(settings);
+    
+    // 10秒後恢復原設定
+    setTimeout(() => {
+        regeneratePetCards(originalSettings);
+        hidePreviewNotification();
+    }, 10000);
+}
+
+// 重新生成寵物卡片
+async function regeneratePetCards(settings) {
+    try {
+        const pets = await API.getPets();
+        const dogsGrid = document.querySelector('.dogs-grid');
+        
+        if (pets.length > 0 && dogsGrid) {
+            dogsGrid.innerHTML = '';
+            
+            pets.forEach(pet => {
+                const dogCard = document.createElement('div');
+                dogCard.className = 'dog-card';
+                dogCard.dataset.category = `${pet.category} ${pet.gender}`;
+                
+                // 處理圖片
+                let images = [];
+                if (pet.images) {
+                    if (typeof pet.images === 'string') {
+                        try {
+                            images = JSON.parse(pet.images);
+                        } catch (e) {
+                            images = [pet.images];
+                        }
+                    } else if (Array.isArray(pet.images)) {
+                        images = pet.images;
+                    }
+                }
+                const imageUrl = images.length > 0 ? images[0] : 'images/64805.jpg';
+                
+                dogCard.innerHTML = generatePetCardHTML(pet, imageUrl, settings);
+                dogsGrid.appendChild(dogCard);
+            });
+            
+            initializeCategoryFilters();
+        }
+    } catch (error) {
+        console.error('重新生成寵物卡片失敗:', error);
+    }
+}
+
+// 顯示預覽通知
+function showPreviewNotification() {
+    // 移除現有通知
+    const existing = document.getElementById('previewNotification');
+    if (existing) existing.remove();
+    
+    const notification = document.createElement('div');
+    notification.id = 'previewNotification';
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #ff9800;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        font-weight: bold;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        animation: slideInRight 0.3s ease;
+    `;
+    notification.innerHTML = `
+        <i class="fas fa-eye"></i> 預覽模式
+        <div style="font-size: 12px; margin-top: 5px;">10秒後自動恢復原設定</div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // 添加動畫樣式
+    if (!document.getElementById('previewAnimationStyles')) {
+        const style = document.createElement('style');
+        style.id = 'previewAnimationStyles';
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+// 隱藏預覽通知
+function hidePreviewNotification() {
+    const notification = document.getElementById('previewNotification');
+    if (notification) {
+        notification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }
+}
+
 // 載入寵物資料
 async function loadPetsFromStorage() {
     try {
+        // 載入顯示設定
+        const displaySettings = loadFrontendDisplaySettings();
+        
         // 從資料庫 API 載入寵物資料
         const pets = await API.getPets();
         const dogsGrid = document.querySelector('.dogs-grid');
@@ -119,16 +249,8 @@ async function loadPetsFromStorage() {
                 }
                 const imageUrl = images.length > 0 ? images[0] : 'images/64805.jpg';
                 
-                dogCard.innerHTML = `
-                    <img src="${imageUrl}" alt="${pet.name}">
-                    <div class="dog-info">
-                        <h3>${pet.name}</h3>
-                        <p>${pet.breed} | ${pet.age} | ${pet.gender === 'male' ? '公犬' : '母犬'}</p>
-                        <p class="category-tag">${categoryName}</p>
-                        <p class="price">NT$ ${parseInt(pet.price).toLocaleString()}</p>
-                        <a href="#" class="btn-secondary" onclick="showPetDetails(${pet.id})">了解更多</a>
-                    </div>
-                `;
+                // 根據管理員設定動態生成卡片內容
+                dogCard.innerHTML = generatePetCardHTML(pet, imageUrl, displaySettings);
                 
                 dogsGrid.appendChild(dogCard);
             });
@@ -144,6 +266,83 @@ async function loadPetsFromStorage() {
         // 如果載入失敗，也初始化靜態卡片
         initializeStaticPetCards();
     }
+}
+
+// 載入前台顯示設定
+function loadFrontendDisplaySettings() {
+    const defaultSettings = {
+        showName: true,
+        showBreed: true,
+        showDescription: true,
+        showAge: false,
+        showGender: false,
+        showPrice: false,
+        showHealth: false,
+        showColor: false
+    };
+    
+    try {
+        const saved = localStorage.getItem('frontendDisplaySettings');
+        if (saved) {
+            return { ...defaultSettings, ...JSON.parse(saved) };
+        }
+    } catch (error) {
+        console.error('載入顯示設定失敗:', error);
+    }
+    
+    return defaultSettings;
+}
+
+// 生成寵物卡片HTML
+function generatePetCardHTML(pet, imageUrl, settings) {
+    let cardContent = `<img src="${imageUrl}" alt="${pet.name}">`;
+    cardContent += `<div class="dog-info">`;
+    
+    // 寵物名稱
+    if (settings.showName) {
+        cardContent += `<h3>${pet.name}</h3>`;
+    }
+    
+    // 品種
+    if (settings.showBreed) {
+        cardContent += `<p class="breed">${pet.breed}</p>`;
+    }
+    
+    // 年齡
+    if (settings.showAge && pet.age) {
+        cardContent += `<p class="age">年齡：${pet.age}</p>`;
+    }
+    
+    // 性別
+    if (settings.showGender) {
+        const genderText = pet.gender === 'male' ? '公犬' : '母犬';
+        cardContent += `<p class="gender">性別：${genderText}</p>`;
+    }
+    
+    // 毛色
+    if (settings.showColor && pet.color) {
+        cardContent += `<p class="color">毛色：${pet.color}</p>`;
+    }
+    
+    // 價格
+    if (settings.showPrice && pet.price) {
+        cardContent += `<p class="price">NT$ ${parseInt(pet.price).toLocaleString()}</p>`;
+    }
+    
+    // 描述
+    if (settings.showDescription) {
+        cardContent += `<p class="description">${pet.description}</p>`;
+    }
+    
+    // 健康資訊
+    if (settings.showHealth && pet.health) {
+        cardContent += `<p class="health">健康：${pet.health}</p>`;
+    }
+    
+    cardContent += `<a href="#" class="btn-secondary" onclick="showPetDetails(${pet.id})">了解更多</a>`;
+    cardContent += `</div>`;
+    
+    return cardContent;
 }
 
 // 初始化靜態寵物卡片的點擊事件
@@ -227,12 +426,13 @@ function showStaticPetDetails(pet) {
                 <h2>${pet.name}</h2>
                 <div class="modal-info">
                     <p><strong>品種：</strong>${pet.breed}</p>
-                    <p><strong>年齡：</strong>${pet.age}</p>
-                    <p><strong>性別：</strong>${pet.gender === 'male' ? '公犬' : '母犬'}</p>
-                    <p><strong>毛色：</strong>${pet.color}</p>
-                    <p><strong>價格：</strong>NT$ ${parseInt(pet.price).toLocaleString()}</p>
                     <p><strong>描述：</strong>${pet.description}</p>
-                    <p><strong>健康資訊：</strong>${pet.health}</p>
+                    <div class="contact-info">
+                        <p><strong>詳細資訊請聯絡我們：</strong></p>
+                        <p>📞 電話：0910-808-283</p>
+                        <p>📱 LINE：@corgidog</p>
+                        <p>🕒 營業時間：下午13:00 ~ 晚上21:00</p>
+                    </div>
                 </div>
                 <div class="modal-contact">
                     <h3>有興趣嗎？立即聯絡我們！</h3>
@@ -298,12 +498,13 @@ async function showPetDetails(petId) {
                     <h2>${pet.name}</h2>
                     <div class="modal-info">
                         <p><strong>品種：</strong>${pet.breed}</p>
-                        <p><strong>年齡：</strong>${pet.age}</p>
-                        <p><strong>性別：</strong>${pet.gender === 'male' ? '公犬' : '母犬'}</p>
-                        <p><strong>毛色：</strong>${pet.color}</p>
-                        <p><strong>價格：</strong>NT$ ${parseInt(pet.price).toLocaleString()}</p>
                         <p><strong>描述：</strong>${pet.description}</p>
-                        <p><strong>健康資訊：</strong>${pet.health || '請聯絡我們了解更多'}</p>
+                        <div class="contact-info">
+                            <p><strong>詳細資訊請聯絡我們：</strong></p>
+                            <p>📞 電話：0910-808-283</p>
+                            <p>📱 LINE：@corgidog</p>
+                            <p>🕒 營業時間：下午13:00 ~ 晚上21:00</p>
+                        </div>
                     </div>
                     <div class="modal-contact">
                         <h3>有興趣嗎？立即聯絡我們！</h3>

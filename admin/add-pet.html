@@ -47,12 +47,41 @@
                             <label for="petBreed">品種 *</label>
                             <select id="petBreed" name="breed" required>
                                 <option value="">請選擇品種</option>
-                                <option value="邊境牧羊犬">邊境牧羊犬</option>
-                                <option value="柯基犬">柯基犬</option>
-                                <option value="柴犬">柴犬</option>
-                                <option value="貴賓犬">貴賓犬</option>
-                                <option value="黃金獵犬">黃金獵犬</option>
-                                <option value="其他">其他</option>
+                                <optgroup label="大型犬">
+                                    <option value="黃金獵犬">黃金獵犬</option>
+                                    <option value="邊境牧羊犬">邊境牧羊犬</option>
+                                    <option value="哈士奇">哈士奇</option>
+                                    <option value="拉布拉多">拉布拉多</option>
+                                    <option value="鬆獅犬">鬆獅犬</option>
+                                    <option value="巨型貴賓">巨型貴賓</option>
+                                    <option value="薩摩耶">薩摩耶</option>
+                                </optgroup>
+                                <optgroup label="中型犬">
+                                    <option value="柴犬">柴犬</option>
+                                    <option value="柯基犬">柯基犬</option>
+                                    <option value="法國鬥牛犬">法國鬥牛犬</option>
+                                    <option value="巴哥犬">巴哥犬</option>
+                                    <option value="米格魯">米格魯</option>
+                                    <option value="查理士">查理士</option>
+                                </optgroup>
+                                <optgroup label="小型犬">
+                                    <option value="比熊犬">比熊犬</option>
+                                    <option value="狐狸犬">狐狸犬</option>
+                                    <option value="長毛臘腸犬">長毛臘腸犬</option>
+                                    <option value="短毛臘腸犬">短毛臘腸犬</option>
+                                    <option value="傑克羅素">傑克羅素</option>
+                                    <option value="狐狸博美">狐狸博美</option>
+                                    <option value="西施犬">西施犬</option>
+                                    <option value="雪納瑞">雪納瑞</option>
+                                    <option value="騎士比熊">騎士比熊</option>
+                                    <option value="可卡布">可卡布</option>
+                                    <option value="瑪爾濟斯">瑪爾濟斯</option>
+                                    <option value="貴賓">貴賓</option>
+                                    <option value="約克夏">約克夏</option>
+                                    <option value="博美">博美</option>
+                                    <option value="瑪爾泰迪">瑪爾泰迪</option>
+                                    <option value="吉娃娃">吉娃娃</option>
+                                </optgroup>
                             </select>
                         </div>
                     </div>
@@ -127,5 +156,68 @@
     <script src="../js/api.js"></script>
     <script src="admin-auth.js"></script>
     <script src="admin-pets.js"></script>
+    <script>
+        // 品種與犬型的對應關係
+        const breedToCategory = {
+            // 大型犬
+            '黃金獵犬': 'large',
+            '邊境牧羊犬': 'large',
+            '哈士奇': 'large',
+            '拉布拉多': 'large',
+            '鬆獅犬': 'large',
+            '巨型貴賓': 'large',
+            '薩摩耶': 'large',
+            
+            // 中型犬
+            '柴犬': 'medium',
+            '柯基犬': 'medium',
+            '法國鬥牛犬': 'medium',
+            '巴哥犬': 'medium',
+            '米格魯': 'medium',
+            '查理士': 'medium',
+            
+            // 小型犬
+            '比熊犬': 'small',
+            '狐狸犬': 'small',
+            '長毛臘腸犬': 'small',
+            '短毛臘腸犬': 'small',
+            '傑克羅素': 'small',
+            '狐狸博美': 'small',
+            '西施犬': 'small',
+            '雪納瑞': 'small',
+            '騎士比熊': 'small',
+            '可卡布': 'small',
+            '瑪爾濟斯': 'small',
+            '貴賓': 'small',
+            '約克夏': 'small',
+            '博美': 'small',
+            '瑪爾泰迪': 'small',
+            '吉娃娃': 'small'
+        };
+
+        // 當品種選擇改變時自動設定犬型分類
+        document.addEventListener('DOMContentLoaded', function() {
+            const breedSelect = document.getElementById('petBreed');
+            const categorySelect = document.getElementById('petCategory');
+            
+            if (breedSelect && categorySelect) {
+                breedSelect.addEventListener('change', function() {
+                    const selectedBreed = this.value;
+                    const category = breedToCategory[selectedBreed];
+                    
+                    if (category) {
+                        categorySelect.value = category;
+                        // 添加視覺提示
+                        categorySelect.style.backgroundColor = '#e8f5e8';
+                        setTimeout(() => {
+                            categorySelect.style.backgroundColor = '';
+                        }, 1000);
+                    } else {
+                        categorySelect.value = '';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
