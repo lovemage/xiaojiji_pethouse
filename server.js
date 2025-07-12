@@ -16,23 +16,15 @@ const pool = new Pool({
 
 // 中介軟體
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' })); // 增加請求大小限制以支援 Base64 圖片
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // 靜態檔案服務
 app.use(express.static(path.join(__dirname)));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 圖片上傳設定
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/')
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// 圖片上傳設定 - 改為記憶體存儲
+const storage = multer.memoryStorage(); // 使用記憶體存儲而非磁碟
 
 const upload = multer({ 
   storage: storage,
@@ -47,6 +39,12 @@ const upload = multer({
     }
   }
 });
+
+// 將圖片轉換為 Base64 的輔助函數
+function imageToBase64(file) {
+  const base64 = file.buffer.toString('base64');
+  return `data:${file.mimetype};base64,${base64}`;
+}
 
 // API 路由
 
@@ -85,7 +83,7 @@ app.post('/api/pets', upload.array('images', 5), async (req, res) => {
     const { name, breed, birthdate, age, gender, color, category, price, description, health } = req.body;
     
     // 處理上傳的圖片
-    const images = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+    const images = req.files ? req.files.map(file => imageToBase64(file)) : [];
     
     const result = await pool.query(
       `INSERT INTO pets (name, breed, birthdate, age, gender, color, category, price, description, health, images) 
@@ -113,7 +111,7 @@ app.put('/api/pets/:id', upload.array('images', 5), async (req, res) => {
     
     // 如果有新上傳的圖片，更新圖片欄位
     if (req.files && req.files.length > 0) {
-      const images = req.files.map(file => `/uploads/${file.filename}`);
+      const images = req.files.map(file => imageToBase64(file));
       updateQuery += `, images = $11 WHERE id = $12 RETURNING *`;
       params.push(JSON.stringify(images), id);
     } else {
@@ -337,7 +335,7 @@ app.post('/api/gallery', upload.single('image'), async (req, res) => {
     const { title, description, category, sortOrder } = req.body;
     
     // 處理上傳的圖片
-    const src = req.file ? `/uploads/${req.file.filename}` : req.body.src;
+    const src = req.file ? imageToBase64(req.file) : req.body.src;
     
     const result = await pool.query(
       'INSERT INTO gallery_images (title, description, src, category, sort_order) VALUES ($1, $2, $3, $4, $5) RETURNING *',
@@ -363,7 +361,7 @@ app.put('/api/gallery/:id', upload.single('image'), async (req, res) => {
     
     if (req.file) {
       updateQuery += `, src = $6 WHERE id = $7 RETURNING *`;
-      params.push(`/uploads/${req.file.filename}`, id);
+      params.push(imageToBase64(req.file), id);
     } else {
       updateQuery += ` WHERE id = $6 RETURNING *`;
       params.push(id);

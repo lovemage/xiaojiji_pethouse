@@ -61,7 +61,7 @@ function displayGalleryImages() {
         imageCard.className = 'gallery-card';
         imageCard.innerHTML = `
             <div class="gallery-image">
-                <img src="../${image.src}" alt="${image.title}">
+                <img src="${image.src.startsWith('data:') ? image.src : `../${image.src}`}" alt="${image.title}">
                 <div class="image-overlay">
                     <button class="btn-icon edit-btn" data-id="${image.id}" title="編輯">
                         <i class="fas fa-edit"></i>

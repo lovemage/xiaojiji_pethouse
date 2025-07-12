@@ -247,6 +247,7 @@ async function loadPetsFromStorage() {
                         images = pet.images;
                     }
                 }
+                // 支援 Base64 格式（以 data: 開頭）和 URL 格式
                 const imageUrl = images.length > 0 ? images[0] : 'images/64805.jpg';
                 
                 // 根據管理員設定動態生成卡片內容

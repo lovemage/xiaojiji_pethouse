@@ -244,7 +244,14 @@ async function loadPets() {
                     images = pet.images;
                 }
             }
-            const imageUrl = images.length > 0 ? `../${images[0]}` : '../images/64805.jpg';
+            // 支援 Base64 格式（以 data: 開頭）和 URL 格式
+            let imageUrl = '';
+            if (images.length > 0) {
+                // 如果是 Base64 格式，直接使用；否則加上相對路徑
+                imageUrl = images[0].startsWith('data:') ? images[0] : `../${images[0]}`;
+            } else {
+                imageUrl = '../images/64805.jpg';
+            }
             
             tr.innerHTML = `
                 <td>
