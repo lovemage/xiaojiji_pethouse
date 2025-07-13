@@ -1237,6 +1237,11 @@ function initializeGallery() {
     const lightbox = document.getElementById('gallery-lightbox');
     const lightboxClose = document.querySelector('.lightbox-close');
     
+    // 檢查相簿元素是否存在，如果不存在則直接返回
+    if (!galleryItems.length || !lightbox) {
+        return;
+    }
+    
     // 收集所有圖片數據
     galleryImages = Array.from(galleryItems).map(item => ({
         src: item.querySelector('img').src,
@@ -1280,17 +1285,22 @@ function initializeGallery() {
         });
     });
     
-    // 關閉燈箱
-    lightboxClose.addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) {
-            closeLightbox();
-        }
-    });
+    // 關閉燈箱（檢查元素是否存在）
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', closeLightbox);
+    }
+    
+    if (lightbox) {
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+    }
     
     // 鍵盤導航
     document.addEventListener('keydown', (e) => {
-        if (lightbox.classList.contains('active')) {
+        if (lightbox && lightbox.classList.contains('active')) {
             if (e.key === 'Escape') {
                 closeLightbox();
             } else if (e.key === 'ArrowLeft') {
@@ -1364,7 +1374,14 @@ function changeLightboxImage(direction) {
 
 // 獲取當前可見的圖片
 function getVisibleImages() {
-    const activeCategory = document.querySelector('.gallery-category-btn.active').dataset.category;
+    const activeCategoryBtn = document.querySelector('.gallery-category-btn.active');
+    
+    // 如果沒有相簿按鈕，返回空數組
+    if (!activeCategoryBtn) {
+        return [];
+    }
+    
+    const activeCategory = activeCategoryBtn.dataset.category;
     
     if (activeCategory === 'all') {
         return galleryImages;
@@ -1376,6 +1393,12 @@ function getVisibleImages() {
 // 載入相簿圖片（從資料庫 API 獲取與 admin 同步的資料）
 async function loadGalleryImages() {
     try {
+        // 檢查相簿元素是否存在，如果不存在則直接返回
+        const galleryGrid = document.querySelector('.gallery-grid');
+        if (!galleryGrid) {
+            return;
+        }
+        
         // 從資料庫 API 載入 admin 管理的相簿資料
         const images = await API.getGalleryImages();
         
