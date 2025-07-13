@@ -8,6 +8,114 @@
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="admin-styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 圖片壓縮按鈕樣式 */
+        .info-icon {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #17a2b8;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .info-icon:hover {
+            background-color: #138496;
+            transform: scale(1.1);
+        }
+
+        /* 圖片壓縮提示框樣式 */
+        .compression-tip {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .tip-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .tip-content h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .tip-content h4 i {
+            color: #f39c12;
+            margin-right: 8px;
+        }
+
+        .tip-content p {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .tip-content ul {
+            text-align: left;
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        .tip-content li {
+            color: #555;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .btn-small {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-small:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-secondary i {
+            margin-right: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="admin-panel">
@@ -36,9 +144,29 @@
             <div class="admin-header">
                 <h1>相簿管理</h1>
                 <div class="admin-actions">
-                <button class="btn-primary" onclick="showAddImageModal()">
-                    <i class="fas fa-plus"></i> 新增圖片
-                </button>
+                    <button class="btn-primary" onclick="showAddImageModal()">
+                        <i class="fas fa-plus"></i> 新增圖片
+                    </button>
+                    <button class="btn-secondary" onclick="openImageCompressor()" style="position: relative;">
+                        <i class="fas fa-compress-alt"></i> 圖片壓縮
+                        <span class="info-icon" onclick="event.stopPropagation(); showCompressionTip()" title="點擊查看提示">
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 圖片壓縮提示框 -->
+            <div id="compressionTip" class="compression-tip" style="display: none;">
+                <div class="tip-content">
+                    <h4><i class="fas fa-lightbulb"></i> 圖片壓縮建議</h4>
+                    <p>建議大尺寸圖片縮小以優化不影響網站運行</p>
+                    <ul>
+                        <li>建議將圖片壓縮到 2MB 以下</li>
+                        <li>保持適當的圖片品質</li>
+                        <li>優化載入速度</li>
+                    </ul>
+                    <button onclick="closeCompressionTip()" class="btn-small">知道了</button>
                 </div>
             </div>
 
@@ -71,6 +199,7 @@
                 <div class="form-group">
                     <label for="imageFile">選擇圖片</label>
                     <input type="file" id="imageFile" accept="image/*" required>
+                    <small style="color: #666;">支援圖片格式，檔案大小不超過2MB</small>
                     <div class="image-preview" id="imagePreview"></div>
                 </div>
                 <div class="form-group">
@@ -116,7 +245,7 @@
                     <label for="editImageFile">更換圖片（選填）</label>
                     <input type="file" id="editImageFile" accept="image/*">
                     <div class="image-preview" id="editImagePreview"></div>
-                    <small class="form-help">不選擇檔案則保持原圖片</small>
+                    <small class="form-help">不選擇檔案則保持原圖片，檔案大小不超過2MB</small>
                 </div>
                 <div class="form-group">
                     <label for="editImageTitle">圖片標題</label>

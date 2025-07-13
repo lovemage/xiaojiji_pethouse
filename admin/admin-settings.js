@@ -62,6 +62,13 @@ function previewHeroImage() {
     const preview = document.getElementById('heroImagePreview');
     
     if (file) {
+        // 檢查檔案大小（2MB = 2 * 1024 * 1024 bytes）
+        if (file.size > 2 * 1024 * 1024) {
+            preview.innerHTML = `<div style="color: red; margin: 10px 0;">檔案 "${file.name}" 超過2MB限制，請選擇較小的圖片</div>`;
+            document.getElementById('newHeroImage').value = ''; // 清除檔案選擇
+            return;
+        }
+        
         const reader = new FileReader();
         reader.onload = function(e) {
             preview.innerHTML = `<img src="${e.target.result}" alt="預覽圖片" style="max-width: 100%; max-height: 200px; border-radius: 5px;">`;

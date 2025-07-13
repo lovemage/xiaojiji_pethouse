@@ -16,12 +16,26 @@ const pool = new Pool({
 
 // 中介軟體
 app.use(cors());
-app.use(express.json({ limit: '50mb' })); // 增加請求大小限制以支援 Base64 圖片
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.json({ limit: '5mb' })); // 增加請求大小限制以支援 Base64 圖片
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 
 // 靜態檔案服務
 app.use(express.static(path.join(__dirname)));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// 錯誤處理中間件 - 處理檔案上傳錯誤
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: '檔案大小超過限制，請上傳小於2MB的圖片' });
+    }
+    return res.status(400).json({ error: '檔案上傳錯誤：' + err.message });
+  }
+  if (err.message === '只允許上傳圖片檔案') {
+    return res.status(400).json({ error: '只允許上傳圖片檔案' });
+  }
+  next(err);
+});
 
 // 圖片上傳設定 - 改為記憶體存儲
 const storage = multer.memoryStorage(); // 使用記憶體存儲而非磁碟
@@ -29,7 +43,7 @@ const storage = multer.memoryStorage(); // 使用記憶體存儲而非磁碟
 const upload = multer({ 
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB
+    fileSize: 2 * 1024 * 1024 // 2MB
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {

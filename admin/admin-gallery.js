@@ -149,6 +149,13 @@ function handleImagePreview(event) {
     const preview = document.getElementById('imagePreview');
     
     if (file) {
+        // 檢查檔案大小（2MB = 2 * 1024 * 1024 bytes）
+        if (file.size > 2 * 1024 * 1024) {
+            preview.innerHTML = `<div style="color: red; margin: 10px 0;">檔案 "${file.name}" 超過2MB限制，請選擇較小的圖片</div>`;
+            event.target.value = ''; // 清除檔案選擇
+            return;
+        }
+        
         const reader = new FileReader();
         reader.onload = function(e) {
             preview.innerHTML = `<img src="${e.target.result}" alt="預覽圖片">`;
@@ -165,6 +172,13 @@ function handleEditImagePreview(event) {
     const preview = document.getElementById('editImagePreview');
     
     if (file) {
+        // 檢查檔案大小（2MB = 2 * 1024 * 1024 bytes）
+        if (file.size > 2 * 1024 * 1024) {
+            preview.innerHTML = `<div style="color: red; margin: 10px 0;">檔案 "${file.name}" 超過2MB限制，請選擇較小的圖片</div>`;
+            event.target.value = ''; // 清除檔案選擇
+            return;
+        }
+        
         const reader = new FileReader();
         reader.onload = function(e) {
             preview.innerHTML = `<img src="${e.target.result}" alt="新圖片預覽">`;
@@ -370,6 +384,36 @@ function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString('zh-TW');
 }
+
+// 圖片壓縮功能
+function openImageCompressor() {
+    // 開啟外部圖片壓縮網站
+    window.open('https://bulkresizephotos.com/zh-tw', '_blank');
+}
+
+function showCompressionTip() {
+    const tip = document.getElementById('compressionTip');
+    tip.style.display = 'block';
+    
+    // 點擊背景區域關閉提示框
+    tip.addEventListener('click', function(e) {
+        if (e.target === tip) {
+            closeCompressionTip();
+        }
+    });
+}
+
+function closeCompressionTip() {
+    const tip = document.getElementById('compressionTip');
+    tip.style.display = 'none';
+}
+
+// 鍵盤事件監聽（ESC鍵關閉提示框）
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeCompressionTip();
+    }
+});
 
 // 顯示通知
 function showNotification(message, type = 'info') {

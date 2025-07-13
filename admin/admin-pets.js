@@ -137,7 +137,16 @@ function previewImages() {
     preview.innerHTML = '';
     
     if (input.files) {
+        let hasOversizedFile = false;
+        
         Array.from(input.files).forEach(file => {
+            // 檢查檔案大小（2MB = 2 * 1024 * 1024 bytes）
+            if (file.size > 2 * 1024 * 1024) {
+                hasOversizedFile = true;
+                preview.innerHTML += `<div style="color: red; margin: 10px 0;">檔案 "${file.name}" 超過2MB限制，請選擇較小的圖片</div>`;
+                return;
+            }
+            
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = document.createElement('img');
@@ -146,6 +155,11 @@ function previewImages() {
             };
             reader.readAsDataURL(file);
         });
+        
+        if (hasOversizedFile) {
+            // 清除檔案選擇
+            input.value = '';
+        }
     }
 }
 
