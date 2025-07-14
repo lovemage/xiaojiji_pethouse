@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大型犬 - 小基基寵物犬舍</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="images/logo.png">
+</head>
+<body>
+    <!-- 頂部聯絡資訊欄 -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="contact-info">
+                <span><i class="fas fa-phone"></i> 0910-808-283</span>
+                <span><i class="fab fa-line"></i> @corgidog</span>
+                <span><i class="fas fa-clock"></i> 下午13:00 ~ 晚上21:00</span>
+            </div>
+            <div class="social-links">
+                <a href="https://lin.ee/kWyAbbF" target="_blank" aria-label="Line"><i class="fab fa-line"></i></a>
+                <a href="http://instagram.com/xiaojijichongwuquanshe?utm_source=qr" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.tiktok.com/@corgidog114666?_t=ZS-8xwHtofNTBI&_r=1" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 導航欄 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="index.html" style="text-decoration: none;">
+                    <img src="images/logo.png" alt="小基基寵物犬舍" style="height: 50px; vertical-align: middle; margin-right: 10px;" id="adminLogo">
+                    <div style="display: inline-block; vertical-align: middle;">
+                        <h1 style="margin: 0; font-size: 24px;">小基基寵物犬舍</h1>
+                        <span class="subtitle">特寵業字第W1141071號</span>
+                    </div>
+                </a>
+            </div>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="index.html">首頁</a></li>
+                <li><a href="large-dogs.html" class="active">大型犬</a></li>
+                <li><a href="medium-dogs.html">中型犬</a></li>
+                <li><a href="small-dogs.html">小型犬</a></li>
+                <li><a href="gallery.html">寶貝相簿</a></li>
+                <li><a href="pet-health.html">健康手冊</a></li>
+                <li><a href="adoption-guide.html">照顧手冊</a></li>
+                <li><a href="contact-form.html">聯絡我們</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要內容 -->
+    <main>
+        <!-- 大型犬展示區 -->
+        <section id="large-dogs" class="dogs-section">
+            <div class="container">
+                <div class="section-title">
+                    <img src="images/puppy1.png" alt="大型犬出售區">
+                </div>
+                
+                <!-- 品種篩選標籤 -->
+                <div class="breed-filters" id="breedFilters">
+                    <button class="breed-btn active" data-breed="all">全部品種</button>
+                    <!-- 品種按鈕將由 JavaScript 動態生成 -->
+                </div>
+                
+                <!-- 大型犬展示網格 -->
+                <div class="dogs-grid" id="largeDogsGrid">
+                    <!-- 寵物卡片將由 JavaScript 動態生成 -->
+                </div>
+                
+                <!-- 無資料提示 -->
+                <div class="no-pets-message" id="noPetsMessage" style="display: none;">
+                    <div class="empty-state">
+                        <i class="fas fa-dog"></i>
+                        <h3>目前沒有大型犬可供選擇</h3>
+                        <p>請稍後再來查看，或聯絡我們了解最新資訊</p>
+                        <a href="https://lin.ee/kWyAbbF" target="_blank" class="btn-primary">
+                            <i class="fab fa-line"></i> LINE 諮詢
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>小基基寵物犬舍</h3>
+                    <p>給您最健康、最聰明的毛孩子</p>
+                    <div class="license-info">
+                        <p><strong>特寵業字第W1141071號</strong></p>
+                        <p>統一編號：00879221</p>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>聯絡資訊</h4>
+                    <ul class="footer-contact-list">
+                        <li><i class="fas fa-map-marker-alt"></i> 高雄市鳳山區文龍東路666號</li>
+                        <li><i class="fas fa-phone"></i> 0910-808-283</li>
+                        <li><i class="fas fa-envelope"></i> info@xiaojiji-kennel.com</li>
+                        <li><i class="fab fa-line"></i> <a href="https://lin.ee/kWyAbbF" target="_blank">LINE ID: @corgidog</a></li>
+                        <li><i class="fas fa-clock"></i> 營業時間：下午13:00 ~ 晚上21:00</li>
+                        <li><i class="fas fa-car"></i> 門口可停車呦</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>快速連結</h4>
+                    <ul>
+                        <li><a href="index.html">首頁</a></li>
+                        <li><a href="large-dogs.html">大型犬</a></li>
+                        <li><a href="medium-dogs.html">中型犬</a></li>
+                        <li><a href="small-dogs.html">小型犬</a></li>
+                        <li><a href="adoption-guide.html">照顧手冊</a></li>
+                        <li><a href="pet-health.html">健康手冊</a></li>
+                        <li><a href="gallery.html">寶貝相簿</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>關注我們</h4>
+                    <div class="footer-social">
+                        <a href="https://lin.ee/kWyAbbF" target="_blank" aria-label="Line"><i class="fab fa-line"></i></a>
+                        <a href="http://instagram.com/xiaojijichongwuquanshe?utm_source=qr" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@corgidog114666?_t=ZS-8xwHtofNTBI&_r=1" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 小基基寵物犬舍. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+    <script>
+        // 頁面載入時初始化大型犬頁面
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeLargeDogsPage();
+        });
+    </script>
+</body>
+</html>

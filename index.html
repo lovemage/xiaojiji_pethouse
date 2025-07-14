@@ -59,11 +59,14 @@
                 <span></span>
             </button>
             <ul class="nav-menu">
-                <li><a href="#home">首頁</a></li>
-                <li><a href="#dogs">幼犬出售區</a></li>
-                <li><a href="adoption-guide.html">照顧手冊</a></li>
-                <li><a href="pet-health.html">健康手冊</a></li>
+                <li><a href="index.html" class="active">首頁</a></li>
+                <li><a href="large-dogs.html">大型犬</a></li>
+                <li><a href="medium-dogs.html">中型犬</a></li>
+                <li><a href="small-dogs.html">小型犬</a></li>
                 <li><a href="gallery.html">寶貝相簿</a></li>
+                <li><a href="pet-health.html">健康手冊</a></li>
+                <li><a href="adoption-guide.html">照顧手冊</a></li>
+                <li><a href="contact-form.html">聯絡我們</a></li>
             </ul>
         </div>
     </nav>
@@ -108,48 +111,11 @@
             <div class="section-title">
                 <img src="images/puppy1.png" alt="幼犬出售區">
             </div>
-            <div class="dog-categories">
-                <button class="category-btn active" data-category="all">全部</button>
-                <button class="category-btn" data-category="small">小型犬</button>
-                <button class="category-btn" data-category="medium">中型犬</button>
-                <button class="category-btn" data-category="large">大型犬</button>
-            </div>
-            <div class="dogs-grid">
-                <div class="dog-card" data-category="medium male">
-                    <img src="images/64805.jpg" alt="邊境牧羊犬幼犬">
-                    <div class="dog-info">
-                        <h3>小黑</h3>
-                        <p>邊境牧羊犬 | 3個月大 | 公犬</p>
-                        <p class="price">NT$ 35,000</p>
-                        <a href="#" class="btn-secondary">了解更多</a>
-                    </div>
-                </div>
-                <div class="dog-card" data-category="small female">
-                    <img src="images/download.jpg" alt="柯基犬幼犬">
-                    <div class="dog-info">
-                        <h3>小花</h3>
-                        <p>柯基犬 | 2個月大 | 母犬</p>
-                        <p class="price">NT$ 38,000</p>
-                        <a href="#" class="btn-secondary">了解更多</a>
-                    </div>
-                </div>
-                <div class="dog-card" data-category="large female">
-                    <img src="images/download-1.jpg" alt="黃金獵犬幼犬">
-                    <div class="dog-info">
-                        <h3>露西</h3>
-                        <p>黃金獵犬 | 4個月大 | 母犬</p>
-                        <p class="price">NT$ 45,000</p>
-                        <a href="#" class="btn-secondary">了解更多</a>
-                    </div>
-                </div>
-                <div class="dog-card" data-category="medium male">
-                    <img src="images/download-2.jpg" alt="柴犬幼犬">
-                    <div class="dog-info">
-                        <h3>小白</h3>
-                        <p>柴犬 | 4個月大 | 公犬</p>
-                        <p class="price">NT$ 32,000</p>
-                        <a href="#" class="btn-secondary">了解更多</a>
-                    </div>
+
+            <!-- 滑動寵物卡片展示 -->
+            <div class="dogs-slider-container">
+                <div class="dogs-slider" id="randomDogsGrid">
+                    <!-- 5張隨機寵物卡片將由 JavaScript 動態生成 -->
                 </div>
             </div>
         </div>

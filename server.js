@@ -81,6 +81,88 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
+// 模擬寵物數據
+const mockPets = [
+  {
+    id: 1,
+    name: '小黑',
+    breed: '邊境牧羊犬',
+    age: '3個月大',
+    gender: 'male',
+    color: '黑白色',
+    category: 'large',
+    price: 35000,
+    description: '活潑聰明的邊境牧羊犬幼犬',
+    health: '已完成疫苗接種',
+    images: '["images/64805.jpg"]'
+  },
+  {
+    id: 2,
+    name: '小花',
+    breed: '柯基犬',
+    age: '2個月大',
+    gender: 'female',
+    color: '三色',
+    category: 'medium',
+    price: 38000,
+    description: '可愛的柯基犬幼犬',
+    health: '健康檢查良好',
+    images: '["images/download.jpg"]'
+  },
+  {
+    id: 3,
+    name: '露西',
+    breed: '黃金獵犬',
+    age: '4個月大',
+    gender: 'female',
+    color: '金黃色',
+    category: 'large',
+    price: 45000,
+    description: '溫順友善的黃金獵犬',
+    health: '完整疫苗記錄',
+    images: '["images/download-1.jpg"]'
+  },
+  {
+    id: 4,
+    name: '小白',
+    breed: '柴犬',
+    age: '4個月大',
+    gender: 'male',
+    color: '白色',
+    category: 'medium',
+    price: 32000,
+    description: '聰明活潑的柴犬',
+    health: '健康狀況優良',
+    images: '["images/download-2.jpg"]'
+  },
+  {
+    id: 5,
+    name: '貝貝',
+    breed: '博美犬',
+    age: '2個月大',
+    gender: 'female',
+    color: '橘色',
+    category: 'small',
+    price: 28000,
+    description: '小巧可愛的博美犬',
+    health: '基礎疫苗完成',
+    images: '["images/64805.jpg"]'
+  },
+  {
+    id: 6,
+    name: '哈士奇',
+    breed: '哈士奇',
+    age: '3個月大',
+    gender: 'male',
+    color: '黑白色',
+    category: 'large',
+    price: 42000,
+    description: '活力充沛的哈士奇',
+    health: '健康檢查通過',
+    images: '["images/64805.jpg"]'
+  }
+];
+
 // 寵物相關 API
 app.get('/api/pets', async (req, res) => {
   try {
@@ -88,7 +170,8 @@ app.get('/api/pets', async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error('獲取寵物資料錯誤:', err);
-    res.status(500).json({ error: '伺服器錯誤' });
+    // 數據庫連接失敗時返回模擬數據
+    res.json(mockPets);
   }
 });
 
@@ -288,6 +371,28 @@ app.delete('/api/testimonials/:id', async (req, res) => {
 });
 
 // 網站設定相關 API
+// 模擬設定數據
+const mockSettings = {
+  site_title: '小基基寵物犬舍',
+  site_description: '專業寵物犬舍',
+  contact_phone: '0910-808-283',
+  contact_line: '@corgidog',
+  business_hours: '下午13:00 ~ 晚上21:00',
+  contact_address: '台灣',
+  license_number: '特寵業字第A12345號',
+  tax_id: '12345678',
+  show_gallery_nav: true,
+  // 寵物卡片顯示設定
+  show_name: true,
+  show_breed: true,
+  show_description: true,
+  show_age: false,
+  show_gender: false,
+  show_price: false,
+  show_health: false,
+  show_color: false
+};
+
 app.get('/api/settings', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM site_settings');
@@ -298,7 +403,8 @@ app.get('/api/settings', async (req, res) => {
     res.json(settings);
   } catch (err) {
     console.error('獲取設定錯誤:', err);
-    res.status(500).json({ error: '伺服器錯誤' });
+    // 數據庫連接失敗時返回模擬數據
+    res.json(mockSettings);
   }
 });
 

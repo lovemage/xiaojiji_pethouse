@@ -125,6 +125,27 @@
                 </form>
             </div>
 
+            <!-- 導航設定 -->
+            <div class="content-section">
+                <h2>導航列設定</h2>
+
+                <form id="navigationForm">
+                    <div class="form-group">
+                        <label for="galleryNavToggle">寶貝相簿導航</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label class="switch">
+                                <input type="checkbox" id="galleryNavToggle">
+                                <span class="slider"></span>
+                            </label>
+                            <span id="galleryNavStatus">關閉</span>
+                        </div>
+                        <div class="form-hint">控制導航列中是否顯示「寶貝相簿」選項</div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">儲存導航設定</button>
+                </form>
+            </div>
+
             <style>
                 .current-hero-image {
                     margin: 10px 0;

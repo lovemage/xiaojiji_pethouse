@@ -21,9 +21,16 @@ document.querySelectorAll('.nav-menu a').forEach(link => {
 
 // 初始化分類篩選（頁面載入時調用）
 document.addEventListener('DOMContentLoaded', () => {
+    // 檢查是否為首頁
+    if (document.getElementById('randomDogsGrid')) {
+        initializeRandomPetsDisplay();
+    }
+
     initializeCategoryFilters();
     initializeGallery(); // 初始化相簿功能
     loadGalleryImages(); // 載入相簿圖片
+    loadNavigationSettings(); // 載入導航設定
+
 });
 
 // 平滑滾動
@@ -340,7 +347,9 @@ function generatePetCardHTML(pet, imageUrl, settings) {
         cardContent += `<p class="health">健康：${pet.health}</p>`;
     }
     
-    cardContent += `<a href="#" class="btn-secondary" onclick="showPetDetails(${pet.id})">了解更多</a>`;
+    cardContent += `<a href="#" class="btn-secondary" onclick="showPetDetails(${pet.id})">
+        <i class="fas fa-paw"></i> 了解更多
+    </a>`;
     cardContent += `</div>`;
     
     return cardContent;
@@ -1445,3 +1454,458 @@ function updateIndexGallery(images) {
         initializeGallery();
     }, 100);
 }
+
+// ==================== 新的犬型頁面功能 ====================
+
+// 初始化首頁隨機寵物展示
+async function initializeRandomPetsDisplay() {
+    try {
+        const response = await fetch('/api/pets');
+        const pets = await response.json();
+
+        if (pets.length > 0) {
+            // 隨機選擇五個寵物
+            const randomPets = getRandomPets(pets, 5);
+            displayRandomPets(randomPets);
+        }
+    } catch (error) {
+        console.error('載入寵物資料失敗:', error);
+    }
+}
+
+// 獲取隨機寵物
+function getRandomPets(pets, count) {
+    const shuffled = [...pets].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+}
+
+// 顯示隨機寵物卡片
+async function displayRandomPets(pets) {
+    const randomDogsGrid = document.getElementById('randomDogsGrid');
+    if (!randomDogsGrid) return;
+
+    randomDogsGrid.innerHTML = '';
+
+    // 載入顯示設定
+    let displaySettings;
+    try {
+        const response = await fetch('/api/settings');
+        const settings = await response.json();
+        displaySettings = {
+            showName: settings.show_name !== false,
+            showBreed: settings.show_breed !== false,
+            showDescription: settings.show_description !== false,
+            showAge: settings.show_age === true,
+            showGender: settings.show_gender === true,
+            showPrice: settings.show_price === true,
+            showHealth: settings.show_health === true,
+            showColor: settings.show_color === true
+        };
+    } catch (error) {
+        console.error('載入顯示設定失敗:', error);
+        // 使用預設設定
+        displaySettings = {
+            showName: true,
+            showBreed: true,
+            showDescription: true,
+            showAge: false,
+            showGender: false,
+            showPrice: false,
+            showHealth: false,
+            showColor: false
+        };
+    }
+
+    // 創建寵物卡片的函數
+    function createPetCard(pet) {
+        const dogCard = document.createElement('div');
+        dogCard.className = 'dog-card';
+
+        // 處理圖片
+        let images = [];
+        if (pet.images) {
+            if (typeof pet.images === 'string') {
+                try {
+                    images = JSON.parse(pet.images);
+                } catch (e) {
+                    images = [pet.images];
+                }
+            } else if (Array.isArray(pet.images)) {
+                images = pet.images;
+            }
+        }
+        const imageUrl = images.length > 0 ? images[0] : 'images/64805.jpg';
+
+        // 根據設定生成卡片內容
+        dogCard.innerHTML = generatePetCardHTML(pet, imageUrl, displaySettings);
+
+        return dogCard;
+    }
+
+    // 創建兩組相同的卡片以實現無縫循環
+    for (let i = 0; i < 2; i++) {
+        pets.forEach(pet => {
+            const dogCard = createPetCard(pet);
+            randomDogsGrid.appendChild(dogCard);
+        });
+    }
+}
+
+// 生成導航列品種菜單
+function generateBreedMenus(pets) {
+    const categories = {
+        large: new Set(),
+        medium: new Set(),
+        small: new Set()
+    };
+
+    // 收集各類型的品種
+    pets.forEach(pet => {
+        if (categories[pet.category]) {
+            categories[pet.category].add(pet.breed);
+        }
+    });
+
+    // 生成各類型的品種菜單
+    Object.keys(categories).forEach(category => {
+        const menuId = `${category}DogBreeds`;
+        const menu = document.getElementById(menuId);
+        if (menu && categories[category].size > 0) {
+            menu.innerHTML = '';
+            categories[category].forEach(breed => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${category}-dogs.html?breed=${encodeURIComponent(breed)}">${breed}</a>`;
+                menu.appendChild(li);
+            });
+        }
+    });
+}
+
+// 初始化大型犬頁面
+async function initializeLargeDogsPage() {
+    await initializeDogTypePage('large', 'largeDogsGrid');
+}
+
+// 初始化中型犬頁面
+async function initializeMediumDogsPage() {
+    await initializeDogTypePage('medium', 'mediumDogsGrid');
+}
+
+// 初始化小型犬頁面
+async function initializeSmallDogsPage() {
+    await initializeDogTypePage('small', 'smallDogsGrid');
+}
+
+// 通用犬型頁面初始化函數
+async function initializeDogTypePage(category, gridId) {
+    try {
+        const response = await fetch('/api/pets');
+        const allPets = await response.json();
+
+        // 篩選指定類型的寵物
+        const pets = allPets.filter(pet => pet.category === category);
+
+        // 顯示寵物
+        displayDogsByType(pets, gridId);
+
+        // 生成品種篩選按鈕
+        generateBreedFilters(pets);
+
+        // 生成導航列品種菜單
+        generateBreedMenus(allPets);
+
+        // 初始化品種篩選功能
+        initializeBreedFilters(pets, gridId);
+
+        // 檢查 URL 參數是否有指定品種
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedBreed = urlParams.get('breed');
+        if (selectedBreed) {
+            filterByBreed(selectedBreed, pets, gridId);
+        }
+
+    } catch (error) {
+        console.error('載入寵物資料失敗:', error);
+        showNoPetsMessage();
+    }
+}
+
+// 顯示指定類型的寵物
+function displayDogsByType(pets, gridId) {
+    const grid = document.getElementById(gridId);
+    const noPetsMessage = document.getElementById('noPetsMessage');
+
+    if (!grid) return;
+
+    if (pets.length === 0) {
+        grid.style.display = 'none';
+        if (noPetsMessage) noPetsMessage.style.display = 'block';
+        return;
+    }
+
+    grid.style.display = 'grid';
+    if (noPetsMessage) noPetsMessage.style.display = 'none';
+
+    grid.innerHTML = '';
+
+    pets.forEach(pet => {
+        const dogCard = document.createElement('div');
+        dogCard.className = 'dog-card';
+        dogCard.dataset.breed = pet.breed;
+
+        // 處理圖片
+        let images = [];
+        if (pet.images) {
+            if (typeof pet.images === 'string') {
+                try {
+                    images = JSON.parse(pet.images);
+                } catch (e) {
+                    images = [pet.images];
+                }
+            } else if (Array.isArray(pet.images)) {
+                images = pet.images;
+            }
+        }
+        const imageUrl = images.length > 0 ? images[0] : 'images/64805.jpg';
+
+        // 性別中文名稱
+        const genderText = pet.gender === 'male' ? '公犬' : '母犬';
+
+        dogCard.innerHTML = `
+            <img src="${imageUrl}" alt="${pet.name}">
+            <div class="dog-info">
+                <h3>${pet.name}</h3>
+                <p class="breed">${pet.breed}</p>
+                <p>${pet.age} | ${genderText}</p>
+                ${pet.color ? `<p class="color">毛色：${pet.color}</p>` : ''}
+                <p class="price">NT$ ${pet.price ? pet.price.toLocaleString() : '面議'}</p>
+                <a href="https://lin.ee/kWyAbbF" target="_blank" class="btn-secondary">
+                    <i class="fab fa-line"></i> 了解更多
+                </a>
+            </div>
+        `;
+
+        grid.appendChild(dogCard);
+    });
+}
+
+// 生成品種篩選按鈕
+function generateBreedFilters(pets) {
+    const breedFilters = document.getElementById('breedFilters');
+    if (!breedFilters) return;
+
+    // 收集所有品種
+    const breeds = [...new Set(pets.map(pet => pet.breed))];
+
+    // 清空現有按鈕（保留"全部品種"按鈕）
+    const allButton = breedFilters.querySelector('[data-breed="all"]');
+    breedFilters.innerHTML = '';
+    if (allButton) {
+        breedFilters.appendChild(allButton);
+    }
+
+    // 添加品種按鈕
+    breeds.forEach(breed => {
+        const button = document.createElement('button');
+        button.className = 'breed-btn';
+        button.dataset.breed = breed;
+        button.textContent = breed;
+        breedFilters.appendChild(button);
+    });
+}
+
+// 初始化品種篩選功能
+function initializeBreedFilters(pets, gridId) {
+    const breedButtons = document.querySelectorAll('.breed-btn');
+
+    breedButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // 移除所有按鈕的 active 類
+            breedButtons.forEach(btn => btn.classList.remove('active'));
+            // 添加 active 類到點擊的按鈕
+            button.classList.add('active');
+
+            const selectedBreed = button.dataset.breed;
+            filterByBreed(selectedBreed, pets, gridId);
+        });
+    });
+}
+
+// 按品種篩選
+function filterByBreed(breed, pets, gridId) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+
+    let filteredPets;
+    if (breed === 'all') {
+        filteredPets = pets;
+    } else {
+        filteredPets = pets.filter(pet => pet.breed === breed);
+    }
+
+    displayDogsByType(filteredPets, gridId);
+
+    // 更新品種按鈕狀態
+    const breedButtons = document.querySelectorAll('.breed-btn');
+    breedButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.breed === breed);
+    });
+}
+
+// 顯示無寵物訊息
+function showNoPetsMessage() {
+    const noPetsMessage = document.getElementById('noPetsMessage');
+    const grid = document.querySelector('.dogs-grid');
+
+    if (grid) grid.style.display = 'none';
+    if (noPetsMessage) noPetsMessage.style.display = 'block';
+}
+
+// 載入導航設定
+async function loadNavigationSettings() {
+    try {
+        const response = await fetch('/api/settings');
+        const settings = await response.json();
+
+        if (settings.navigation) {
+            const navigation = typeof settings.navigation === 'string'
+                ? JSON.parse(settings.navigation)
+                : settings.navigation;
+
+            // 控制寶貝相簿導航的顯示
+            const galleryNavItems = document.querySelectorAll('a[href="gallery.html"], a[href="../gallery.html"]');
+            galleryNavItems.forEach(item => {
+                const listItem = item.closest('li');
+                if (listItem) {
+                    listItem.style.display = navigation.showGallery ? 'block' : 'none';
+                }
+            });
+        } else {
+            // 預設為隱藏
+            const galleryNavItems = document.querySelectorAll('a[href="gallery.html"], a[href="../gallery.html"]');
+            galleryNavItems.forEach(item => {
+                const listItem = item.closest('li');
+                if (listItem) {
+                    listItem.style.display = 'none';
+                }
+            });
+        }
+    } catch (error) {
+        console.error('載入導航設定失敗:', error);
+        // 如果 API 失敗，嘗試從 localStorage 載入
+        try {
+            const localSettings = JSON.parse(localStorage.getItem('siteSettings') || '{}');
+            if (localSettings.navigation) {
+                const navigation = typeof localSettings.navigation === 'string'
+                    ? JSON.parse(localSettings.navigation)
+                    : localSettings.navigation;
+
+                const galleryNavItems = document.querySelectorAll('a[href="gallery.html"], a[href="../gallery.html"]');
+                galleryNavItems.forEach(item => {
+                    const listItem = item.closest('li');
+                    if (listItem) {
+                        listItem.style.display = navigation.showGallery ? 'block' : 'none';
+                    }
+                });
+            } else {
+                // 預設為隱藏
+                const galleryNavItems = document.querySelectorAll('a[href="gallery.html"], a[href="../gallery.html"]');
+                galleryNavItems.forEach(item => {
+                    const listItem = item.closest('li');
+                    if (listItem) {
+                        listItem.style.display = 'none';
+                    }
+                });
+            }
+        } catch (localError) {
+            console.error('載入本地導航設定失敗:', localError);
+        }
+    }
+}
+
+// 監聽來自 admin 的導航設定更新
+window.addEventListener('message', function(event) {
+    if (event.data.type === 'navigationUpdated') {
+        loadNavigationSettings();
+    }
+});
+
+// 初始化下拉菜單行為
+function initializeDropdownMenus() {
+    const dropdowns = document.querySelectorAll('.dropdown');
+
+    dropdowns.forEach(dropdown => {
+        const subDropdowns = dropdown.querySelectorAll('.dropdown .dropdown');
+
+        subDropdowns.forEach(subDropdown => {
+            const breedMenu = subDropdown.querySelector('.breed-menu');
+            if (breedMenu) {
+                let hoverTimeout;
+
+                // 滑鼠進入子菜單項目
+                subDropdown.addEventListener('mouseenter', function() {
+                    clearTimeout(hoverTimeout);
+                    subDropdown.classList.add('show-breed-menu');
+                    breedMenu.style.display = 'block';
+                });
+
+                // 滑鼠離開子菜單項目
+                subDropdown.addEventListener('mouseleave', function(e) {
+                    // 檢查滑鼠是否移動到品種菜單
+                    const rect = breedMenu.getBoundingClientRect();
+                    const mouseX = e.clientX;
+                    const mouseY = e.clientY;
+
+                    if (mouseX >= rect.left && mouseX <= rect.right &&
+                        mouseY >= rect.top && mouseY <= rect.bottom) {
+                        return; // 滑鼠在品種菜單內，不隱藏
+                    }
+
+                    hoverTimeout = setTimeout(() => {
+                        subDropdown.classList.remove('show-breed-menu');
+                        breedMenu.style.display = 'none';
+                    }, 150);
+                });
+
+                // 滑鼠進入品種菜單
+                breedMenu.addEventListener('mouseenter', function() {
+                    clearTimeout(hoverTimeout);
+                    subDropdown.classList.add('show-breed-menu');
+                    breedMenu.style.display = 'block';
+                });
+
+                // 滑鼠離開品種菜單
+                breedMenu.addEventListener('mouseleave', function() {
+                    hoverTimeout = setTimeout(() => {
+                        subDropdown.classList.remove('show-breed-menu');
+                        breedMenu.style.display = 'none';
+                    }, 150);
+                });
+            }
+        });
+
+        // 主下拉菜單的懸停控制
+        const mainDropdownMenu = dropdown.querySelector('.dropdown-menu');
+        if (mainDropdownMenu) {
+            dropdown.addEventListener('mouseleave', function() {
+                // 隱藏所有子菜單
+                const allSubDropdowns = dropdown.querySelectorAll('.dropdown .dropdown');
+                allSubDropdowns.forEach(sub => {
+                    sub.classList.remove('show-breed-menu');
+                    const menu = sub.querySelector('.breed-menu');
+                    if (menu) {
+                        menu.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+}
+
+// 在頁面載入時初始化下拉菜單
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        initializeDropdownMenus();
+    }, 500); // 延遲執行確保所有元素都已載入
+});
+

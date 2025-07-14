@@ -54,6 +54,20 @@ function loadCurrentSettings() {
             document.getElementById('announcementLink').value = announcement.link || '';
         }
     }
+
+    // 載入導航設定
+    if (siteSettings.navigation) {
+        const navigation = typeof siteSettings.navigation === 'string'
+            ? JSON.parse(siteSettings.navigation)
+            : siteSettings.navigation;
+
+        document.getElementById('galleryNavToggle').checked = navigation.showGallery || false;
+        updateGalleryNavStatus();
+    } else {
+        // 預設為關閉
+        document.getElementById('galleryNavToggle').checked = false;
+        updateGalleryNavStatus();
+    }
 }
 
 // 預覽橫幅圖片
@@ -164,6 +178,46 @@ document.getElementById('announcementForm').addEventListener('submit', async fun
         // 如果 API 失敗，使用 localStorage 作為備份
     localStorage.setItem('siteSettings', JSON.stringify(siteSettings));
         alert('公告設定已儲存（本地儲存）！');
+    }
+});
+
+// 更新寶貝相簿導航狀態顯示
+function updateGalleryNavStatus() {
+    const toggle = document.getElementById('galleryNavToggle');
+    const status = document.getElementById('galleryNavStatus');
+    status.textContent = toggle.checked ? '開啟' : '關閉';
+}
+
+// 寶貝相簿導航開關事件
+document.getElementById('galleryNavToggle').addEventListener('change', updateGalleryNavStatus);
+
+// 導航設定表單提交
+document.getElementById('navigationForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const navigationData = {
+        showGallery: document.getElementById('galleryNavToggle').checked,
+        updatedAt: new Date().toISOString()
+    };
+
+    try {
+        await API.updateSetting('navigation', JSON.stringify(navigationData));
+        siteSettings.navigation = navigationData;
+        alert('導航設定已儲存！');
+
+        // 通知前端更新導航
+        if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({
+                type: 'navigationUpdated',
+                data: navigationData
+            }, '*');
+        }
+    } catch (error) {
+        console.error('儲存失敗:', error);
+        // 如果 API 失敗，使用 localStorage 作為備份
+        siteSettings.navigation = navigationData;
+        localStorage.setItem('siteSettings', JSON.stringify(siteSettings));
+        alert('導航設定已儲存（本地儲存）！');
     }
 });
 
