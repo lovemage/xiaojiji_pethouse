@@ -23,7 +23,23 @@ class API {
             const response = await fetch(url, config);
             
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                // 嘗試獲取錯誤訊息
+                let errorMessage = `HTTP error! status: ${response.status}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData.message) {
+                        errorMessage = errorData.message;
+                    }
+                } catch (e) {
+                    // 如果無法解析 JSON，使用預設錯誤訊息
+                }
+                
+                // 特殊處理複製寵物的錯誤
+                if (endpoint.includes('/copy') && response.status === 500) {
+                    errorMessage = '複製功能暫時無法使用，請稍後再試或聯絡系統管理員。';
+                }
+                
+                throw new Error(errorMessage);
             }
             
             return await response.json();
@@ -54,7 +70,11 @@ class API {
 
     static async copyPet(id) {
         return await this.request(`/pets/${id}/copy`, {
-            method: 'POST'
+            method: 'POST',
+            body: JSON.stringify({
+                // 確保複製的寵物不包含任何註記
+                clearNotes: true
+            })
         });
     }
 

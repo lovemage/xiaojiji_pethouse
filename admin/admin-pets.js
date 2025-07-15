@@ -301,15 +301,52 @@ async function loadPets() {
 
 // 複製寵物
 async function copyPet(id) {
+    // 使用 prompt 讓用戶選擇複製數量
+    const input = prompt('請輸入要複製的數量（1-10）：', '1');
+    
+    if (input === null) {
+        // 用戶取消了操作
+        return;
+    }
+    
+    const copyCount = parseInt(input);
+    
+    // 驗證輸入
+    if (isNaN(copyCount) || copyCount < 1 || copyCount > 10) {
+        showNotification('請輸入有效的數量（1-10）', 'error');
+        return;
+    }
+    
     // 顯示確認對話框
-    const confirmMessage = '確定要複製這隻寵物嗎？\n\n複製後的寵物名稱會自動加上 "(複製)" 標識，\n您可以稍後編輯修改名稱和其他資料。';
+    const confirmMessage = `確定要複製 ${copyCount} 隻寵物嗎？\n\n複製後會創建 ${copyCount} 個完全相同的新產品，\n您可以稍後編輯修改資料。`;
 
     if (confirm(confirmMessage)) {
         try {
             // 顯示載入狀態
-            const loadingNotification = showNotification('正在複製寵物...', 'info', false);
+            const loadingNotification = showNotification(`正在複製寵物...`, 'info', false);
+            
+            let successCount = 0;
+            let failCount = 0;
 
-            const result = await API.copyPet(id);
+            // 逐一複製寵物
+            for (let i = 0; i < copyCount; i++) {
+                try {
+                    await API.copyPet(id);
+                    successCount++;
+                } catch (error) {
+                    console.error(`複製第 ${i + 1} 隻寵物失敗:`, error);
+                    failCount++;
+                    
+                    // 如果第一個就失敗，顯示錯誤訊息並停止
+                    if (i === 0) {
+                        if (loadingNotification) {
+                            loadingNotification.remove();
+                        }
+                        showNotification(error.message || '複製功能暫時無法使用，請稍後再試。', 'error');
+                        return;
+                    }
+                }
+            }
 
             // 移除載入通知
             if (loadingNotification) {
@@ -319,8 +356,12 @@ async function copyPet(id) {
             // 重新載入寵物列表
             loadPets();
 
-            // 顯示成功訊息
-            showNotification(result.message || '寵物複製成功！', 'success');
+            // 顯示結果訊息
+            if (failCount === 0) {
+                showNotification(`成功複製 ${successCount} 隻寵物！`, 'success');
+            } else {
+                showNotification(`複製完成！成功 ${successCount} 隻，失敗 ${failCount} 隻`, 'warning');
+            }
 
         } catch (error) {
             console.error('複製寵物失敗:', error);

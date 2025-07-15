@@ -9,6 +9,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // 資料庫連接
+console.log('DATABASE_URL:', process.env.DATABASE_URL);
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
@@ -233,8 +234,10 @@ app.put('/api/pets/:id', upload.array('images', 5), async (req, res) => {
 app.post('/api/pets/:id/copy', async (req, res) => {
   try {
     const { id } = req.params;
+    console.log('複製寵物 ID:', id);
 
     // 先獲取原始寵物資料
+    console.log('執行查詢: SELECT * FROM pets WHERE id = $1', [id]);
     const result = await pool.query('SELECT * FROM pets WHERE id = $1', [id]);
 
     if (result.rows.length === 0) {
@@ -243,15 +246,13 @@ app.post('/api/pets/:id/copy', async (req, res) => {
 
     const originalPet = result.rows[0];
 
-    // 創建複製的寵物資料
-    const copyName = originalPet.name + ' (複製)';
-
+    // 創建複製的寵物資料（保持原名稱）
     const insertResult = await pool.query(`
       INSERT INTO pets (name, breed, age, gender, color, category, price, description, health, images, created_at)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())
       RETURNING *
     `, [
-      copyName,
+      originalPet.name,
       originalPet.breed,
       originalPet.age,
       originalPet.gender,
@@ -263,11 +264,11 @@ app.post('/api/pets/:id/copy', async (req, res) => {
       originalPet.images
     ]);
 
-    console.log('寵物複製成功:', copyName);
+    console.log('寵物複製成功:', originalPet.name);
     res.json({
       success: true,
       pet: insertResult.rows[0],
-      message: `寵物 "${copyName}" 複製成功！`
+      message: `寵物 "${originalPet.name}" 複製成功！`
     });
   } catch (err) {
     console.error('複製寵物錯誤:', err);
