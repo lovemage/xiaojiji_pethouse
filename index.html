@@ -499,9 +499,9 @@
                     loadAnnouncements();
                 }
                 
-                // 載入其他功能
-                if (typeof loadPetsFromStorage === 'function') {
-                    loadPetsFromStorage();
+                // 載入首頁隨機寵物展示
+                if (typeof initializeRandomPetsDisplay === 'function') {
+                    initializeRandomPetsDisplay();
                 }
                 if (typeof loadTestimonials === 'function') {
                     loadTestimonials();

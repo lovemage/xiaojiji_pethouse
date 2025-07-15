@@ -1597,16 +1597,28 @@ function updateIndexGallery(images) {
 // 初始化首頁隨機寵物展示
 async function initializeRandomPetsDisplay() {
     try {
+        console.log('開始載入首頁寵物資料...');
         const response = await fetch('/api/pets');
-        const pets = await response.json();
 
-        if (pets.length > 0) {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const pets = await response.json();
+        console.log('載入的寵物資料:', pets);
+
+        if (pets && pets.length > 0) {
             // 隨機選擇五個寵物
             const randomPets = getRandomPets(pets, 5);
+            console.log('選擇的隨機寵物:', randomPets);
             displayRandomPets(randomPets);
+        } else {
+            console.warn('沒有寵物資料可顯示');
+            showNoPetsMessage();
         }
     } catch (error) {
         console.error('載入寵物資料失敗:', error);
+        showNoPetsMessage();
     }
 }
 
@@ -1710,11 +1722,19 @@ async function initializeSmallDogsPage() {
 // 通用犬型頁面初始化函數
 async function initializeDogTypePage(category, gridId) {
     try {
+        console.log(`開始載入${category}型犬資料...`);
         const response = await fetch('/api/pets');
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const allPets = await response.json();
+        console.log('載入的所有寵物資料:', allPets);
 
         // 篩選指定類型的寵物
         const pets = allPets.filter(pet => pet.category === category);
+        console.log(`篩選的${category}型犬資料:`, pets);
 
         // 顯示寵物
         displayDogsByType(pets, gridId);
@@ -1739,6 +1759,29 @@ async function initializeDogTypePage(category, gridId) {
         console.error('載入寵物資料失敗:', error);
         showNoPetsMessage();
     }
+}
+
+// 顯示沒有寵物資料的訊息
+function showNoPetsMessage() {
+    const randomDogsGrid = document.getElementById('randomDogsGrid');
+    const largeDogsGrid = document.getElementById('largeDogsGrid');
+    const mediumDogsGrid = document.getElementById('mediumDogsGrid');
+    const smallDogsGrid = document.getElementById('smallDogsGrid');
+
+    const grids = [randomDogsGrid, largeDogsGrid, mediumDogsGrid, smallDogsGrid].filter(grid => grid);
+
+    grids.forEach(grid => {
+        grid.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #666;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
+                <h3>暫時沒有寵物資料</h3>
+                <p>請稍後再試，或聯絡我們了解更多資訊</p>
+                <a href="https://lin.ee/kWyAbbF" target="_blank" class="btn-primary">
+                    <i class="fab fa-line"></i> 聯絡我們
+                </a>
+            </div>
+        `;
+    });
 }
 
 // 顯示指定類型的寵物
