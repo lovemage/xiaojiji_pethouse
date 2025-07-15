@@ -247,21 +247,33 @@ app.post('/api/pets/:id/copy', async (req, res) => {
     const originalPet = result.rows[0];
 
     // 創建複製的寵物資料（保持原名稱）
+    // 處理 JSONB 字段
+    let imagesData = originalPet.images;
+    if (typeof imagesData === 'string') {
+      try {
+        imagesData = JSON.parse(imagesData);
+      } catch (e) {
+        console.log('Images 解析錯誤，使用原始值:', imagesData);
+      }
+    }
+
+    // 不複製任何註記，只複製基本資料
     const insertResult = await pool.query(`
-      INSERT INTO pets (name, breed, age, gender, color, category, price, description, health, images, created_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())
+      INSERT INTO pets (name, breed, birthdate, age, gender, color, category, price, description, health, images, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW())
       RETURNING *
     `, [
       originalPet.name,
       originalPet.breed,
+      originalPet.birthdate || null,  // 包含 birthdate 欄位
       originalPet.age,
       originalPet.gender,
       originalPet.color,
       originalPet.category,
       originalPet.price,
-      originalPet.description,
+      '', // 清空描述，確保沒有任何註記
       originalPet.health,
-      originalPet.images
+      JSON.stringify(imagesData) // 確保是 JSON 字符串
     ]);
 
     console.log('寵物複製成功:', originalPet.name);
@@ -272,7 +284,21 @@ app.post('/api/pets/:id/copy', async (req, res) => {
     });
   } catch (err) {
     console.error('複製寵物錯誤:', err);
-    res.status(500).json({ error: '複製寵物失敗' });
+    console.error('錯誤詳情:', err.message);
+    console.error('錯誤堆疊:', err.stack);
+    
+    // 提供更詳細的錯誤訊息
+    let errorMessage = '複製寵物失敗';
+    if (err.code === '42703') {
+      errorMessage = '資料庫欄位錯誤，請聯絡系統管理員';
+    } else if (err.code === '23505') {
+      errorMessage = '複製失敗：資料重複';
+    }
+    
+    res.status(500).json({ 
+      error: errorMessage,
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 });
 
