@@ -198,8 +198,8 @@
             <form id="addImageForm">
                 <div class="form-group">
                     <label for="imageFile">選擇圖片</label>
-                    <input type="file" id="imageFile" accept="image/*" required>
-                    <small style="color: #666;">支援圖片格式，檔案大小不超過2MB</small>
+                    <input type="file" id="imageFile" accept="image/png,.png" required>
+                    <small style="color: #666;">僅支援 PNG 格式，檔案大小不超過2MB</small>
                     <div class="image-preview" id="imagePreview"></div>
                 </div>
                 <div class="form-group">
@@ -243,9 +243,9 @@
                 </div>
                 <div class="form-group">
                     <label for="editImageFile">更換圖片（選填）</label>
-                    <input type="file" id="editImageFile" accept="image/*">
+                    <input type="file" id="editImageFile" accept="image/png,.png">
                     <div class="image-preview" id="editImagePreview"></div>
-                    <small class="form-help">不選擇檔案則保持原圖片，檔案大小不超過2MB</small>
+                    <small class="form-help">不選擇檔案則保持原圖片，僅支援 PNG 格式，檔案大小不超過2MB</small>
                 </div>
                 <div class="form-group">
                     <label for="editImageTitle">圖片標題</label>
