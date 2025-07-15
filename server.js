@@ -480,6 +480,58 @@ app.post('/api/settings', async (req, res) => {
   }
 });
 
+// 強制重置顯示設定的 API 端點（用於修復生產端問題）
+app.post('/api/reset-display-settings', async (req, res) => {
+  try {
+    console.log('開始重置顯示設定...');
+
+    // 刪除現有的顯示設定
+    await pool.query(`
+      DELETE FROM site_settings
+      WHERE setting_key IN (
+        'show_name', 'show_breed', 'show_description', 'show_age',
+        'show_gender', 'show_price', 'show_health', 'show_color'
+      )
+    `);
+
+    // 插入正確的預設設定
+    await pool.query(`
+      INSERT INTO site_settings (setting_key, setting_value) VALUES
+      ('show_name', 'false'),
+      ('show_breed', 'true'),
+      ('show_description', 'false'),
+      ('show_age', 'false'),
+      ('show_gender', 'false'),
+      ('show_price', 'false'),
+      ('show_health', 'false'),
+      ('show_color', 'true')
+    `);
+
+    console.log('顯示設定重置完成');
+    res.json({
+      success: true,
+      message: '顯示設定已重置為預設值（品種和毛色開啟）'
+    });
+  } catch (error) {
+    console.error('重置顯示設定失敗:', error);
+
+    // 數據庫連接失敗時更新模擬數據
+    mockSettings.show_name = false;
+    mockSettings.show_breed = true;
+    mockSettings.show_description = false;
+    mockSettings.show_age = false;
+    mockSettings.show_gender = false;
+    mockSettings.show_price = false;
+    mockSettings.show_health = false;
+    mockSettings.show_color = true;
+
+    res.json({
+      success: true,
+      message: '顯示設定已重置為預設值（使用模擬數據）'
+    });
+  }
+});
+
 // 相簿相關 API
 app.get('/api/gallery', async (req, res) => {
   try {
