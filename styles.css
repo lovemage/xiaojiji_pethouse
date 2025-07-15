@@ -2978,3 +2978,102 @@ button {
         gap: 6px;
     }
 }
+
+/* 分頁導航樣式 */
+.pagination-container {
+    margin-top: 40px;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.pagination {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.pagination-btn {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    background: white;
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(70, 130, 180, 0.3);
+}
+
+.pagination-btn.active {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-dots {
+    padding: 0 8px;
+    color: #999;
+    font-weight: 500;
+}
+
+.pagination-info {
+    font-size: 14px;
+    color: #666;
+    margin-top: 10px;
+}
+
+/* 手機版分頁樣式 */
+@media (max-width: 768px) {
+    .pagination-container {
+        margin-top: 30px;
+        padding: 15px 0;
+    }
+
+    .pagination {
+        gap: 4px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pagination-btn {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 10px;
+        font-size: 13px;
+    }
+
+    .pagination-info {
+        font-size: 13px;
+        margin-top: 8px;
+    }
+
+    /* 手機版隱藏部分頁碼按鈕 */
+    .pagination-btn:not(.active):not(:first-child):not(:last-child):nth-child(n+5):nth-last-child(n+5) {
+        display: none;
+    }
+
+    /* 手機版調整dogs-grid為2x2 */
+    .dogs-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+}

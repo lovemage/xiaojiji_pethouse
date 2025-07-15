@@ -1908,12 +1908,35 @@ function showNoPetsMessage() {
     });
 }
 
-// 顯示指定類型的寵物
-async function displayDogsByType(pets, gridId) {
+// 分頁相關變數
+let currentPage = 1;
+let itemsPerPage = 16; // 預設桌面版
+let totalPages = 1;
+let allPetsData = []; // 儲存所有寵物資料
+
+// 檢測是否為手機版
+function isMobile() {
+    return window.innerWidth <= 768;
+}
+
+// 更新每頁顯示數量
+function updateItemsPerPage() {
+    itemsPerPage = isMobile() ? 4 : 16;
+}
+
+// 顯示指定類型的寵物（帶分頁）
+async function displayDogsByType(pets, gridId, page = 1) {
     const grid = document.getElementById(gridId);
     const noPetsMessage = document.getElementById('noPetsMessage');
 
     if (!grid) return;
+
+    // 更新每頁顯示數量
+    updateItemsPerPage();
+
+    // 儲存所有寵物資料
+    allPetsData = pets;
+    currentPage = page;
 
     // 確保載入最新的顯示設定
     const currentSettings = await loadFrontendDisplaySettings();
@@ -1927,9 +1950,19 @@ async function displayDogsByType(pets, gridId) {
     grid.style.display = 'grid';
     if (noPetsMessage) noPetsMessage.style.display = 'none';
 
+    // 計算總頁數
+    totalPages = Math.ceil(pets.length / itemsPerPage);
+
+    // 計算當前頁的起始和結束索引
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, pets.length);
+
+    // 獲取當前頁的寵物
+    const petsToDisplay = pets.slice(startIndex, endIndex);
+
     grid.innerHTML = '';
 
-    pets.forEach(pet => {
+    petsToDisplay.forEach(pet => {
         const dogCard = document.createElement('div');
         dogCard.className = 'dog-card';
         dogCard.dataset.breed = pet.breed;
@@ -1954,6 +1987,126 @@ async function displayDogsByType(pets, gridId) {
 
         grid.appendChild(dogCard);
     });
+
+    // 生成分頁導航
+    generatePagination(gridId);
+}
+
+// 生成分頁導航
+function generatePagination(gridId) {
+    // 如果總頁數小於等於1，不顯示分頁
+    if (totalPages <= 1) return;
+
+    // 查找或創建分頁容器
+    let paginationContainer = document.querySelector('.pagination-container');
+    if (!paginationContainer) {
+        paginationContainer = document.createElement('div');
+        paginationContainer.className = 'pagination-container';
+        const grid = document.getElementById(gridId);
+        grid.parentNode.insertBefore(paginationContainer, grid.nextSibling);
+    }
+
+    paginationContainer.innerHTML = '';
+
+    // 創建分頁導航
+    const pagination = document.createElement('div');
+    pagination.className = 'pagination';
+
+    // 上一頁按鈕
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'pagination-btn';
+    prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => {
+        if (currentPage > 1) {
+            displayDogsByType(allPetsData, gridId, currentPage - 1);
+            scrollToTop();
+        }
+    };
+    pagination.appendChild(prevBtn);
+
+    // 頁碼按鈕
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, currentPage + 2);
+
+    // 調整顯示範圍
+    if (currentPage <= 3) {
+        endPage = Math.min(5, totalPages);
+    }
+    if (currentPage >= totalPages - 2) {
+        startPage = Math.max(1, totalPages - 4);
+    }
+
+    // 第一頁
+    if (startPage > 1) {
+        const firstBtn = createPageButton(1, gridId);
+        pagination.appendChild(firstBtn);
+        if (startPage > 2) {
+            const dots = document.createElement('span');
+            dots.className = 'pagination-dots';
+            dots.textContent = '...';
+            pagination.appendChild(dots);
+        }
+    }
+
+    // 中間頁碼
+    for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = createPageButton(i, gridId);
+        pagination.appendChild(pageBtn);
+    }
+
+    // 最後一頁
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            const dots = document.createElement('span');
+            dots.className = 'pagination-dots';
+            dots.textContent = '...';
+            pagination.appendChild(dots);
+        }
+        const lastBtn = createPageButton(totalPages, gridId);
+        pagination.appendChild(lastBtn);
+    }
+
+    // 下一頁按鈕
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'pagination-btn';
+    nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => {
+        if (currentPage < totalPages) {
+            displayDogsByType(allPetsData, gridId, currentPage + 1);
+            scrollToTop();
+        }
+    };
+    pagination.appendChild(nextBtn);
+
+    // 頁面資訊
+    const pageInfo = document.createElement('div');
+    pageInfo.className = 'pagination-info';
+    pageInfo.textContent = `第 ${currentPage} 頁，共 ${totalPages} 頁`;
+
+    paginationContainer.appendChild(pagination);
+    paginationContainer.appendChild(pageInfo);
+}
+
+// 創建頁碼按鈕
+function createPageButton(pageNum, gridId) {
+    const btn = document.createElement('button');
+    btn.className = 'pagination-btn' + (pageNum === currentPage ? ' active' : '');
+    btn.textContent = pageNum;
+    btn.onclick = () => {
+        displayDogsByType(allPetsData, gridId, pageNum);
+        scrollToTop();
+    };
+    return btn;
+}
+
+// 滾動到頁面頂部
+function scrollToTop() {
+    const dogsSection = document.querySelector('.dogs-section');
+    if (dogsSection) {
+        dogsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 // 生成品種篩選按鈕
@@ -2010,7 +2163,8 @@ async function filterByBreed(breed, pets, gridId) {
         filteredPets = pets.filter(pet => pet.breed === breed);
     }
 
-    await displayDogsByType(filteredPets, gridId);
+    // 重置到第一頁
+    await displayDogsByType(filteredPets, gridId, 1);
 
     // 更新品種按鈕狀態
     const breedButtons = document.querySelectorAll('.breed-btn');
@@ -2175,6 +2329,33 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeDropdownMenus();
         loadBreedSubmenus(); // 載入品種子菜單
     }, 500); // 延遲執行確保所有元素都已載入
+});
+
+// 監聽視窗大小變化
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        const oldItemsPerPage = itemsPerPage;
+        updateItemsPerPage();
+        
+        // 如果每頁顯示數量改變了，重新顯示當前頁
+        if (oldItemsPerPage !== itemsPerPage && allPetsData.length > 0) {
+            // 計算新的當前頁
+            const currentIndex = (currentPage - 1) * oldItemsPerPage;
+            const newPage = Math.floor(currentIndex / itemsPerPage) + 1;
+            
+            // 找到當前顯示的網格
+            const grids = ['largeDogsGrid', 'mediumDogsGrid', 'smallDogsGrid'];
+            for (const gridId of grids) {
+                const grid = document.getElementById(gridId);
+                if (grid && grid.children.length > 0) {
+                    displayDogsByType(allPetsData, gridId, newPage);
+                    break;
+                }
+            }
+        }
+    }, 250);
 });
 
 // 載入品種到子菜單
