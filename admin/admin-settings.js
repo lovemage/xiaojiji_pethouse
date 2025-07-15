@@ -188,6 +188,15 @@ function updateGalleryNavStatus() {
     status.textContent = toggle.checked ? '開啟' : '關閉';
 }
 
+// 更新顯示設定狀態
+function updateDisplayStatus(settingName) {
+    const toggle = document.getElementById(settingName);
+    const status = document.getElementById(settingName + 'Status');
+    if (toggle && status) {
+        status.textContent = toggle.checked ? '開啟' : '關閉';
+    }
+}
+
 // 寶貝相簿導航開關事件
 document.getElementById('galleryNavToggle').addEventListener('change', updateGalleryNavStatus);
 
@@ -221,7 +230,71 @@ document.getElementById('navigationForm').addEventListener('submit', async funct
     }
 });
 
+// 載入顯示設定
+async function loadDisplaySettings() {
+    try {
+        const settings = await API.getSettings();
+
+        // 設定各個開關的狀態
+        const displaySettings = [
+            'showName', 'showBreed', 'showAge', 'showGender',
+            'showPrice', 'showColor', 'showDescription', 'showHealth'
+        ];
+
+        displaySettings.forEach(setting => {
+            const toggle = document.getElementById(setting);
+            const serverKey = setting.replace('show', 'show_').toLowerCase();
+
+            if (toggle && settings[serverKey] !== undefined) {
+                toggle.checked = settings[serverKey];
+                updateDisplayStatus(setting);
+            }
+        });
+
+    } catch (error) {
+        console.error('載入顯示設定失敗:', error);
+    }
+}
+
+// 前台卡片顯示設定表單提交
+document.getElementById('cardDisplayForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const displayData = {
+        show_name: document.getElementById('showName').checked,
+        show_breed: document.getElementById('showBreed').checked,
+        show_age: document.getElementById('showAge').checked,
+        show_gender: document.getElementById('showGender').checked,
+        show_price: document.getElementById('showPrice').checked,
+        show_color: document.getElementById('showColor').checked,
+        show_description: document.getElementById('showDescription').checked,
+        show_health: document.getElementById('showHealth').checked
+    };
+
+    try {
+        // 更新每個設定項目
+        for (const [key, value] of Object.entries(displayData)) {
+            await API.updateSetting(key, value);
+        }
+
+        alert('顯示設定已儲存！');
+
+        // 通知前端更新顯示
+        if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({
+                type: 'displaySettingsUpdated',
+                data: displayData
+            }, '*');
+        }
+
+    } catch (error) {
+        console.error('儲存顯示設定失敗:', error);
+        alert('儲存失敗，請稍後再試');
+    }
+});
+
 // 頁面載入時載入設定
 document.addEventListener('DOMContentLoaded', function() {
     loadSettings();
+    loadDisplaySettings();
 });

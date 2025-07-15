@@ -6,6 +6,7 @@
     <title>大型犬 - 小基基寵物犬舍</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="icon" type="image/png" href="images/logo.png">
 </head>
 <body>
@@ -44,9 +45,42 @@
             </button>
             <ul class="nav-menu">
                 <li><a href="index.html">首頁</a></li>
-                <li><a href="large-dogs.html" class="active">大型犬</a></li>
-                <li><a href="medium-dogs.html">中型犬</a></li>
-                <li><a href="small-dogs.html">小型犬</a></li>
+                <li class="nav-dropdown">
+                    <a href="#" class="dropdown-toggle active">
+                        <i class="material-icons">pets</i>
+                        <span>幼犬出售區</span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-submenu">
+                            <a href="large-dogs.html" class="active">
+                                大型犬
+                                <i class="fas fa-chevron-right submenu-arrow"></i>
+                            </a>
+                            <ul class="submenu-items" id="largeDogBreeds">
+                                <!-- 大型犬品種將由 JavaScript 動態生成 -->
+                            </ul>
+                        </li>
+                        <li class="dropdown-submenu">
+                            <a href="medium-dogs.html">
+                                中型犬
+                                <i class="fas fa-chevron-right submenu-arrow"></i>
+                            </a>
+                            <ul class="submenu-items" id="mediumDogBreeds">
+                                <!-- 中型犬品種將由 JavaScript 動態生成 -->
+                            </ul>
+                        </li>
+                        <li class="dropdown-submenu">
+                            <a href="small-dogs.html">
+                                小型犬
+                                <i class="fas fa-chevron-right submenu-arrow"></i>
+                            </a>
+                            <ul class="submenu-items" id="smallDogBreeds">
+                                <!-- 小型犬品種將由 JavaScript 動態生成 -->
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
                 <li><a href="gallery.html">寶貝相簿</a></li>
                 <li><a href="pet-health.html">健康手冊</a></li>
                 <li><a href="adoption-guide.html">照顧手冊</a></li>
@@ -141,7 +175,8 @@
     </footer>
 
     <!-- JavaScript -->
-    <script src="script.js"></script>
+    <script src="js/api.js?v=2"></script>
+    <script src="script.js?v=2"></script>
     <script>
         // 頁面載入時初始化大型犬頁面
         document.addEventListener('DOMContentLoaded', function() {

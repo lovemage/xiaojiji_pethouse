@@ -320,7 +320,8 @@ app.get('/api/testimonials', async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error('獲取評價資料錯誤:', err);
-    res.status(500).json({ error: '伺服器錯誤' });
+    // 數據庫連接失敗時返回模擬數據
+    res.json(mockTestimonials);
   }
 });
 
@@ -382,16 +383,60 @@ const mockSettings = {
   license_number: '特寵業字第A12345號',
   tax_id: '12345678',
   show_gallery_nav: true,
-  // 寵物卡片顯示設定
-  show_name: true,
+  // 寵物卡片顯示設定 - 預設只顯示品種和毛色
+  show_name: false,
   show_breed: true,
-  show_description: true,
+  show_description: false,
   show_age: false,
   show_gender: false,
   show_price: false,
   show_health: false,
-  show_color: false
+  show_color: true
 };
+
+// 模擬客戶評價數據
+const mockTestimonials = [
+  {
+    id: 1,
+    name: '王小明',
+    pet_type: '黃金獵犬',
+    rating: 5,
+    text: '非常滿意！小狗很健康，老闆很專業，會持續關心小狗的狀況。',
+    avatar: null,
+    created_at: '2024-01-15T10:30:00Z'
+  },
+  {
+    id: 2,
+    name: '李美華',
+    pet_type: '柴犬',
+    rating: 5,
+    text: '服務很好，小狗很可愛，已經養了半年了，很健康活潑！',
+    avatar: null,
+    created_at: '2024-01-10T14:20:00Z'
+  },
+  {
+    id: 3,
+    name: '張大偉',
+    pet_type: '貴賓犬',
+    rating: 4,
+    text: '品質不錯，價格合理，推薦給想養寵物的朋友。',
+    avatar: null,
+    created_at: '2024-01-05T16:45:00Z'
+  }
+];
+
+// 模擬公告數據
+const mockAnnouncements = [
+  {
+    id: 1,
+    title: '新年優惠活動',
+    content: '農曆新年期間，所有幼犬享有9折優惠！',
+    type: 'promotion',
+    is_active: true,
+    link: null,
+    created_at: '2024-01-01T00:00:00Z'
+  }
+];
 
 app.get('/api/settings', async (req, res) => {
   try {
@@ -409,22 +454,29 @@ app.get('/api/settings', async (req, res) => {
 });
 
 app.post('/api/settings', async (req, res) => {
+  const { key, value } = req.body;
+
   try {
-    const { key, value } = req.body;
-    
     const result = await pool.query(
-      `INSERT INTO site_settings (setting_key, setting_value) 
-       VALUES ($1, $2) 
-       ON CONFLICT (setting_key) 
-       DO UPDATE SET setting_value = $2, updated_at = CURRENT_TIMESTAMP 
+      `INSERT INTO site_settings (setting_key, setting_value)
+       VALUES ($1, $2)
+       ON CONFLICT (setting_key)
+       DO UPDATE SET setting_value = $2, updated_at = CURRENT_TIMESTAMP
        RETURNING *`,
       [key, value]
     );
-    
+
     res.json(result.rows[0]);
   } catch (err) {
     console.error('更新設定錯誤:', err);
-    res.status(500).json({ error: '伺服器錯誤' });
+
+    // 數據庫連接失敗時更新模擬數據
+    if (mockSettings.hasOwnProperty(key)) {
+      mockSettings[key] = value;
+      res.json({ setting_key: key, setting_value: value });
+    } else {
+      res.status(500).json({ error: '設定項目不存在' });
+    }
   }
 });
 
@@ -537,22 +589,28 @@ app.delete('/api/gallery/:id', async (req, res) => {
 
 // 公告相關 API
 app.get('/api/announcements', async (req, res) => {
+  const { active } = req.query;
+
   try {
-    const { active } = req.query;
     let query = 'SELECT * FROM announcements';
     let params = [];
-    
+
     if (active === 'true') {
       query += ' WHERE is_active = true AND (start_date IS NULL OR start_date <= CURRENT_DATE) AND (end_date IS NULL OR end_date >= CURRENT_DATE)';
     }
-    
+
     query += ' ORDER BY created_at DESC';
-    
+
     const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (err) {
     console.error('獲取公告資料錯誤:', err);
-    res.status(500).json({ error: '伺服器錯誤' });
+    // 數據庫連接失敗時返回模擬數據
+    let announcements = [...mockAnnouncements];
+    if (active === 'true') {
+      announcements = announcements.filter(a => a.is_active);
+    }
+    res.json(announcements);
   }
 });
 

@@ -172,6 +172,133 @@ body {
     border-radius: 2px;
 }
 
+/* 下拉菜單樣式 */
+.nav-dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.dropdown-toggle .material-icons {
+    font-size: 20px;
+}
+
+.dropdown-arrow {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+
+.nav-dropdown:hover .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* 主下拉菜單 */
+.nav-dropdown .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    min-width: 200px;
+    padding: 8px 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1100;
+}
+
+.nav-dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-menu li {
+    list-style: none;
+    margin: 0;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px 20px;
+    color: var(--text-color) !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu a:hover {
+    background: rgba(139, 69, 19, 0.1);
+    color: var(--accent-color) !important;
+}
+
+/* 子菜單樣式 */
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu > a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.submenu-arrow {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-submenu:hover .submenu-arrow {
+    transform: translateX(5px);
+}
+
+.submenu-items {
+    position: absolute;
+    left: 100%;
+    top: -8px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    min-width: 180px;
+    padding: 8px 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+    list-style: none;
+    margin: 0;
+}
+
+.dropdown-submenu:hover .submenu-items {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.submenu-items li {
+    margin: 0;
+}
+
+.submenu-items a {
+    display: block;
+    padding: 8px 20px;
+    color: var(--text-color) !important;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.submenu-items a:hover {
+    background: rgba(139, 69, 19, 0.1);
+    color: var(--accent-color) !important;
+}
+
 .breed-menu li {
     padding: 8px 12px;
     border-bottom: 1px solid rgba(173, 216, 230, 0.2);
@@ -1442,9 +1569,9 @@ button {
     background-color: white;
     padding: 30px;
     border-radius: 15px;
-    max-width: 500px;
+    max-width: 600px;
     width: 90%;
-    max-height: 80vh;
+    max-height: 85vh;
     overflow-y: auto;
     position: relative;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -2149,6 +2276,95 @@ button {
         display: none;
     }
     
+    /* 移動端下拉菜單樣式 */
+    .nav-dropdown .dropdown-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        box-shadow: none;
+        background: transparent;
+        border: none;
+        padding: 0;
+        margin-left: 20px;
+        display: none;
+    }
+    
+    .nav-dropdown.active .dropdown-menu {
+        display: block;
+    }
+    
+    .nav-dropdown .dropdown-menu li {
+        background: rgba(255, 255, 255, 0.05);
+        margin: 5px 0;
+        border-radius: 8px;
+    }
+    
+    .nav-dropdown .dropdown-menu a {
+        color: white !important;
+        padding: 12px 20px;
+    }
+    
+    .nav-dropdown .dropdown-menu a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white !important;
+    }
+    
+    .dropdown-toggle {
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+    .dropdown-toggle .dropdown-arrow {
+        transition: transform 0.3s ease;
+    }
+    
+    .nav-dropdown.active .dropdown-arrow {
+        transform: rotate(180deg);
+    }
+    
+    .dropdown-submenu .submenu-items {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        box-shadow: none;
+        background: transparent;
+        border: none;
+        padding: 0;
+        margin-left: 20px;
+        display: none;
+    }
+    
+    .dropdown-submenu.active .submenu-items {
+        display: block;
+    }
+    
+    .dropdown-submenu .submenu-items li {
+        background: rgba(255, 255, 255, 0.03);
+        margin: 3px 0;
+        border-radius: 6px;
+    }
+    
+    .dropdown-submenu .submenu-items a {
+        color: rgba(255, 255, 255, 0.9) !important;
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    
+    .dropdown-submenu .submenu-items a:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: white !important;
+    }
+    
+    .dropdown-submenu .submenu-arrow {
+        transition: transform 0.3s ease;
+    }
+    
+    .dropdown-submenu.active .submenu-arrow {
+        transform: rotate(90deg);
+    }
+    
 
     
     .nav-menu.active {
@@ -2503,4 +2719,79 @@ button {
         max-width: 85%;
         width: auto;
     }
+}
+
+/* 寵物詳情彈窗新增樣式 */
+.pet-basic-info {
+    background: rgba(173, 216, 230, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--accent-color);
+}
+
+.service-highlights, .service-guarantee {
+    margin: 20px 0;
+}
+
+.service-highlights h3, .service-guarantee h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.service-highlights ul, .service-guarantee ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.service-highlights li, .service-guarantee li {
+    padding: 8px 0;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.5;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.service-highlights li:last-child, .service-guarantee li:last-child {
+    border-bottom: none;
+}
+
+.license-info {
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.1), rgba(173, 216, 230, 0.1));
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin: 20px 0;
+    border: 2px solid rgba(139, 69, 19, 0.2);
+}
+
+.license-info p {
+    margin: 0;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.contact-info {
+    background: rgba(0, 185, 0, 0.05);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #00B900;
+}
+
+.contact-info h3 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.contact-info p {
+    margin: 8px 0;
+    color: #555;
+    font-size: 14px;
 }
