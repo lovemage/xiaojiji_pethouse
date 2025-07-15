@@ -412,6 +412,12 @@ async function loadFrontendDisplaySettings() {
 
 // 生成寵物卡片HTML
 function generatePetCardHTML(pet, imageUrl, settings) {
+    // 調試信息 - 生產環境問題排查
+    console.log('=== 生成寵物卡片 ===');
+    console.log('寵物資料:', pet);
+    console.log('顯示設定:', settings);
+    console.log('品種顯示:', settings.showBreed, '毛色顯示:', settings.showColor);
+
     let cardContent = `<img src="${imageUrl}" alt="寵物照片">`;
     cardContent += `<div class="dog-info">`;
     
@@ -422,23 +428,31 @@ function generatePetCardHTML(pet, imageUrl, settings) {
     
     // 品種
     if (settings.showBreed) {
+        console.log('添加品種:', pet.breed);
         cardContent += `<p class="breed">${pet.breed}</p>`;
+    } else {
+        console.log('品種被隱藏');
     }
-    
+
     // 年齡
     if (settings.showAge && pet.age) {
+        console.log('添加年齡:', pet.age);
         cardContent += `<p class="age">年齡：${pet.age}</p>`;
     }
-    
+
     // 性別
     if (settings.showGender) {
         const genderText = pet.gender === 'male' ? '公犬' : '母犬';
+        console.log('添加性別:', genderText);
         cardContent += `<p class="gender">性別：${genderText}</p>`;
     }
-    
+
     // 毛色
     if (settings.showColor && pet.color) {
+        console.log('添加毛色:', pet.color);
         cardContent += `<p class="color">毛色：${pet.color}</p>`;
+    } else {
+        console.log('毛色被隱藏或無毛色資料:', settings.showColor, pet.color);
     }
     
     // 價格
