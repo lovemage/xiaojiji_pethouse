@@ -257,7 +257,7 @@ app.post('/api/pets/:id/copy', async (req, res) => {
       }
     }
 
-    // 不複製任何註記，只複製基本資料
+    // 複製所有資料，包括描述
     const insertResult = await pool.query(`
       INSERT INTO pets (name, breed, birthdate, age, gender, color, category, price, description, health, images, created_at)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW())
@@ -271,7 +271,7 @@ app.post('/api/pets/:id/copy', async (req, res) => {
       originalPet.color,
       originalPet.category,
       originalPet.price,
-      '', // 清空描述，確保沒有任何註記
+      originalPet.description || '',  // 複製原始描述
       originalPet.health,
       JSON.stringify(imagesData) // 確保是 JSON 字符串
     ]);
