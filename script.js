@@ -388,6 +388,7 @@ async function loadFrontendDisplaySettings() {
             showColor: settings.show_color === true
         };
 
+
         return displaySettings;
     } catch (error) {
         console.error('從 API 載入顯示設定失敗，使用預設設定:', error);
@@ -411,7 +412,7 @@ async function loadFrontendDisplaySettings() {
 
 // 生成寵物卡片HTML
 function generatePetCardHTML(pet, imageUrl, settings) {
-    let cardContent = `<img src="${imageUrl}" alt="${pet.name}">`;
+    let cardContent = `<img src="${imageUrl}" alt="寵物照片">`;
     cardContent += `<div class="dog-info">`;
     
     // 寵物名稱
@@ -1636,8 +1637,8 @@ async function displayRandomPets(pets) {
     randomDogsGrid.innerHTML = '';
 
     // 載入最新的顯示設定
-    await loadFrontendDisplaySettings();
-    console.log('首頁顯示設定:', displaySettings);
+    const currentSettings = await loadFrontendDisplaySettings();
+    console.log('首頁顯示設定:', currentSettings);
 
     // 創建寵物卡片的函數
     function createPetCard(pet) {
@@ -1660,7 +1661,7 @@ async function displayRandomPets(pets) {
         const imageUrl = images.length > 0 ? images[0] : 'images/64805.jpg';
 
         // 根據設定生成卡片內容
-        dogCard.innerHTML = generatePetCardHTML(pet, imageUrl, displaySettings);
+        dogCard.innerHTML = generatePetCardHTML(pet, imageUrl, currentSettings);
 
         return dogCard;
     }
@@ -1737,7 +1738,7 @@ async function initializeDogTypePage(category, gridId) {
         console.log(`篩選的${category}型犬資料:`, pets);
 
         // 顯示寵物
-        displayDogsByType(pets, gridId);
+        await displayDogsByType(pets, gridId);
 
         // 生成品種篩選按鈕
         generateBreedFilters(pets);
@@ -1752,7 +1753,7 @@ async function initializeDogTypePage(category, gridId) {
         const urlParams = new URLSearchParams(window.location.search);
         const selectedBreed = urlParams.get('breed');
         if (selectedBreed) {
-            filterByBreed(selectedBreed, pets, gridId);
+            await filterByBreed(selectedBreed, pets, gridId);
         }
 
     } catch (error) {
@@ -1785,14 +1786,14 @@ function showNoPetsMessage() {
 }
 
 // 顯示指定類型的寵物
-function displayDogsByType(pets, gridId) {
+async function displayDogsByType(pets, gridId) {
     const grid = document.getElementById(gridId);
     const noPetsMessage = document.getElementById('noPetsMessage');
 
     if (!grid) return;
 
     // 確保載入最新的顯示設定
-    loadFrontendDisplaySettings();
+    const currentSettings = await loadFrontendDisplaySettings();
 
     if (pets.length === 0) {
         grid.style.display = 'none';
@@ -1826,7 +1827,7 @@ function displayDogsByType(pets, gridId) {
         const imageUrl = images.length > 0 ? images[0] : 'images/64805.jpg';
 
         // 使用 generatePetCardHTML 函數生成卡片內容
-        dogCard.innerHTML = generatePetCardHTML(pet, imageUrl, displaySettings);
+        dogCard.innerHTML = generatePetCardHTML(pet, imageUrl, currentSettings);
 
         grid.appendChild(dogCard);
     });
@@ -1862,20 +1863,20 @@ function initializeBreedFilters(pets, gridId) {
     const breedButtons = document.querySelectorAll('.breed-btn');
 
     breedButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
             // 移除所有按鈕的 active 類
             breedButtons.forEach(btn => btn.classList.remove('active'));
             // 添加 active 類到點擊的按鈕
             button.classList.add('active');
 
             const selectedBreed = button.dataset.breed;
-            filterByBreed(selectedBreed, pets, gridId);
+            await filterByBreed(selectedBreed, pets, gridId);
         });
     });
 }
 
 // 按品種篩選
-function filterByBreed(breed, pets, gridId) {
+async function filterByBreed(breed, pets, gridId) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
 
@@ -1886,7 +1887,7 @@ function filterByBreed(breed, pets, gridId) {
         filteredPets = pets.filter(pet => pet.breed === breed);
     }
 
-    displayDogsByType(filteredPets, gridId);
+    await displayDogsByType(filteredPets, gridId);
 
     // 更新品種按鈕狀態
     const breedButtons = document.querySelectorAll('.breed-btn');
