@@ -154,7 +154,7 @@ window.addEventListener('message', function(event) {
             showAge: settings.show_age === true,
             showGender: settings.show_gender === true,
             showPrice: settings.show_price === true,
-            showColor: settings.show_color !== false,
+            showColor: settings.show_color === true,
             showDescription: settings.show_description === true,
             showHealth: settings.show_health === true
         };
@@ -1847,6 +1847,10 @@ async function initializeSmallDogsPage() {
 async function initializeDogTypePage(category, gridId) {
     try {
         console.log(`開始載入${category}型犬資料...`);
+        
+        // 先載入顯示設定
+        await loadFrontendDisplaySettings();
+        
         const response = await fetch('/api/pets');
 
         if (!response.ok) {
@@ -1938,8 +1942,8 @@ async function displayDogsByType(pets, gridId, page = 1) {
     allPetsData = pets;
     currentPage = page;
 
-    // 確保載入最新的顯示設定
-    const currentSettings = await loadFrontendDisplaySettings();
+    // 確保載入最新的顯示設定並更新全局變量
+    await loadFrontendDisplaySettings();
 
     if (pets.length === 0) {
         grid.style.display = 'none';
@@ -1982,8 +1986,8 @@ async function displayDogsByType(pets, gridId, page = 1) {
         }
         const imageUrl = images.length > 0 ? images[0] : 'images/64805.jpg';
 
-        // 使用 generatePetCardHTML 函數生成卡片內容
-        dogCard.innerHTML = generatePetCardHTML(pet, imageUrl, currentSettings);
+        // 使用 generatePetCardHTML 函數生成卡片內容，使用全局 displaySettings
+        dogCard.innerHTML = generatePetCardHTML(pet, imageUrl, displaySettings);
 
         grid.appendChild(dogCard);
     });

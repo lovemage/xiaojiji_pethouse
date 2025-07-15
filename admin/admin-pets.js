@@ -829,8 +829,8 @@ function updateFrontendDisplay() {
     try {
         if (window.opener && !window.opener.closed) {
             window.opener.postMessage({
-                type: 'updateDisplaySettings',
-                settings: displaySettings
+                type: 'displaySettingsUpdated',
+                data: displaySettings
             }, '*');
         }
     } catch (e) {
