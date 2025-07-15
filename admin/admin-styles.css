@@ -166,6 +166,7 @@
 }
 
 .btn-edit,
+.btn-copy,
 .btn-delete {
     padding: 6px 15px;
     border-radius: 20px;
@@ -174,12 +175,21 @@
     transition: all 0.3s;
     position: relative;
     overflow: hidden;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    cursor: pointer;
 }
 
 .btn-edit {
     background-color: var(--accent-color);
     color: var(--primary-color);
+}
+
+.btn-copy {
+    background-color: #28a745;
+    color: white;
 }
 
 .btn-delete {
@@ -188,6 +198,7 @@
 }
 
 .btn-edit::after,
+.btn-copy::after,
 .btn-delete::after {
     content: '';
     position: absolute;
@@ -204,20 +215,30 @@
     background-color: rgba(70, 130, 180, 0.3);
 }
 
+.btn-copy::after {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
 .btn-delete::after {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
 .btn-edit:hover::after,
+.btn-copy:hover::after,
 .btn-delete:hover::after {
     width: 100px;
     height: 100px;
 }
 
 .btn-edit:hover,
+.btn-copy:hover,
 .btn-delete:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-copy:hover {
+    background-color: #218838;
 }
 
 /* 寵物表單 */

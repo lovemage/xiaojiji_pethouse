@@ -52,6 +52,12 @@ class API {
         });
     }
 
+    static async copyPet(id) {
+        return await this.request(`/pets/${id}/copy`, {
+            method: 'POST'
+        });
+    }
+
     static async deletePet(id) {
         return await this.request(`/pets/${id}`, {
             method: 'DELETE'

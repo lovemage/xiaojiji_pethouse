@@ -277,8 +277,15 @@ async function loadPets() {
                 <td>${pet.description || '無描述'}</td>
                 <td>
                     <div class="table-actions">
-                        <button onclick="editPet(${pet.id})" class="btn-edit">編輯</button>
-                        <button onclick="deletePet(${pet.id})" class="btn-delete">刪除</button>
+                        <button onclick="editPet(${pet.id})" class="btn-edit" title="編輯寵物資料">
+                            <i class="fas fa-edit"></i> 編輯
+                        </button>
+                        <button onclick="copyPet(${pet.id})" class="btn-copy" title="複製此寵物">
+                            <i class="fas fa-copy"></i> 複製
+                        </button>
+                        <button onclick="deletePet(${pet.id})" class="btn-delete" title="刪除寵物">
+                            <i class="fas fa-trash"></i> 刪除
+                        </button>
                     </div>
                 </td>
             `;
@@ -292,9 +299,39 @@ async function loadPets() {
     }
 }
 
+// 複製寵物
+async function copyPet(id) {
+    // 顯示確認對話框
+    const confirmMessage = '確定要複製這隻寵物嗎？\n\n複製後的寵物名稱會自動加上 "(複製)" 標識，\n您可以稍後編輯修改名稱和其他資料。';
+
+    if (confirm(confirmMessage)) {
+        try {
+            // 顯示載入狀態
+            const loadingNotification = showNotification('正在複製寵物...', 'info', false);
+
+            const result = await API.copyPet(id);
+
+            // 移除載入通知
+            if (loadingNotification) {
+                loadingNotification.remove();
+            }
+
+            // 重新載入寵物列表
+            loadPets();
+
+            // 顯示成功訊息
+            showNotification(result.message || '寵物複製成功！', 'success');
+
+        } catch (error) {
+            console.error('複製寵物失敗:', error);
+            showNotification('複製失敗，請稍後再試。', 'error');
+        }
+    }
+}
+
 // 刪除寵物
 async function deletePet(id) {
-    if (confirm('確定要刪除這隻寵物嗎？')) {
+    if (confirm('確定要刪除這隻寵物嗎？\n\n此操作無法復原！')) {
         try {
             await API.deletePet(id);
             loadPets();
@@ -646,7 +683,7 @@ async function handleEditPet(event) {
 }
 
 // 顯示通知
-function showNotification(message, type = 'info') {
+function showNotification(message, type = 'info', autoHide = true) {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.textContent = message;
@@ -683,14 +720,19 @@ function showNotification(message, type = 'info') {
         notification.style.transform = 'translateX(0)';
     }, 10);
     
-    // 自動移除
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateX(100%)';
+    // 自動移除（如果啟用）
+    if (autoHide) {
         setTimeout(() => {
-            notification.remove();
-        }, 300);
-    }, 3000);
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
+    }
+
+    // 返回通知元素，以便手動控制
+    return notification;
 }
 
 // 顯示設定管理

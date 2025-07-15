@@ -229,6 +229,52 @@ app.put('/api/pets/:id', upload.array('images', 5), async (req, res) => {
   }
 });
 
+// 複製寵物
+app.post('/api/pets/:id/copy', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // 先獲取原始寵物資料
+    const result = await pool.query('SELECT * FROM pets WHERE id = $1', [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: '找不到指定的寵物' });
+    }
+
+    const originalPet = result.rows[0];
+
+    // 創建複製的寵物資料
+    const copyName = originalPet.name + ' (複製)';
+
+    const insertResult = await pool.query(`
+      INSERT INTO pets (name, breed, age, gender, color, category, price, description, health, images, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())
+      RETURNING *
+    `, [
+      copyName,
+      originalPet.breed,
+      originalPet.age,
+      originalPet.gender,
+      originalPet.color,
+      originalPet.category,
+      originalPet.price,
+      originalPet.description,
+      originalPet.health,
+      originalPet.images
+    ]);
+
+    console.log('寵物複製成功:', copyName);
+    res.json({
+      success: true,
+      pet: insertResult.rows[0],
+      message: `寵物 "${copyName}" 複製成功！`
+    });
+  } catch (err) {
+    console.error('複製寵物錯誤:', err);
+    res.status(500).json({ error: '複製寵物失敗' });
+  }
+});
+
 app.delete('/api/pets/:id', async (req, res) => {
   try {
     const { id } = req.params;
