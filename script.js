@@ -74,9 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // 初始化分類篩選（頁面載入時調用）
-document.addEventListener('DOMContentLoaded', () => {
-    // 載入顯示設定
-    loadFrontendDisplaySettings();
+document.addEventListener('DOMContentLoaded', async () => {
+    // 先載入顯示設定，確保設定載入完成
+    await loadFrontendDisplaySettings();
     
     // 檢查是否為首頁
     if (document.getElementById('randomDogsGrid')) {
@@ -1759,9 +1759,9 @@ async function displayRandomPets(pets) {
 
     randomDogsGrid.innerHTML = '';
 
-    // 載入最新的顯示設定
-    const currentSettings = await loadFrontendDisplaySettings();
-    console.log('首頁顯示設定:', currentSettings);
+    // 載入最新的顯示設定並更新全局變量
+    await loadFrontendDisplaySettings();
+    console.log('首頁顯示設定:', displaySettings);
 
     // 創建寵物卡片的函數
     function createPetCard(pet) {
@@ -1783,8 +1783,8 @@ async function displayRandomPets(pets) {
         }
         const imageUrl = images.length > 0 ? images[0] : 'images/64805.jpg';
 
-        // 根據設定生成卡片內容
-        dogCard.innerHTML = generatePetCardHTML(pet, imageUrl, currentSettings);
+        // 根據設定生成卡片內容，使用全局 displaySettings
+        dogCard.innerHTML = generatePetCardHTML(pet, imageUrl, displaySettings);
 
         return dogCard;
     }
