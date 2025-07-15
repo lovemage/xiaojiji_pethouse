@@ -176,11 +176,12 @@ function previewEditImages() {
                 const img = document.createElement('img');
                 img.src = e.target.result;
                 img.style.cssText = `
-                    width: 80px;
-                    height: 80px;
+                    width: 150px;
+                    height: 150px;
                     object-fit: cover;
-                    border-radius: 5px;
-                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    border: 2px solid #ddd;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
                 `;
                 preview.appendChild(img);
             };
@@ -549,15 +550,20 @@ async function editPet(id) {
                     </div>
                     
                     <div class="edit-form-group">
-                        <label for="editPetImages">更新圖片</label>
-                        <input type="file" id="editPetImages" name="images" multiple accept="image/*" onchange="previewEditImages()">
-                        <div class="image-preview" id="editImagePreview" style="
-                            display: flex;
-                            gap: 10px;
-                            margin-top: 10px;
-                            flex-wrap: wrap;
-                        "></div>
-                        <small style="color: #666; font-size: 12px;">留空則保持原有圖片</small>
+                        <label>現有圖片管理</label>
+                        <div id="existingImages" class="existing-images-container">
+                            <!-- 現有圖片將在這裡顯示 -->
+                        </div>
+                        <small style="color: #666; font-size: 12px; display: block; margin-bottom: 10px;">
+                            點擊 ❌ 刪除圖片 | 拖拽調整順序 | 第一張圖片為主要展示圖片
+                        </small>
+                    </div>
+
+                    <div class="edit-form-group">
+                        <label for="editPetImages">新增圖片</label>
+                        <input type="file" id="editPetImages" name="images" multiple accept="image/png,.png" onchange="previewEditImages()">
+                        <div class="image-preview" id="editImagePreview"></div>
+                        <small style="color: #666; font-size: 12px;">僅支援 PNG 格式，最多可上傳 5 張圖片</small>
                     </div>
                     
                     <div class="form-actions">
@@ -569,7 +575,10 @@ async function editPet(id) {
         `;
         
         document.body.appendChild(modal);
-        
+
+        // 顯示現有圖片
+        displayExistingImages(pet);
+
         // 處理表單提交
         document.getElementById('editPetForm').addEventListener('submit', handleEditPet);
         
@@ -604,10 +613,22 @@ async function handleEditPet(event) {
     formData.append('description', document.getElementById('editPetDescription').value);
     formData.append('health', document.getElementById('editPetHealth').value);
     
-    // 處理圖片上傳
+    // 處理圖片更新
+    // 1. 先添加現有圖片（已經過刪除和排序處理）
+    if (currentPetImages && currentPetImages.length > 0) {
+        formData.append('existingImages', JSON.stringify(currentPetImages));
+    }
+
+    // 2. 添加新上傳的圖片
     const imageFiles = document.getElementById('editPetImages').files;
     if (imageFiles && imageFiles.length > 0) {
-        // 如果有選擇新圖片，添加到 FormData
+        // 檢查總圖片數量
+        const totalImages = (currentPetImages ? currentPetImages.length : 0) + imageFiles.length;
+        if (totalImages > 5) {
+            alert(`總圖片數量不能超過5張！目前有${currentPetImages.length}張現有圖片，您選擇了${imageFiles.length}張新圖片。`);
+            return;
+        }
+
         Array.from(imageFiles).forEach(file => {
             formData.append('images', file);
         });
@@ -779,3 +800,166 @@ document.addEventListener('DOMContentLoaded', function() {
         previewBtn.addEventListener('click', previewChanges);
     }
 });
+
+// 全域變量存儲當前編輯的寵物圖片
+let currentPetImages = [];
+
+// 顯示現有圖片
+function displayExistingImages(pet) {
+    const container = document.getElementById('existingImages');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    // 解析圖片數據
+    let images = [];
+    if (pet.images) {
+        if (typeof pet.images === 'string') {
+            try {
+                images = JSON.parse(pet.images);
+            } catch (e) {
+                images = [pet.images];
+            }
+        } else if (Array.isArray(pet.images)) {
+            images = pet.images;
+        }
+    }
+
+    currentPetImages = [...images];
+
+    if (images.length === 0) {
+        container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">此寵物暫無圖片</p>';
+        return;
+    }
+
+    container.style.cssText = `
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    `;
+
+    images.forEach((imageUrl, index) => {
+        const imageItem = document.createElement('div');
+        imageItem.className = 'existing-image-item';
+        imageItem.draggable = true;
+        imageItem.dataset.index = index;
+
+        imageItem.style.cssText = `
+            position: relative;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: move;
+        `;
+
+        imageItem.innerHTML = `
+            <img src="${imageUrl}" alt="寵物圖片 ${index + 1}" style="
+                width: 100%;
+                height: 150px;
+                object-fit: cover;
+                display: block;
+            ">
+            <div class="image-controls" style="
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                background: rgba(220, 53, 69, 0.9);
+                border-radius: 50%;
+                width: 25px;
+                height: 25px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            ">
+                <button onclick="deleteExistingImage(${index})" style="
+                    background: none;
+                    color: white;
+                    border: none;
+                    font-size: 14px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    width: 100%;
+                    height: 100%;
+                " title="刪除圖片">×</button>
+            </div>
+            <div class="image-info" style="
+                padding: 8px;
+                font-size: 12px;
+                color: #666;
+                text-align: center;
+                background: #f8f9fa;
+                font-weight: ${index === 0 ? 'bold' : 'normal'};
+                color: ${index === 0 ? '#007cba' : '#666'};
+            ">
+                ${index === 0 ? '🌟 主圖' : `第 ${index + 1} 張`}
+            </div>
+        `;
+
+        // 拖拽事件
+        imageItem.addEventListener('dragstart', handleDragStart);
+        imageItem.addEventListener('dragover', handleDragOver);
+        imageItem.addEventListener('drop', handleDrop);
+        imageItem.addEventListener('dragend', handleDragEnd);
+
+        container.appendChild(imageItem);
+    });
+}
+
+// 刪除現有圖片
+function deleteExistingImage(index) {
+    if (currentPetImages.length <= 1) {
+        alert('至少需要保留一張圖片！');
+        return;
+    }
+
+    if (confirm('確定要刪除這張圖片嗎？')) {
+        currentPetImages.splice(index, 1);
+
+        // 重新顯示圖片
+        const pet = { images: currentPetImages };
+        displayExistingImages(pet);
+
+        showNotification('圖片已標記為刪除，請點擊"更新寵物"保存變更', 'info');
+    }
+}
+
+// 拖拽排序功能
+let draggedElement = null;
+
+function handleDragStart(e) {
+    draggedElement = this;
+    this.style.opacity = '0.5';
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    if (this !== draggedElement) {
+        const draggedIndex = parseInt(draggedElement.dataset.index);
+        const targetIndex = parseInt(this.dataset.index);
+
+        // 交換圖片位置
+        [currentPetImages[draggedIndex], currentPetImages[targetIndex]] =
+        [currentPetImages[targetIndex], currentPetImages[draggedIndex]];
+
+        // 重新顯示
+        const pet = { images: currentPetImages };
+        displayExistingImages(pet);
+
+        showNotification('圖片順序已調整，請點擊"更新寵物"保存變更', 'info');
+    }
+}
+
+function handleDragEnd(e) {
+    this.style.opacity = '1';
+    draggedElement = null;
+}
