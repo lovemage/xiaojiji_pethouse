@@ -603,17 +603,74 @@ async function showPetDetails(petId) {
                     images = pet.images;
                 }
             }
-            const imageUrl = images.length > 0 ? images[0] : 'images/64805.jpg';
+            // 確保至少有一張預設圖片
+            if (images.length === 0) {
+                images = ['images/64805.jpg'];
+            }
             
             // 建立詳細資訊視窗
             const modal = document.createElement('div');
             modal.className = 'pet-modal';
+            // 生成圖片輪播HTML
+            const generateImageCarousel = (images) => {
+                if (images.length === 1) {
+                    return `
+                        <div class="modal-pet-image single-image">
+                            <img src="${images[0]}" alt="寵物照片">
+                        </div>
+                    `;
+                }
+
+                const imageSlides = images.map((img, index) =>
+                    `<div class="carousel-slide ${index === 0 ? 'active' : ''}">
+                        <img src="${img}" alt="寵物照片 ${index + 1}">
+                    </div>`
+                ).join('');
+
+                const thumbnails = images.map((img, index) =>
+                    `<div class="thumbnail ${index === 0 ? 'active' : ''}" onclick="showSlide(${index})">
+                        <img src="${img}" alt="縮圖 ${index + 1}">
+                    </div>`
+                ).join('');
+
+                return `
+                    <div class="modal-pet-image carousel">
+                        <div class="carousel-container">
+                            <div class="carousel-slides">
+                                ${imageSlides}
+                            </div>
+                            ${images.length > 1 ? `
+                                <button class="carousel-btn prev" onclick="changeSlide(-1)">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="carousel-btn next" onclick="changeSlide(1)">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                                <div class="carousel-indicators">
+                                    ${images.map((_, index) =>
+                                        `<span class="indicator ${index === 0 ? 'active' : ''}" onclick="showSlide(${index})"></span>`
+                                    ).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                        ${images.length > 1 ? `
+                            <div class="image-thumbnails">
+                                <div class="thumbnail-label">
+                                    <i class="fas fa-images"></i> 共 ${images.length} 張圖片
+                                </div>
+                                <div class="thumbnails-container">
+                                    ${thumbnails}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            };
+
             modal.innerHTML = `
                 <div class="modal-content">
                     <span class="close-modal">&times;</span>
-                    <div class="modal-pet-image">
-                        <img src="${imageUrl}" alt="寵物照片" style="width: 100%; max-width: 300px; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 20px;">
-                    </div>
+                    ${generateImageCarousel(images)}
                     <h2>各式品種幼犬出售</h2>
                     <div class="modal-info">
                         <div class="pet-basic-info">
@@ -665,7 +722,59 @@ async function showPetDetails(petId) {
             `;
             
             document.body.appendChild(modal);
-            
+
+            // 圖片輪播功能
+            if (images.length > 1) {
+                let currentSlide = 0;
+
+                // 全域函數，供 HTML onclick 使用
+                window.showSlide = (index) => {
+                    const slides = modal.querySelectorAll('.carousel-slide');
+                    const thumbnails = modal.querySelectorAll('.thumbnail');
+                    const indicators = modal.querySelectorAll('.indicator');
+
+                    // 移除所有 active 類
+                    slides.forEach(slide => slide.classList.remove('active'));
+                    thumbnails.forEach(thumb => thumb.classList.remove('active'));
+                    indicators.forEach(indicator => indicator.classList.remove('active'));
+
+                    // 添加 active 類到當前項目
+                    slides[index].classList.add('active');
+                    thumbnails[index].classList.add('active');
+                    indicators[index].classList.add('active');
+
+                    currentSlide = index;
+                };
+
+                window.changeSlide = (direction) => {
+                    const newIndex = (currentSlide + direction + images.length) % images.length;
+                    window.showSlide(newIndex);
+                };
+
+                // 鍵盤導航
+                const handleKeyPress = (e) => {
+                    if (e.key === 'ArrowLeft') {
+                        window.changeSlide(-1);
+                    } else if (e.key === 'ArrowRight') {
+                        window.changeSlide(1);
+                    } else if (e.key === 'Escape') {
+                        modal.remove();
+                        document.removeEventListener('keydown', handleKeyPress);
+                    }
+                };
+
+                document.addEventListener('keydown', handleKeyPress);
+
+                // 清理函數
+                const originalRemove = modal.remove.bind(modal);
+                modal.remove = () => {
+                    document.removeEventListener('keydown', handleKeyPress);
+                    delete window.showSlide;
+                    delete window.changeSlide;
+                    originalRemove();
+                };
+            }
+
             // 關閉按鈕
             modal.querySelector('.close-modal').onclick = () => {
                 modal.remove();

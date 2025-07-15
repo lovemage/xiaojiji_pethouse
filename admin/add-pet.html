@@ -142,7 +142,12 @@
                     <div class="form-group full-width">
                         <label for="petImages">上傳圖片</label>
                         <input type="file" id="petImages" name="images" multiple accept="image/*" onchange="previewImages()">
-                        <small style="color: #666;">支援多張圖片上傳，單一檔案大小不超過2MB，圖片將永久存儲在資料庫中</small>
+                        <small style="color: #666;">
+                            <i class="fas fa-info-circle"></i>
+                            支援上傳 <strong>1-5張圖片</strong>，單一檔案大小不超過 <strong>2MB</strong><br>
+                            <i class="fas fa-image"></i>
+                            支援格式：JPG、PNG、GIF | 第一張圖片將作為主要展示圖片
+                        </small>
                         <div class="image-preview" id="imagePreview"></div>
                     </div>
 
@@ -196,6 +201,68 @@
             '瑪爾泰迪': 'small',
             '吉娃娃': 'small'
         };
+
+        // 圖片預覽功能
+        function previewImages() {
+            const input = document.getElementById('petImages');
+            const preview = document.getElementById('imagePreview');
+
+            // 清空之前的預覽
+            preview.innerHTML = '';
+
+            if (input.files && input.files.length > 0) {
+                // 檢查圖片數量限制
+                if (input.files.length > 5) {
+                    alert('最多只能上傳5張圖片！');
+                    input.value = '';
+                    return;
+                }
+
+                // 顯示圖片數量提示
+                const countInfo = document.createElement('div');
+                countInfo.className = 'image-count-info';
+                countInfo.innerHTML = `<i class="fas fa-images"></i> 已選擇 ${input.files.length} 張圖片 (最多5張)`;
+                preview.appendChild(countInfo);
+
+                // 創建預覽容器
+                const previewContainer = document.createElement('div');
+                previewContainer.className = 'image-preview-container';
+
+                Array.from(input.files).forEach((file, index) => {
+                    // 檢查檔案大小
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert(`圖片 "${file.name}" 超過2MB限制！`);
+                        return;
+                    }
+
+                    // 檢查檔案類型
+                    if (!file.type.startsWith('image/')) {
+                        alert(`檔案 "${file.name}" 不是有效的圖片格式！`);
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imageItem = document.createElement('div');
+                        imageItem.className = 'image-preview-item';
+
+                        imageItem.innerHTML = `
+                            <img src="${e.target.result}" alt="預覽圖片 ${index + 1}">
+                            <div class="image-info">
+                                <span class="image-name">${file.name}</span>
+                                <span class="image-size">${(file.size / 1024).toFixed(1)} KB</span>
+                                <span class="image-index">第 ${index + 1} 張</span>
+                            </div>
+                        `;
+
+                        previewContainer.appendChild(imageItem);
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                preview.appendChild(previewContainer);
+            }
+        }
 
         // 當品種選擇改變時自動設定犬型分類
         document.addEventListener('DOMContentLoaded', function() {
