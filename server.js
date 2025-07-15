@@ -480,40 +480,39 @@ app.post('/api/settings', async (req, res) => {
   }
 });
 
-// 強制重置顯示設定的 API 端點（用於修復生產端問題）
-app.post('/api/reset-display-settings', async (req, res) => {
+// 安全修復顯示設定的 API 端點（僅修復顯示設定，不影響客戶數據）
+app.post('/api/fix-display-settings', async (req, res) => {
   try {
-    console.log('開始重置顯示設定...');
+    console.log('開始修復顯示設定...');
 
-    // 刪除現有的顯示設定
-    await pool.query(`
-      DELETE FROM site_settings
-      WHERE setting_key IN (
-        'show_name', 'show_breed', 'show_description', 'show_age',
-        'show_gender', 'show_price', 'show_health', 'show_color'
-      )
-    `);
+    // 使用 UPSERT 語法，安全地更新或插入顯示設定
+    const displaySettings = [
+      ['show_name', 'false'],
+      ['show_breed', 'true'],
+      ['show_description', 'false'],
+      ['show_age', 'false'],
+      ['show_gender', 'false'],
+      ['show_price', 'false'],
+      ['show_health', 'false'],
+      ['show_color', 'true']
+    ];
 
-    // 插入正確的預設設定
-    await pool.query(`
-      INSERT INTO site_settings (setting_key, setting_value) VALUES
-      ('show_name', 'false'),
-      ('show_breed', 'true'),
-      ('show_description', 'false'),
-      ('show_age', 'false'),
-      ('show_gender', 'false'),
-      ('show_price', 'false'),
-      ('show_health', 'false'),
-      ('show_color', 'true')
-    `);
+    for (const [key, value] of displaySettings) {
+      await pool.query(`
+        INSERT INTO site_settings (setting_key, setting_value)
+        VALUES ($1, $2)
+        ON CONFLICT (setting_key)
+        DO UPDATE SET setting_value = $2
+      `, [key, value]);
+    }
 
-    console.log('顯示設定重置完成');
+    console.log('顯示設定修復完成');
     res.json({
       success: true,
-      message: '顯示設定已重置為預設值（品種和毛色開啟）'
+      message: '顯示設定已修復為預設值（品種和毛色開啟），客戶數據未受影響'
     });
   } catch (error) {
-    console.error('重置顯示設定失敗:', error);
+    console.error('修復顯示設定失敗:', error);
 
     // 數據庫連接失敗時更新模擬數據
     mockSettings.show_name = false;
@@ -527,7 +526,7 @@ app.post('/api/reset-display-settings', async (req, res) => {
 
     res.json({
       success: true,
-      message: '顯示設定已重置為預設值（使用模擬數據）'
+      message: '顯示設定已修復為預設值（使用模擬數據），客戶數據未受影響'
     });
   }
 });

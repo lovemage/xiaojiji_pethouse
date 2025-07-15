@@ -99,18 +99,19 @@
 </head>
 <body>
     <div class="container">
-        <h1>🔧 重置顯示設定</h1>
-        
+        <h1>🔧 修復顯示設定</h1>
+
         <div class="info">
             <strong>📋 功能說明：</strong><br>
-            此工具用於修復生產端 Railway 的 volume 持久化問題，強制重置寵物卡片的顯示設定為預設值。
+            此工具用於修復生產端 PostgreSQL 數據庫的顯示設定問題，確保寵物卡片正確顯示品種和毛色。
         </div>
-        
+
         <div class="warning">
-            <strong>⚠️ 注意事項：</strong><br>
-            • 預設設定：僅顯示品種和毛色<br>
-            • 其他項目（名稱、價格、年齡等）將被關閉<br>
-            • 此操作會覆蓋現有的自定義設定
+            <strong>✅ 安全保證：</strong><br>
+            • 僅修復顯示設定，不會影響任何客戶數據<br>
+            • 不會刪除或修改寵物資料、相簿、用戶資料<br>
+            • 使用 UPSERT 語法安全更新設定<br>
+            • 預設設定：僅顯示品種和毛色
         </div>
         
         <button onclick="loadCurrentSettings()">📊 查看當前設定</button>
@@ -120,7 +121,7 @@
             <div id="settingsDisplay"></div>
         </div>
         
-        <button onclick="resetSettings()" id="resetBtn">🔄 重置為預設設定</button>
+        <button onclick="fixSettings()" id="fixBtn">🔧 修復顯示設定</button>
         
         <div class="result" id="result"></div>
     </div>
@@ -175,33 +176,33 @@
             }
         }
         
-        async function resetSettings() {
-            const resetBtn = document.getElementById('resetBtn');
-            resetBtn.disabled = true;
-            resetBtn.textContent = '🔄 重置中...';
-            
+        async function fixSettings() {
+            const fixBtn = document.getElementById('fixBtn');
+            fixBtn.disabled = true;
+            fixBtn.textContent = '🔧 修復中...';
+
             try {
-                const response = await fetch('/api/reset-display-settings', {
+                const response = await fetch('/api/fix-display-settings', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showResult('✅ ' + result.message, 'success');
                     // 自動重新載入當前設定
                     setTimeout(loadCurrentSettings, 1000);
                 } else {
-                    showResult('❌ 重置失敗: ' + result.error, 'error');
+                    showResult('❌ 修復失敗: ' + result.error, 'error');
                 }
             } catch (error) {
-                showResult('❌ 重置失敗: ' + error.message, 'error');
+                showResult('❌ 修復失敗: ' + error.message, 'error');
             } finally {
-                resetBtn.disabled = false;
-                resetBtn.textContent = '🔄 重置為預設設定';
+                fixBtn.disabled = false;
+                fixBtn.textContent = '🔧 修復顯示設定';
             }
         }
         
