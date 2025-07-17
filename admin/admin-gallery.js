@@ -2,6 +2,22 @@
 let galleryImages = [];
 let currentFilter = 'all';
 
+// 統一處理圖片URL的函數
+function getImageUrl(src) {
+    if (!src) return '../images/64805.jpg';
+    
+    if (src.startsWith('data:')) {
+        // Base64 格式，直接使用
+        return src;
+    } else if (src.startsWith('http')) {
+        // 完整URL（Cloudinary CDN），直接使用
+        return src;
+    } else {
+        // 本地圖片路徑，加上相對路徑前綴
+        return `../${src}`;
+    }
+}
+
 // 頁面載入時初始化
 document.addEventListener('DOMContentLoaded', () => {
     loadGalleryImages();
@@ -61,7 +77,7 @@ function displayGalleryImages() {
         imageCard.className = 'gallery-card';
         imageCard.innerHTML = `
             <div class="gallery-image">
-                <img src="${image.src.startsWith('data:') ? image.src : `../${image.src}`}" alt="${image.title}">
+                <img src="${getImageUrl(image.src)}" alt="${image.title}">
                 <div class="image-overlay">
                     <button class="btn-icon edit-btn" data-id="${image.id}" title="編輯">
                         <i class="fas fa-edit"></i>
@@ -270,7 +286,7 @@ function editImage(imageId) {
     document.getElementById('editImageCategory').value = image.category;
     
     // 顯示目前圖片
-    const imageSrc = image.src.startsWith('data:') ? image.src : `../${image.src}`;
+    const imageSrc = getImageUrl(image.src);
     document.getElementById('currentImage').innerHTML = `
             <img src="${imageSrc}" alt="${image.title}" style="max-width: 200px; height: auto; border-radius: 5px;">
     `;

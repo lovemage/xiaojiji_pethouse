@@ -320,7 +320,7 @@ body {
 
 /* 主要橫幅 */
 .hero {
-    background: linear-gradient(rgba(70,130,180,0.7), rgba(70,130,180,0.5)), url('images/hero-bg.jpg') center/cover;
+    background: linear-gradient(135deg, rgba(70,130,180,0.9), rgba(100,149,237,0.8));
     height: 500px;
     display: flex;
     align-items: center;

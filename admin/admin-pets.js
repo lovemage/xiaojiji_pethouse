@@ -259,11 +259,20 @@ async function loadPets() {
                     images = pet.images;
                 }
             }
-            // 支援 Base64 格式（以 data: 開頭）和 URL 格式
+            // 支援 Base64、Cloudinary CDN 和本地圖片格式
             let imageUrl = '';
             if (images.length > 0) {
-                // 如果是 Base64 格式，直接使用；否則加上相對路徑
-                imageUrl = images[0].startsWith('data:') ? images[0] : `../${images[0]}`;
+                const firstImage = images[0];
+                if (firstImage.startsWith('data:')) {
+                    // Base64 格式，直接使用
+                    imageUrl = firstImage;
+                } else if (firstImage.startsWith('http')) {
+                    // 完整URL（Cloudinary CDN），直接使用
+                    imageUrl = firstImage;
+                } else {
+                    // 本地圖片路徑，加上相對路徑前綴
+                    imageUrl = `../${firstImage}`;
+                }
             } else {
                 imageUrl = '../images/64805.jpg';
             }
@@ -408,7 +417,20 @@ function loadDashboardStats() {
             
             recentPets.forEach(pet => {
                 const tr = document.createElement('tr');
-                const imageUrl = pet.images && pet.images.length > 0 ? pet.images[0] : '../images/64805.jpg';
+                let imageUrl = '../images/64805.jpg';
+                if (pet.images && pet.images.length > 0) {
+                    const firstImage = pet.images[0];
+                    if (firstImage.startsWith('data:')) {
+                        // Base64 格式，直接使用
+                        imageUrl = firstImage;
+                    } else if (firstImage.startsWith('http')) {
+                        // 完整URL（Cloudinary CDN），直接使用
+                        imageUrl = firstImage;
+                    } else {
+                        // 本地圖片路徑，加上相對路徑前綴
+                        imageUrl = `../${firstImage}`;
+                    }
+                }
                 
                 tr.innerHTML = `
                     <td>
@@ -656,7 +678,7 @@ async function editPet(id) {
 
         // 顯示現有圖片
         displayExistingImages(pet);
-
+        
         // 處理表單提交
         document.getElementById('editPetForm').addEventListener('submit', handleEditPet);
         
@@ -763,13 +785,13 @@ function showNotification(message, type = 'info', autoHide = true) {
     
     // 自動移除（如果啟用）
     if (autoHide) {
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
         setTimeout(() => {
-            notification.style.opacity = '0';
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                notification.remove();
-            }, 300);
-        }, 3000);
+            notification.remove();
+        }, 300);
+    }, 3000);
     }
 
     // 返回通知元素，以便手動控制

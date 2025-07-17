@@ -9,6 +9,7 @@
     "build": "echo 'No build step needed for static files'",
     "test:cloudinary": "node scripts/test-cloudinary-connection.js",
     "migrate:cloudinary": "node scripts/migrate-to-cloudinary.js",
+    "migrate:railway": "node scripts/railway-migrate.js",
     "db:check": "railway connect Postgres < db_check.sql",
     "db:vacuum": "echo 'VACUUM FULL;' | railway connect Postgres"
   },
@@ -35,4 +36,4 @@
   ],
   "author": "小基基寵物犬舍",
   "license": "MIT"
-}
+} 
