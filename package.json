@@ -14,6 +14,7 @@
     "db:vacuum": "echo 'VACUUM FULL;' | railway connect Postgres"
   },
   "dependencies": {
+    "@sendgrid/mail": "^8.1.5",
     "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -36,4 +37,4 @@
   ],
   "author": "小基基寵物犬舍",
   "license": "MIT"
-} 
+}
