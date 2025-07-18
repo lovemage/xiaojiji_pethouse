@@ -21,6 +21,9 @@ function loadCurrentSettings() {
     // 載入橫幅圖片
     if (siteSettings.heroImage) {
         document.getElementById('currentHeroImage').src = siteSettings.heroImage;
+    } else {
+        // 如果沒有設定，使用預設的webp圖片
+        document.getElementById('currentHeroImage').src = '../images/pkncb1-golden-retriever-puppy-running-outdoors-in-grass.webp';
     }
     
     // 載入 Hero 文字設定
@@ -94,6 +97,9 @@ function previewHeroImage() {
     }
 }
 
+// 確保函數在全域作用域可用
+window.previewHeroImage = previewHeroImage;
+
 // 儲存 Hero 文字設定
 document.getElementById('heroTextForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -130,9 +136,6 @@ document.getElementById('heroForm').addEventListener('submit', async function(e)
     }
     
     try {
-        const formData = new FormData();
-        formData.append('heroImage', file);
-        
         // 使用 Cloudinary CDN 上傳
         console.log('開始上傳hero圖片到CDN...');
         

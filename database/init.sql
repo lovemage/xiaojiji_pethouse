@@ -139,7 +139,7 @@ BEGIN
         ('黃金獵犬', '溫順友善的黃金獵犬成犬', 'images/download-1.jpg', 'adult', 3),
         ('柴犬', '聰明活潑的柴犬成犬', 'images/download-2.jpg', 'adult', 4),
         ('犬舍環境', '乾淨整潔的犬舍環境，給狗狗最好的生活空間', 'images/RnWoowUwUaWbUjTraVyj-6FYMm_TH-eUtdIZk7XSGZM.jpg', 'daily', 5),
-        ('戶外訓練', '狗狗在戶外草地上快樂奔跑的訓練時光', 'images/pkncb1-golden-retriever-puppy-running-outdoors-in-grass.png', 'training', 6),
+        ('戶外訓練', '狗狗在戶外草地上快樂奔跑的訓練時光', 'images/pkncb1-golden-retriever-puppy-running-outdoors-in-grass.webp', 'training', 6),
         ('健康檢查', '定期的健康檢查，確保每隻狗狗都健康', 'images/Pets-Health.jpg', 'puppy', 7),
         ('日常照護', '專業的日常照護，讓狗狗健康成長', 'images/pets-Health2.jpg', 'daily', 8);
     END IF;
