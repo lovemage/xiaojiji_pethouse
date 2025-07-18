@@ -560,14 +560,14 @@ app.post('/api/fix-display-settings', async (req, res) => {
 
     // 使用 UPSERT 語法，安全地更新或插入顯示設定
     const displaySettings = [
-      ['show_name', 'false'],
-      ['show_breed', 'true'],
-      ['show_description', 'false'],
-      ['show_age', 'false'],
-      ['show_gender', 'false'],
-      ['show_price', 'false'],
-      ['show_health', 'false'],
-      ['show_color', 'true']
+      ['show_name', false],
+      ['show_breed', true],
+      ['show_description', false],
+      ['show_age', false],
+      ['show_gender', false],
+      ['show_price', false],
+      ['show_health', false],
+      ['show_color', true]
     ];
 
     for (const [key, value] of displaySettings) {

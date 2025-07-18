@@ -7,11 +7,12 @@ async function loadSettings() {
         const settings = await API.getSettings();
         siteSettings = settings;
         loadCurrentSettings();
+        console.log('設定載入成功:', settings);
     } catch (error) {
         console.error('載入設定失敗:', error);
         // 如果 API 失敗，嘗試從 localStorage 載入
         siteSettings = JSON.parse(localStorage.getItem('siteSettings') || '{}');
-    loadCurrentSettings();
+        loadCurrentSettings();
     }
 }
 
@@ -136,12 +137,20 @@ document.getElementById('heroForm').addEventListener('submit', async function(e)
         // const response = await API.uploadHeroImage(formData);
         
         // 暫時使用 localStorage
+        console.log('開始上傳hero圖片');
         const reader = new FileReader();
         reader.onload = async function(e) {
-            await API.updateSetting('heroImage', e.target.result);
-            siteSettings.heroImage = e.target.result;
-            document.getElementById('currentHeroImage').src = e.target.result;
-            alert('橫幅圖片已更新！');
+            try {
+                console.log('圖片讀取完成，開始更新設定');
+                await API.updateSetting('heroImage', e.target.result);
+                siteSettings.heroImage = e.target.result;
+                document.getElementById('currentHeroImage').src = e.target.result;
+                alert('橫幅圖片已更新！');
+                console.log('Hero圖片更新成功');
+            } catch (error) {
+                console.error('Hero圖片更新失敗:', error);
+                alert('圖片更新失敗，請稍後再試');
+            }
         }
         reader.readAsDataURL(file);
     } catch (error) {
@@ -170,13 +179,19 @@ document.getElementById('announcementForm').addEventListener('submit', async fun
     };
     
     try {
+        console.log('提交公告設定:', announcementData);
         await API.updateSetting('announcement', JSON.stringify(announcementData));
         siteSettings.announcement = announcementData;
         alert('公告設定已儲存！');
+        console.log('公告設定儲存成功');
+        
+        // 重新載入設定以確保UI更新
+        loadCurrentSettings();
     } catch (error) {
-        console.error('儲存失敗:', error);
+        console.error('儲存公告設定失敗:', error);
         // 如果 API 失敗，使用 localStorage 作為備份
-    localStorage.setItem('siteSettings', JSON.stringify(siteSettings));
+        siteSettings.announcement = announcementData;
+        localStorage.setItem('siteSettings', JSON.stringify(siteSettings));
         alert('公告設定已儲存（本地儲存）！');
     }
 });
@@ -235,19 +250,27 @@ async function loadDisplaySettings() {
     try {
         const settings = await API.getSettings();
 
-        // 設定各個開關的狀態
-        const displaySettings = [
-            'showName', 'showBreed', 'showAge', 'showGender',
-            'showPrice', 'showColor', 'showDescription', 'showHealth'
-        ];
+        // 設定映射表
+        const settingMap = {
+            'showName': 'show_name',
+            'showBreed': 'show_breed',
+            'showAge': 'show_age',
+            'showGender': 'show_gender',
+            'showPrice': 'show_price',
+            'showColor': 'show_color',
+            'showDescription': 'show_description',
+            'showHealth': 'show_health'
+        };
 
-        displaySettings.forEach(setting => {
-            const toggle = document.getElementById(setting);
-            const serverKey = setting.replace('show', 'show_').toLowerCase();
+        Object.entries(settingMap).forEach(([frontendKey, serverKey]) => {
+            const toggle = document.getElementById(frontendKey);
 
             if (toggle && settings[serverKey] !== undefined) {
-                toggle.checked = settings[serverKey];
-                updateDisplayStatus(setting);
+                // 正確處理字串到布林值的轉換
+                const value = settings[serverKey];
+                toggle.checked = value === true || value === 'true';
+                updateDisplayStatus(frontendKey);
+                console.log(`載入設定: ${frontendKey} -> ${serverKey} = ${value} (checked: ${toggle.checked})`);
             }
         });
 
@@ -272,12 +295,19 @@ document.getElementById('cardDisplayForm').addEventListener('submit', async func
     };
 
     try {
+        console.log('提交顯示設定:', displayData);
+        
         // 更新每個設定項目
         for (const [key, value] of Object.entries(displayData)) {
             await API.updateSetting(key, value);
+            console.log(`更新設定: ${key} = ${value}`);
         }
 
         alert('顯示設定已儲存！');
+        console.log('顯示設定儲存成功');
+        
+        // 重新載入設定以確保UI更新
+        await loadDisplaySettings();
 
         // 通知前端更新顯示
         if (window.opener && !window.opener.closed) {

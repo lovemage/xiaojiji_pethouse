@@ -149,14 +149,14 @@ window.addEventListener('message', function(event) {
         // 更新顯示設定
         const settings = event.data.data;
         displaySettings = {
-            showName: settings.show_name === true,
-            showBreed: settings.show_breed === true,
-            showAge: settings.show_age === true,
-            showGender: settings.show_gender === true,
-            showPrice: settings.show_price === true,
-            showColor: settings.show_color === true,
-            showDescription: settings.show_description === true,
-            showHealth: settings.show_health === true
+            showName: settings.show_name === true || settings.show_name === 'true',
+            showBreed: settings.show_breed === true || settings.show_breed === 'true',
+            showAge: settings.show_age === true || settings.show_age === 'true',
+            showGender: settings.show_gender === true || settings.show_gender === 'true',
+            showPrice: settings.show_price === true || settings.show_price === 'true',
+            showColor: settings.show_color === true || settings.show_color === 'true',
+            showDescription: settings.show_description === true || settings.show_description === 'true',
+            showHealth: settings.show_health === true || settings.show_health === 'true'
         };
         
         // 更新localStorage中的設定
@@ -378,14 +378,14 @@ async function loadFrontendDisplaySettings() {
         const settings = await response.json();
 
         displaySettings = {
-            showName: settings.show_name === true,
-            showBreed: settings.show_breed === true,
-            showDescription: settings.show_description === true,
-            showAge: settings.show_age === true,
-            showGender: settings.show_gender === true,
-            showPrice: settings.show_price === true,
-            showHealth: settings.show_health === true,
-            showColor: settings.show_color === true
+            showName: settings.show_name === true || settings.show_name === 'true',
+            showBreed: settings.show_breed === true || settings.show_breed === 'true',
+            showDescription: settings.show_description === true || settings.show_description === 'true',
+            showAge: settings.show_age === true || settings.show_age === 'true',
+            showGender: settings.show_gender === true || settings.show_gender === 'true',
+            showPrice: settings.show_price === true || settings.show_price === 'true',
+            showHealth: settings.show_health === true || settings.show_health === 'true',
+            showColor: settings.show_color === true || settings.show_color === 'true'
         };
 
 
