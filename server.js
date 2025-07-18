@@ -561,12 +561,30 @@ app.post('/api/upload-hero-image', upload.single('heroImage'), async (req, res) 
       return res.status(400).json({ error: '沒有選擇檔案' });
     }
 
-    console.log('開始上傳 Hero 圖片到 Cloudinary...');
+    console.log('開始上傳 Hero 圖片...');
     
-    // 上傳到 Cloudinary
-    const uploadResult = await uploadToCloudinary(req.file.buffer, 'hero-images');
+    // 檢查檔案大小 (2MB 限制)
+    if (req.file.size > 2 * 1024 * 1024) {
+      return res.status(400).json({ error: '檔案大小超過2MB限制' });
+    }
     
-    console.log('Hero 圖片上傳成功:', uploadResult.secure_url);
+    let imageUrl;
+    
+    // 如果有Cloudinary配置，使用CDN上傳
+    if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
+      try {
+        const uploadResult = await uploadToCloudinary(req.file.buffer, 'hero-images');
+        imageUrl = uploadResult.secure_url;
+        console.log('Hero 圖片上傳到 Cloudinary 成功:', imageUrl);
+      } catch (cloudinaryError) {
+        console.log('Cloudinary 上傳失敗，使用 Base64 儲存:', cloudinaryError.message);
+        imageUrl = imageToBase64(req.file);
+      }
+    } else {
+      // 沒有Cloudinary配置時使用Base64儲存
+      console.log('使用 Base64 儲存 Hero 圖片');
+      imageUrl = imageToBase64(req.file);
+    }
     
     // 更新資料庫設定
     const result = await pool.query(
@@ -575,18 +593,20 @@ app.post('/api/upload-hero-image', upload.single('heroImage'), async (req, res) 
        ON CONFLICT (setting_key)
        DO UPDATE SET setting_value = $2, updated_at = CURRENT_TIMESTAMP
        RETURNING *`,
-      ['heroImage', uploadResult.secure_url]
+      ['heroImage', imageUrl]
     );
+
+    console.log('Hero 圖片設定已更新到資料庫');
 
     res.json({
       success: true,
-      imageUrl: uploadResult.secure_url,
+      imageUrl: imageUrl,
       setting: result.rows[0]
     });
     
   } catch (error) {
     console.error('Hero 圖片上傳失敗:', error);
-    res.status(500).json({ error: '圖片上傳失敗，請稍後再試' });
+    res.status(500).json({ error: '圖片上傳失敗: ' + error.message });
   }
 });
 
