@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
 const { Pool } = require('pg');
+const { uploadToCloudinary } = require('./config/cloudinary-enhanced');
 require('dotenv').config();
 
 const app = express();
@@ -550,6 +551,42 @@ app.post('/api/settings', async (req, res) => {
     } else {
       res.status(500).json({ error: '設定項目不存在' });
     }
+  }
+});
+
+// Hero 圖片上傳 API
+app.post('/api/upload-hero-image', upload.single('heroImage'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: '沒有選擇檔案' });
+    }
+
+    console.log('開始上傳 Hero 圖片到 Cloudinary...');
+    
+    // 上傳到 Cloudinary
+    const uploadResult = await uploadToCloudinary(req.file.buffer, 'hero-images');
+    
+    console.log('Hero 圖片上傳成功:', uploadResult.secure_url);
+    
+    // 更新資料庫設定
+    const result = await pool.query(
+      `INSERT INTO site_settings (setting_key, setting_value)
+       VALUES ($1, $2)
+       ON CONFLICT (setting_key)
+       DO UPDATE SET setting_value = $2, updated_at = CURRENT_TIMESTAMP
+       RETURNING *`,
+      ['heroImage', uploadResult.secure_url]
+    );
+
+    res.json({
+      success: true,
+      imageUrl: uploadResult.secure_url,
+      setting: result.rows[0]
+    });
+    
+  } catch (error) {
+    console.error('Hero 圖片上傳失敗:', error);
+    res.status(500).json({ error: '圖片上傳失敗，請稍後再試' });
   }
 });
 

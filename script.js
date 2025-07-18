@@ -78,6 +78,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 先載入顯示設定，確保設定載入完成
     await loadFrontendDisplaySettings();
     
+    // 載入網站設定（包括hero圖片）
+    await loadSiteSettings();
+    
     // 檢查是否為首頁
     if (document.getElementById('randomDogsGrid')) {
         initializeRandomPetsDisplay();
@@ -177,6 +180,17 @@ window.addEventListener('message', function(event) {
         }
         
         console.log('前台顯示設定已更新');
+    } else if (event.data && event.data.type === 'heroImageUpdated') {
+        // 更新 Hero 背景圖片
+        const heroSection = document.querySelector('.hero');
+        if (heroSection) {
+            const currentStyle = heroSection.style.backgroundImage;
+            const gradientMatch = currentStyle.match(/linear-gradient\([^)]+\)/);
+            const gradient = gradientMatch ? gradientMatch[0] : 'linear-gradient(rgba(70,130,180,0.7), rgba(70,130,180,0.5))';
+            
+            heroSection.style.backgroundImage = `${gradient}, url('${event.data.imageUrl}')`;
+            console.log('Hero背景圖片已即時更新:', event.data.imageUrl);
+        }
     } else if (event.data && event.data.type === 'previewDisplaySettings') {
         // 預覽模式，臨時應用設定
         previewDisplaySettings(event.data.settings);
@@ -1126,6 +1140,20 @@ async function loadSiteSettings() {
             });
         }
         
+        // 更新 Hero 背景圖片
+        if (settings.heroImage) {
+            const heroSection = document.querySelector('.hero');
+            if (heroSection) {
+                // 保留原有的漸變疊加，只更新背景圖片
+                const currentStyle = heroSection.style.backgroundImage;
+                const gradientMatch = currentStyle.match(/linear-gradient\([^)]+\)/);
+                const gradient = gradientMatch ? gradientMatch[0] : 'linear-gradient(rgba(70,130,180,0.7), rgba(70,130,180,0.5))';
+                
+                heroSection.style.backgroundImage = `${gradient}, url('${settings.heroImage}')`;
+                console.log('Hero背景圖片已更新:', settings.heroImage);
+            }
+        }
+
         // 更新 LINE ID
         if (settings.contact_line) {
             const lineElements = document.querySelectorAll('.contact-info .fa-line');

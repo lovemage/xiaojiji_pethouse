@@ -203,6 +203,14 @@ class API {
             method: 'DELETE'
         });
     }
+
+    // Hero 圖片上傳
+    static async uploadHeroImage(formData) {
+        return await this.request('/upload-hero-image', {
+            method: 'POST',
+            body: formData // FormData 包含圖片檔案
+        });
+    }
 }
 
 // 全域可用

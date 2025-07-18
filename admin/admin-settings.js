@@ -133,26 +133,33 @@ document.getElementById('heroForm').addEventListener('submit', async function(e)
         const formData = new FormData();
         formData.append('heroImage', file);
         
-        // 這裡需要實現圖片上傳 API
-        // const response = await API.uploadHeroImage(formData);
+        // 使用 Cloudinary CDN 上傳
+        console.log('開始上傳hero圖片到CDN...');
         
-        // 暫時使用 localStorage
-        console.log('開始上傳hero圖片');
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            try {
-                console.log('圖片讀取完成，開始更新設定');
-                await API.updateSetting('heroImage', e.target.result);
-                siteSettings.heroImage = e.target.result;
-                document.getElementById('currentHeroImage').src = e.target.result;
-                alert('橫幅圖片已更新！');
-                console.log('Hero圖片更新成功');
-            } catch (error) {
-                console.error('Hero圖片更新失敗:', error);
-                alert('圖片更新失敗，請稍後再試');
+        const formData = new FormData();
+        formData.append('heroImage', file);
+        
+        const response = await API.uploadHeroImage(formData);
+        
+        if (response.success) {
+            siteSettings.heroImage = response.imageUrl;
+            document.getElementById('currentHeroImage').src = response.imageUrl;
+            alert('橫幅圖片已更新！');
+            console.log('Hero圖片上傳成功:', response.imageUrl);
+            
+            // 重新載入設定以確保UI更新
+            loadCurrentSettings();
+            
+            // 通知前端更新hero圖片
+            if (window.opener && !window.opener.closed) {
+                window.opener.postMessage({
+                    type: 'heroImageUpdated',
+                    imageUrl: response.imageUrl
+                }, '*');
             }
+        } else {
+            throw new Error('上傳失敗');
         }
-        reader.readAsDataURL(file);
     } catch (error) {
         console.error('上傳失敗:', error);
         alert('上傳失敗，請稍後再試');
