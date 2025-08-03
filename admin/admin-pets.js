@@ -198,6 +198,21 @@ if (document.getElementById('petForm')) {
         try {
             const formData = new FormData(e.target);
             
+            // 驗證必填欄位 - 只檢查品種
+            const breed = formData.get('breed');
+            if (!breed) {
+                showNotification('請選擇品種！', 'error');
+                return;
+            }
+            
+            // 設定預設值給未填寫的欄位
+            if (!formData.get('name')) formData.set('name', '未命名');
+            if (!formData.get('age')) formData.set('age', '未知');
+            if (!formData.get('gender')) formData.set('gender', '未知');
+            if (!formData.get('color')) formData.set('color', '未知');
+            if (!formData.get('category')) formData.set('category', 'small');
+            if (!formData.get('description')) formData.set('description', '暫無描述');
+            
             // 檢查是否有上傳圖片
             const imageFiles = document.getElementById('petImages').files;
             
@@ -221,7 +236,7 @@ if (document.getElementById('petForm')) {
             // 使用 API 新增寵物
             const result = await API.createPet(formData);
             
-            showNotification('寵物資料已儲存！', 'success');
+            showNotification('寵物資料已儲存！只需要品種即可上架！', 'success');
             
             // 延遲跳轉，讓用戶看到成功訊息
             setTimeout(() => {

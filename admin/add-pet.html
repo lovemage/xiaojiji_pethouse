@@ -41,8 +41,8 @@
                 <form id="petForm" class="pet-form">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="petName">寵物名稱 *</label>
-                            <input type="text" id="petName" name="name" required>
+                            <label for="petName">寵物名稱</label>
+                            <input type="text" id="petName" name="name" placeholder="選填">
                         </div>
                         <div class="form-group">
                             <label for="petBreed">品種 *</label>
@@ -89,8 +89,8 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="petBirthdate">出生日期 *</label>
-                            <input type="date" id="petBirthdate" name="birthdate" required onchange="calculateAge()">
+                            <label for="petBirthdate">出生日期</label>
+                            <input type="date" id="petBirthdate" name="birthdate" onchange="calculateAge()">
                         </div>
                         <div class="form-group">
                             <label for="petAge">年齡</label>
@@ -100,23 +100,23 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="petGender">性別 *</label>
-                            <select id="petGender" name="gender" required>
+                            <label for="petGender">性別</label>
+                            <select id="petGender" name="gender">
                                 <option value="">請選擇性別</option>
                                 <option value="male">公犬</option>
                                 <option value="female">母犬</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="petColor">毛色 *</label>
-                            <input type="text" id="petColor" name="color" placeholder="例：黑白色、三色" required>
+                            <label for="petColor">毛色</label>
+                            <input type="text" id="petColor" name="color" placeholder="例：黑白色、三色（選填）">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="petCategory">犬型分類 *</label>
-                            <select id="petCategory" name="category" required>
+                            <label for="petCategory">犬型分類</label>
+                            <select id="petCategory" name="category">
                                 <option value="">請選擇犬型</option>
                                 <option value="small">小型犬</option>
                                 <option value="medium">中型犬</option>
@@ -124,14 +124,14 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="petPrice">價格 (NT$) *</label>
-                            <input type="number" id="petPrice" name="price" min="0" required>
+                            <label for="petPrice">價格 (NT$)</label>
+                            <input type="number" id="petPrice" name="price" min="0" placeholder="選填">
                         </div>
                     </div>
 
                     <div class="form-group full-width">
-                        <label for="petDescription">描述 *</label>
-                        <textarea id="petDescription" name="description" placeholder="請詳細描述寵物的個性、健康狀況、特色等..." required></textarea>
+                        <label for="petDescription">描述</label>
+                                                    <textarea id="petDescription" name="description" placeholder="請詳細描述寵物的個性、健康狀況、特色等...（選填）"></textarea>
                     </div>
 
                     <div class="form-group full-width">
