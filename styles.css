@@ -519,40 +519,68 @@ button {
     z-index: 1;
 }
 
-/* 滑動寵物卡片容器 */
+/* 觸摸滑動寵物卡片容器 */
 .dogs-slider-container {
-    overflow: hidden;
     width: 100%;
     position: relative;
     padding: 20px 0;
 }
 
+.dogs-slider-wrapper {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+}
+
 .dogs-slider {
     display: flex;
-    gap: 30px;
-    animation: slideRightToLeft 40s linear infinite;
-    width: fit-content;
+    gap: 20px;
+    padding: 0 20px;
+    transition: transform 0.3s ease;
+    will-change: transform;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
-/* 右至左滑動動畫 - 無縫循環 */
-@keyframes slideRightToLeft {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-50%);
-    }
-}
-
-/* 暫停動畫當滑鼠懸停 */
-.dogs-slider:hover {
-    animation-play-state: paused;
+.dogs-slider::-webkit-scrollbar {
+    display: none;
 }
 
 /* 寵物卡片在滑動中的樣式 */
 .dogs-slider .dog-card {
     flex: 0 0 280px;
     min-width: 280px;
+    scroll-snap-align: start;
+}
+
+/* 滑動指示器 */
+.slider-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.slider-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(70, 130, 180, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.slider-dot.active {
+    background-color: var(--primary-color);
+    transform: scale(1.2);
+}
+
+.slider-dot:hover {
+    background-color: var(--primary-color);
+    opacity: 0.8;
 }
 
 /* 犬型頁面的網格佈局 */
@@ -1909,6 +1937,14 @@ button {
     background-color: #00B900;
 }
 
+.facebook-btn {
+    background-color: #1877F2;
+}
+
+.youtube-btn {
+    background-color: #FF0000;
+}
+
 .tiktok-btn {
     background-color: #000000;
 }
@@ -1925,21 +1961,33 @@ button {
 }
 
 .social-float-menu.active .line-btn {
-    bottom: 80px;
+    bottom: 130px;
     right: 7px;
     transition-delay: 0.1s;
 }
 
-.social-float-menu.active .tiktok-btn {
-    bottom: 65px;
-    right: 65px;
+.social-float-menu.active .facebook-btn {
+    bottom: 100px;
+    right: 50px;
     transition-delay: 0.2s;
+}
+
+.social-float-menu.active .youtube-btn {
+    bottom: 65px;
+    right: 85px;
+    transition-delay: 0.3s;
+}
+
+.social-float-menu.active .tiktok-btn {
+    bottom: 40px;
+    right: 50px;
+    transition-delay: 0.4s;
 }
 
 .social-float-menu.active .instagram-btn {
     bottom: 7px;
-    right: 80px;
-    transition-delay: 0.3s;
+    right: 7px;
+    transition-delay: 0.5s;
 }
 
 /* 懸停效果 */
@@ -2462,9 +2510,23 @@ button {
         width: auto;
     }
     
+    .dogs-slider {
+        gap: 15px;
+        padding: 0 15px;
+    }
+    
     .dogs-slider .dog-card {
         flex: 0 0 250px;
         min-width: 250px;
+    }
+    
+    .slider-indicators {
+        margin-top: 15px;
+    }
+    
+    .slider-dot {
+        width: 6px;
+        height: 6px;
     }
 
     /* 手機端犬型頁面雙排佈局 */
@@ -2570,18 +2632,28 @@ button {
     }
     
     .social-float-menu.active .line-btn {
-        bottom: 70px;
+        bottom: 115px;
         right: 5px;
     }
     
+    .social-float-menu.active .facebook-btn {
+        bottom: 90px;
+        right: 40px;
+    }
+    
+    .social-float-menu.active .youtube-btn {
+        bottom: 60px;
+        right: 70px;
+    }
+    
     .social-float-menu.active .tiktok-btn {
-        bottom: 55px;
-        right: 55px;
+        bottom: 35px;
+        right: 40px;
     }
     
     .social-float-menu.active .instagram-btn {
         bottom: 5px;
-        right: 70px;
+        right: 5px;
     }
     
     .social-tooltip {

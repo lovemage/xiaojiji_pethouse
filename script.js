@@ -1780,17 +1780,22 @@ function getRandomPets(pets, count) {
     return shuffled.slice(0, count);
 }
 
-// 顯示隨機寵物卡片
+// 顯示隨機寵物卡片（觸摸滑動版本）
 async function displayRandomPets(pets) {
     const randomDogsGrid = document.getElementById('randomDogsGrid');
+    const sliderIndicators = document.getElementById('sliderIndicators');
     if (!randomDogsGrid) return;
 
     randomDogsGrid.innerHTML = '';
+    if (sliderIndicators) sliderIndicators.innerHTML = '';
 
     // 載入最新的顯示設定並更新全局變量
     await loadFrontendDisplaySettings();
     console.log('首頁顯示設定:', displaySettings);
 
+    // 獲取隨機10張寵物卡片
+    const randomPets = getRandomPets(pets, 10);
+    
     // 創建寵物卡片的函數
     function createPetCard(pet) {
         const dogCard = document.createElement('div');
@@ -1817,13 +1822,132 @@ async function displayRandomPets(pets) {
         return dogCard;
     }
 
-    // 創建兩組相同的卡片以實現無縫循環
-    for (let i = 0; i < 2; i++) {
-        pets.forEach(pet => {
-            const dogCard = createPetCard(pet);
-            randomDogsGrid.appendChild(dogCard);
+    // 創建10張隨機寵物卡片
+    randomPets.forEach((pet, index) => {
+        const dogCard = createPetCard(pet);
+        randomDogsGrid.appendChild(dogCard);
+    });
+
+    // 初始化滑動功能
+    initializePetSlider();
+}
+
+// 初始化寵物卡片滑動功能
+function initializePetSlider() {
+    const slider = document.getElementById('randomDogsGrid');
+    const indicatorsContainer = document.getElementById('sliderIndicators');
+    
+    if (!slider || !indicatorsContainer) return;
+
+    const cards = slider.querySelectorAll('.dog-card');
+    const totalCards = cards.length;
+    const cardsPerView = getCardsPerView();
+    const totalPages = Math.ceil(totalCards / cardsPerView);
+    
+    let currentPage = 0;
+    
+    // 創建滑動指示器
+    function createIndicators() {
+        indicatorsContainer.innerHTML = '';
+        for (let i = 0; i < totalPages; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'slider-dot';
+            if (i === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToPage(i));
+            indicatorsContainer.appendChild(dot);
+        }
+    }
+
+    // 獲取每次顯示的卡片數量
+    function getCardsPerView() {
+        const screenWidth = window.innerWidth;
+        const cardWidth = 280; // 280px + gap
+        const containerWidth = screenWidth - 40; // 減去padding
+        return Math.floor(containerWidth / (cardWidth + 20));
+    }
+
+    // 跳轉到指定頁面
+    function goToPage(pageIndex) {
+        currentPage = Math.max(0, Math.min(pageIndex, totalPages - 1));
+        const cardWidth = 280 + 20; // 卡片寬度 + gap
+        const scrollPosition = currentPage * cardWidth * cardsPerView;
+        
+        slider.scrollTo({
+            left: scrollPosition,
+            behavior: 'smooth'
+        });
+        
+        updateIndicators();
+    }
+
+    // 更新指示器狀態
+    function updateIndicators() {
+        const dots = indicatorsContainer.querySelectorAll('.slider-dot');
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentPage);
         });
     }
+
+    // 監聽滑動事件
+    let isScrolling = false;
+    slider.addEventListener('scroll', () => {
+        if (isScrolling) return;
+        isScrolling = true;
+        
+        setTimeout(() => {
+            const cardWidth = 280 + 20;
+            const scrollLeft = slider.scrollLeft;
+            const newPage = Math.round(scrollLeft / (cardWidth * cardsPerView));
+            
+            if (newPage !== currentPage) {
+                currentPage = newPage;
+                updateIndicators();
+            }
+            
+            isScrolling = false;
+        }, 100);
+    });
+
+    // 觸摸滑動支持
+    let startX = 0;
+    let startScrollLeft = 0;
+    let isDragging = false;
+
+    slider.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        startScrollLeft = slider.scrollLeft;
+        isDragging = true;
+    });
+
+    slider.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        
+        const currentX = e.touches[0].clientX;
+        const diffX = startX - currentX;
+        slider.scrollLeft = startScrollLeft + diffX;
+    });
+
+    slider.addEventListener('touchend', () => {
+        isDragging = false;
+        
+        // 滑動結束後對齊到最近的頁面
+        const cardWidth = 280 + 20;
+        const scrollLeft = slider.scrollLeft;
+        const newPage = Math.round(scrollLeft / (cardWidth * cardsPerView));
+        goToPage(newPage);
+    });
+
+    // 創建指示器
+    createIndicators();
+
+    // 響應式處理
+    window.addEventListener('resize', () => {
+        const newCardsPerView = getCardsPerView();
+        if (newCardsPerView !== cardsPerView) {
+            createIndicators();
+        }
+    });
 }
 
 // 生成導航列品種菜單
