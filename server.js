@@ -168,7 +168,26 @@ const mockPets = [
 // 寵物相關 API
 app.get('/api/pets', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM pets ORDER BY created_at DESC');
+    const { category, breed } = req.query;
+    
+    let query = 'SELECT * FROM pets WHERE 1=1';
+    let params = [];
+    
+    // 添加分類篩選
+    if (category) {
+      query += ' AND category = $' + (params.length + 1);
+      params.push(category);
+    }
+    
+    // 添加品種篩選
+    if (breed) {
+      query += ' AND breed = $' + (params.length + 1);
+      params.push(breed);
+    }
+    
+    query += ' ORDER BY created_at DESC';
+    
+    const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (err) {
     console.error('獲取寵物資料錯誤:', err);

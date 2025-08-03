@@ -113,16 +113,25 @@
 
 
         <script src="js/navigation.js"></script>
-
-
         <script src="js/api.js"></script>
-
-
+        <script src="js/breed-filter.js"></script>
         <script src="script.js"></script>
     <script>
-        // 頁面載入時初始化小型犬頁面
+        // 頁面載入時初始化小型犬頁面和品種篩選器
         document.addEventListener('DOMContentLoaded', function() {
-            initializeSmallDogsPage();
+            // 先載入顯示設定
+            loadFrontendDisplaySettings().then(() => {
+                // 初始化品種篩選器
+                if (window.initializeBreedFilter) {
+                    window.smallDogsFilter = initializeBreedFilter('small');
+                }
+            }).catch(error => {
+                console.error('載入顯示設定失敗:', error);
+                // 即使載入失敗也初始化品種篩選器
+                if (window.initializeBreedFilter) {
+                    window.smallDogsFilter = initializeBreedFilter('small');
+                }
+            });
         });
     </script>
 </body>

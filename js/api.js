@@ -50,8 +50,13 @@ class API {
     }
 
     // 寵物相關 API
-    static async getPets() {
-        return await this.request('/pets');
+    static async getPets(filters = {}) {
+        const params = new URLSearchParams();
+        if (filters.category) params.append('category', filters.category);
+        if (filters.breed) params.append('breed', filters.breed);
+        
+        const url = params.toString() ? `/pets?${params.toString()}` : '/pets';
+        return await this.request(url);
     }
 
     static async createPet(petData) {

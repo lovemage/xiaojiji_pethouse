@@ -2194,6 +2194,122 @@ button {
     font-size: 14px;
 }
 
+/* ===== 品種篩選標籤樣式 ===== */
+.breed-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    padding: 30px 0;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 15px;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.breed-btn {
+    background: var(--white);
+    border: 2px solid var(--border-color);
+    color: var(--text-color);
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    min-width: 120px;
+    text-align: center;
+}
+
+.breed-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(70,130,180,0.2);
+}
+
+.breed-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(70,130,180,0.3);
+}
+
+.breed-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--primary-color);
+}
+
+.breed-btn .count {
+    background: var(--accent-color);
+    color: var(--primary-color);
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+    position: relative;
+    top: -1px;
+}
+
+.breed-btn.active .count {
+    background: rgba(255,255,255,0.2);
+    color: var(--white);
+}
+
+/* 載入動畫 */
+.breed-filters.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.breed-filters.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--primary-color);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* 品種標籤響應式設計 */
+@media (max-width: 768px) {
+    .breed-filters {
+        padding: 20px 15px;
+        gap: 10px;
+    }
+    
+    .breed-btn {
+        font-size: 14px;
+        padding: 10px 18px;
+        min-width: 100px;
+    }
+    
+    .breed-btn .count {
+        font-size: 11px;
+        padding: 1px 6px;
+    }
+}
+
 /* 響應式設計 */
 @media (max-width: 768px) {
     .top-bar .container {
