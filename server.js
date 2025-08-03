@@ -476,6 +476,8 @@ const mockSettings = {
   license_number: '特寵業字第A12345號',
   tax_id: '12345678',
   show_gallery_nav: true,
+  // 預設 hero 圖片
+  heroImage: 'images/pkncb1-golden-retriever-puppy-running-outdoors-in-grass.webp',
   // 寵物卡片顯示設定 - 預設只顯示品種和毛色
   show_name: false,
   show_breed: true,

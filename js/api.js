@@ -157,6 +157,14 @@ class API {
         });
     }
 
+    // Hero 圖片上傳 API
+    static async uploadHeroImage(formData) {
+        return await this.request('/upload-hero-image', {
+            method: 'POST',
+            body: formData
+        });
+    }
+
     // 相簿相關 API
     static async getGalleryImages(category = null) {
         const endpoint = category ? `/gallery?category=${category}` : '/gallery';
