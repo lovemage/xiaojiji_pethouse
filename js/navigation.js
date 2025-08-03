@@ -32,7 +32,7 @@ class NavigationManager {
                     </div>
                     <div class="social-links">
                         <a href="https://lin.ee/kWyAbbF" target="_blank" aria-label="Line"><i class="fab fa-line"></i></a>
-                        <a href="http://instagram.com/xiaojijichongwuquanshe?utm_source=qr" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.instagram.com/corgidog666/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                         <a href="https://www.tiktok.com/@corgidog114666?_t=ZS-8xwHtofNTBI&_r=1" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
@@ -123,7 +123,7 @@ class NavigationManager {
                     <i class="fab fa-line"></i>
                     <span class="social-tooltip">LINE</span>
                 </a>
-                <a href="https://www.facebook.com/profile.php?id=100090193649009&mibextid=ZbWKwL" target="_blank" class="social-fixed-btn facebook-btn" aria-label="Facebook">
+                <a href="https://www.facebook.com/profile.php?id=61577693613816&locale=zh_TW" target="_blank" class="social-fixed-btn facebook-btn" aria-label="Facebook">
                     <i class="fab fa-facebook-f"></i>
                     <span class="social-tooltip">Facebook</span>
                 </a>
@@ -135,7 +135,7 @@ class NavigationManager {
                     <i class="fab fa-tiktok"></i>
                     <span class="social-tooltip">TikTok</span>
                 </a>
-                <a href="http://instagram.com/xiaojijichongwuquanshe?utm_source=qr" target="_blank" class="social-fixed-btn instagram-btn" aria-label="Instagram">
+                <a href="https://www.instagram.com/corgidog666/" target="_blank" class="social-fixed-btn instagram-btn" aria-label="Instagram">
                     <i class="fab fa-instagram"></i>
                     <span class="social-tooltip">Instagram</span>
                 </a>
