@@ -160,13 +160,8 @@ class BreedFilter {
         if (this.currentBreed !== 'all') {
             this.displayAllPhotos(petsToShow);
         } else {
-                    // 顯示全部時仍使用卡片模式
-        this.gridContainer.className = 'dogs-grid'; // 恢復原本的網格類名
-        petsToShow.forEach(pet => {
-            const dogCard = this.createPetCard(pet);
-            this.gridContainer.appendChild(dogCard);
-        });
-        this.initializePetCardEvents();
+                    // 顯示全部時也使用照片網格模式展示所有圖片
+        this.displayAllPhotos(petsToShow);
         }
     }
 
@@ -205,13 +200,10 @@ class BreedFilter {
             return generatePetCardHTML(pet, imageUrl, window.displaySettings || {});
         }
 
-        // 簡化版卡片HTML
+        // 簡化版卡片HTML - 移除按鈕，直接展示圖片
         return `
             <div class="dog-image">
                 <img src="${imageUrl}" alt="${pet.name}" loading="lazy">
-                <div class="dog-overlay">
-                    <button class="btn-primary view-photos">查看照片</button>
-                </div>
             </div>
             <div class="dog-info">
                 <h3>${pet.name}</h3>
@@ -223,26 +215,10 @@ class BreedFilter {
         `;
     }
 
-    // 初始化寵物卡片事件
+    // 移除寵物卡片點擊事件（不再需要互動按鈕）
     initializePetCardEvents() {
-        this.gridContainer.querySelectorAll('.dog-card').forEach(card => {
-            const viewButton = card.querySelector('.view-photos');
-            if (viewButton) {
-                viewButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const petId = card.dataset.petId;
-                    this.showPetPhotos(petId);
-                });
-            }
-
-            // 卡片點擊事件
-            card.addEventListener('click', (e) => {
-                if (!e.target.closest('.view-photos')) {
-                    const petId = card.dataset.petId;
-                    this.showPetPhotos(petId);
-                }
-            });
-        });
+        // 卡片不再需要點擊事件，純展示模式
+        console.log('寵物卡片展示模式：純品種圖片展示，無需互動');
     }
 
     // 顯示寵物照片

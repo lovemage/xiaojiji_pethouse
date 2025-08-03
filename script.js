@@ -484,9 +484,7 @@ function generatePetCardHTML(pet, imageUrl, settings) {
         cardContent += `<p class="health">健康：${pet.health}</p>`;
     }
     
-    cardContent += `<a href="#" class="btn-secondary" onclick="showPetDetails(${pet.id})">
-        <i class="fas fa-paw"></i> 了解更多
-    </a>`;
+    // 移除「了解更多」按鈕，直接展示品種圖片
     cardContent += `</div>`;
     
     return cardContent;
