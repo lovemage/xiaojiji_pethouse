@@ -1858,19 +1858,47 @@ function initializePetSlider() {
         }
     }
 
-    // 獲取每次顯示的卡片數量
+    // 獲取每次顯示的卡片數量（針對移動端優化）
     function getCardsPerView() {
         const screenWidth = window.innerWidth;
-        const cardWidth = 280; // 280px + gap
-        const containerWidth = screenWidth - 40; // 減去padding
-        return Math.floor(containerWidth / (cardWidth + 20));
+        let cardWidth = 280;
+        let gap = 20;
+        let padding = 40;
+        
+        // 移動端調整
+        if (screenWidth <= 768) {
+            padding = 30;
+            gap = 15;
+            
+            if (screenWidth <= 480) {
+                cardWidth = 260;
+            }
+        }
+        
+        const containerWidth = screenWidth - padding;
+        const cardsPerView = Math.floor(containerWidth / (cardWidth + gap));
+        
+        // 確保至少顯示一張卡片
+        return Math.max(1, cardsPerView);
     }
 
-    // 跳轉到指定頁面
+    // 跳轉到指定頁面（響應式優化）
     function goToPage(pageIndex) {
         currentPage = Math.max(0, Math.min(pageIndex, totalPages - 1));
-        const cardWidth = 280 + 20; // 卡片寬度 + gap
-        const scrollPosition = currentPage * cardWidth * cardsPerView;
+        
+        // 動態計算卡片寬度和間距
+        const screenWidth = window.innerWidth;
+        let cardWidth = 280;
+        let gap = 20;
+        
+        if (screenWidth <= 768) {
+            gap = 15;
+            if (screenWidth <= 480) {
+                cardWidth = 260;
+            }
+        }
+        
+        const scrollPosition = currentPage * (cardWidth + gap) * getCardsPerView();
         
         slider.scrollTo({
             left: scrollPosition,
@@ -1908,35 +1936,67 @@ function initializePetSlider() {
         }, 100);
     });
 
-    // 觸摸滑動支持
+    // 增強觸摸滑動支持
     let startX = 0;
     let startScrollLeft = 0;
     let isDragging = false;
+    let velocity = 0;
+    let lastTouchTime = 0;
+    let lastTouchX = 0;
 
     slider.addEventListener('touchstart', (e) => {
         startX = e.touches[0].clientX;
         startScrollLeft = slider.scrollLeft;
         isDragging = true;
-    });
+        velocity = 0;
+        lastTouchTime = Date.now();
+        lastTouchX = startX;
+        
+        // 停止當前的滑動動畫
+        slider.style.scrollBehavior = 'auto';
+    }, { passive: false });
 
     slider.addEventListener('touchmove', (e) => {
         if (!isDragging) return;
         e.preventDefault();
         
         const currentX = e.touches[0].clientX;
+        const currentTime = Date.now();
+        const timeDiff = currentTime - lastTouchTime;
+        
+        if (timeDiff > 0) {
+            velocity = (currentX - lastTouchX) / timeDiff;
+        }
+        
         const diffX = startX - currentX;
         slider.scrollLeft = startScrollLeft + diffX;
-    });
+        
+        lastTouchTime = currentTime;
+        lastTouchX = currentX;
+    }, { passive: false });
 
     slider.addEventListener('touchend', () => {
+        if (!isDragging) return;
         isDragging = false;
         
-        // 滑動結束後對齊到最近的頁面
+        // 恢復平滑滑動
+        slider.style.scrollBehavior = 'smooth';
+        
+        // 根據滑動速度決定是否應該滑動到下一頁
         const cardWidth = 280 + 20;
-        const scrollLeft = slider.scrollLeft;
-        const newPage = Math.round(scrollLeft / (cardWidth * cardsPerView));
-        goToPage(newPage);
-    });
+        let targetPage = Math.round(slider.scrollLeft / (cardWidth * cardsPerView));
+        
+        // 如果滑動速度足夠快，則滑動到下一頁
+        if (Math.abs(velocity) > 0.5) {
+            if (velocity < 0) {
+                targetPage = Math.min(currentPage + 1, totalPages - 1);
+            } else {
+                targetPage = Math.max(currentPage - 1, 0);
+            }
+        }
+        
+        goToPage(targetPage);
+    }, { passive: false });
 
     // 創建指示器
     createIndicators();

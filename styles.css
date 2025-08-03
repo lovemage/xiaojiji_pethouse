@@ -2531,11 +2531,23 @@ button {
     .dogs-slider {
         gap: 15px;
         padding: 0 15px;
+        scroll-snap-type: x mandatory;
+        scroll-padding: 15px;
     }
     
     .dogs-slider .dog-card {
-        flex: 0 0 250px;
-        min-width: 250px;
+        flex: 0 0 280px;
+        min-width: 280px;
+        scroll-snap-align: start;
+        touch-action: pan-x;
+    }
+    
+    /* 移動端優化觸摸滑動體驗 */
+    @media (max-width: 480px) {
+        .dogs-slider .dog-card {
+            flex: 0 0 260px;
+            min-width: 260px;
+        }
     }
     
     .slider-indicators {
@@ -3180,4 +3192,5 @@ button {
         grid-template-columns: repeat(2, 1fr);
         gap: 15px;
     }
+}
 }
