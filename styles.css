@@ -522,63 +522,48 @@ button {
     z-index: 1;
 }
 
-/* 觸摸滑動寵物卡片容器 */
-.dogs-slider-container {
+/* 寵物圖片固定網格展示 */
+.dogs-grid-container {
     width: 100%;
-    position: relative;
     padding: 20px 0;
 }
 
-.dogs-slider-wrapper {
-    overflow: hidden;
-    width: 100%;
-    position: relative;
-}
-
-.dogs-slider {
-    display: flex;
+.dogs-grid-display {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     padding: 0 20px;
-    transition: transform 0.3s ease;
-    will-change: transform;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.dogs-slider::-webkit-scrollbar {
-    display: none;
-}
-
-/* 寵物卡片在滑動中的樣式 */
-.dogs-slider .dog-card {
-    flex: 0 0 280px;
-    min-width: 280px;
-    scroll-snap-align: start;
-}
-
-/* 滑動指示器 */
-.slider-indicators {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 20px;
-}
-
-.slider-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: rgba(70, 130, 180, 0.3);
-    cursor: pointer;
+.dogs-grid-display .dog-card {
+    background: var(--white);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
+    aspect-ratio: 1;
 }
 
-.slider-dot.active {
-    background-color: var(--primary-color);
-    transform: scale(1.2);
+.dogs-grid-display .dog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.dogs-grid-display .dog-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 移動端響應式設計 */
+@media (max-width: 768px) {
+    .dogs-grid-display {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        padding: 0 15px;
+    }
 }
 
 .slider-dot:hover {

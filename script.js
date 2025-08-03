@@ -1758,10 +1758,8 @@ async function initializeRandomPetsDisplay() {
         console.log('載入的寵物資料:', pets);
 
         if (pets && pets.length > 0) {
-            // 隨機選擇五個寵物
-            const randomPets = getRandomPets(pets, 5);
-            console.log('選擇的隨機寵物:', randomPets);
-            displayRandomPets(randomPets);
+            // 直接傳送所有寵物資料，讓displayRandomPets處理隨機選擇
+            displayRandomPets(pets);
         } else {
             console.warn('沒有寵物資料可顯示');
             showNoPetsMessage();
@@ -1778,24 +1776,22 @@ function getRandomPets(pets, count) {
     return shuffled.slice(0, count);
 }
 
-// 顯示隨機寵物卡片（觸摸滑動版本）
+// 顯示隨機寵物圖片（固定網格版本）
 async function displayRandomPets(pets) {
     const randomDogsGrid = document.getElementById('randomDogsGrid');
-    const sliderIndicators = document.getElementById('sliderIndicators');
     if (!randomDogsGrid) return;
 
     randomDogsGrid.innerHTML = '';
-    if (sliderIndicators) sliderIndicators.innerHTML = '';
 
     // 載入最新的顯示設定並更新全局變量
     await loadFrontendDisplaySettings();
     console.log('首頁顯示設定:', displaySettings);
 
-    // 獲取隨機10張寵物卡片
-    const randomPets = getRandomPets(pets, 10);
+    // 獲取隨機16張寵物圖片（4x4網格）
+    const randomPets = getRandomPets(pets, 16);
     
-    // 創建寵物卡片的函數
-    function createPetCard(pet) {
+    // 創建寵物圖片卡片的函數
+    function createPetImageCard(pet) {
         const dogCard = document.createElement('div');
         dogCard.className = 'dog-card';
 
@@ -1814,199 +1810,21 @@ async function displayRandomPets(pets) {
         }
         const imageUrl = images.length > 0 ? images[0] : 'images/64805.jpg';
 
-        // 根據設定生成卡片內容，使用全局 displaySettings
-        dogCard.innerHTML = generatePetCardHTML(pet, imageUrl, displaySettings);
+        // 純圖片展示卡片
+        dogCard.innerHTML = `<img src="${imageUrl}" alt="${pet.name || '寵物圖片'}" loading="lazy">`;
 
         return dogCard;
     }
 
-    // 創建10張隨機寵物卡片
+    // 創建16張隨機寵物圖片卡片
     randomPets.forEach((pet, index) => {
-        const dogCard = createPetCard(pet);
+        const dogCard = createPetImageCard(pet);
         randomDogsGrid.appendChild(dogCard);
     });
-
-    // 初始化滑動功能
-    initializePetSlider();
 }
 
-// 初始化寵物卡片滑動功能
-function initializePetSlider() {
-    const slider = document.getElementById('randomDogsGrid');
-    const indicatorsContainer = document.getElementById('sliderIndicators');
-    
-    if (!slider || !indicatorsContainer) return;
-
-    const cards = slider.querySelectorAll('.dog-card');
-    const totalCards = cards.length;
-    const cardsPerView = getCardsPerView();
-    const totalPages = Math.ceil(totalCards / cardsPerView);
-    
-    let currentPage = 0;
-    
-    // 創建滑動指示器
-    function createIndicators() {
-        indicatorsContainer.innerHTML = '';
-        for (let i = 0; i < totalPages; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'slider-dot';
-            if (i === 0) dot.classList.add('active');
-            dot.addEventListener('click', () => goToPage(i));
-            indicatorsContainer.appendChild(dot);
-        }
-    }
-
-    // 獲取每次顯示的卡片數量（針對移動端優化）
-    function getCardsPerView() {
-        const screenWidth = window.innerWidth;
-        let cardWidth = 280;
-        let gap = 20;
-        let padding = 40;
-        
-        // 移動端調整
-        if (screenWidth <= 768) {
-            padding = 30;
-            gap = 15;
-            
-            if (screenWidth <= 480) {
-                cardWidth = 260;
-            }
-        }
-        
-        const containerWidth = screenWidth - padding;
-        const cardsPerView = Math.floor(containerWidth / (cardWidth + gap));
-        
-        // 確保至少顯示一張卡片
-        return Math.max(1, cardsPerView);
-    }
-
-    // 跳轉到指定頁面（響應式優化）
-    function goToPage(pageIndex) {
-        currentPage = Math.max(0, Math.min(pageIndex, totalPages - 1));
-        
-        // 動態計算卡片寬度和間距
-        const screenWidth = window.innerWidth;
-        let cardWidth = 280;
-        let gap = 20;
-        
-        if (screenWidth <= 768) {
-            gap = 15;
-            if (screenWidth <= 480) {
-                cardWidth = 260;
-            }
-        }
-        
-        const scrollPosition = currentPage * (cardWidth + gap) * getCardsPerView();
-        
-        slider.scrollTo({
-            left: scrollPosition,
-            behavior: 'smooth'
-        });
-        
-        updateIndicators();
-    }
-
-    // 更新指示器狀態
-    function updateIndicators() {
-        const dots = indicatorsContainer.querySelectorAll('.slider-dot');
-        dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentPage);
-        });
-    }
-
-    // 監聽滑動事件
-    let isScrolling = false;
-    slider.addEventListener('scroll', () => {
-        if (isScrolling) return;
-        isScrolling = true;
-        
-        setTimeout(() => {
-            const cardWidth = 280 + 20;
-            const scrollLeft = slider.scrollLeft;
-            const newPage = Math.round(scrollLeft / (cardWidth * cardsPerView));
-            
-            if (newPage !== currentPage) {
-                currentPage = newPage;
-                updateIndicators();
-            }
-            
-            isScrolling = false;
-        }, 100);
-    });
-
-    // 增強觸摸滑動支持
-    let startX = 0;
-    let startScrollLeft = 0;
-    let isDragging = false;
-    let velocity = 0;
-    let lastTouchTime = 0;
-    let lastTouchX = 0;
-
-    slider.addEventListener('touchstart', (e) => {
-        startX = e.touches[0].clientX;
-        startScrollLeft = slider.scrollLeft;
-        isDragging = true;
-        velocity = 0;
-        lastTouchTime = Date.now();
-        lastTouchX = startX;
-        
-        // 停止當前的滑動動畫
-        slider.style.scrollBehavior = 'auto';
-    }, { passive: false });
-
-    slider.addEventListener('touchmove', (e) => {
-        if (!isDragging) return;
-        e.preventDefault();
-        
-        const currentX = e.touches[0].clientX;
-        const currentTime = Date.now();
-        const timeDiff = currentTime - lastTouchTime;
-        
-        if (timeDiff > 0) {
-            velocity = (currentX - lastTouchX) / timeDiff;
-        }
-        
-        const diffX = startX - currentX;
-        slider.scrollLeft = startScrollLeft + diffX;
-        
-        lastTouchTime = currentTime;
-        lastTouchX = currentX;
-    }, { passive: false });
-
-    slider.addEventListener('touchend', () => {
-        if (!isDragging) return;
-        isDragging = false;
-        
-        // 恢復平滑滑動
-        slider.style.scrollBehavior = 'smooth';
-        
-        // 根據滑動速度決定是否應該滑動到下一頁
-        const cardWidth = 280 + 20;
-        let targetPage = Math.round(slider.scrollLeft / (cardWidth * cardsPerView));
-        
-        // 如果滑動速度足夠快，則滑動到下一頁
-        if (Math.abs(velocity) > 0.5) {
-            if (velocity < 0) {
-                targetPage = Math.min(currentPage + 1, totalPages - 1);
-            } else {
-                targetPage = Math.max(currentPage - 1, 0);
-            }
-        }
-        
-        goToPage(targetPage);
-    }, { passive: false });
-
-    // 創建指示器
-    createIndicators();
-
-    // 響應式處理
-    window.addEventListener('resize', () => {
-        const newCardsPerView = getCardsPerView();
-        if (newCardsPerView !== cardsPerView) {
-            createIndicators();
-        }
-    });
-}
+// 移除滑動功能 - 改為固定網格展示
+// initializePetSlider 函數已不再需要
 
 // 生成導航列品種菜單
 function generateBreedMenus(pets) {
