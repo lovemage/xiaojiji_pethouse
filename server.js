@@ -566,12 +566,9 @@ app.post('/api/settings', async (req, res) => {
     console.error('更新設定錯誤:', err);
 
     // 數據庫連接失敗時更新模擬數據
-    if (mockSettings.hasOwnProperty(key)) {
-      mockSettings[key] = value;
-      res.json({ setting_key: key, setting_value: value });
-    } else {
-      res.status(500).json({ error: '設定項目不存在' });
-    }
+    // 允許所有設定項目，動態添加到 mockSettings
+    mockSettings[key] = value;
+    res.json({ setting_key: key, setting_value: value });
   }
 });
 

@@ -127,7 +127,7 @@ class NavigationManager {
                     <i class="fab fa-facebook-f"></i>
                     <span class="social-tooltip">Facebook</span>
                 </a>
-                <a href="https://youtube.com/@user-co8ms8gn1t?si=dHk8_1YQdP-iCEWA" target="_blank" class="social-fixed-btn youtube-btn" aria-label="YouTube">
+                <a href="https://youtube.com/channel/UChtwOULcktV288e4b8_r7Gg?si=MlrDpNUpk94llQEP" target="_blank" class="social-fixed-btn youtube-btn" aria-label="YouTube">
                     <i class="fab fa-youtube"></i>
                     <span class="social-tooltip">YouTube</span>
                 </a>
