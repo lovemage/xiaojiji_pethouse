@@ -2634,8 +2634,11 @@ button {
     }
     
     .social-float-fixed {
+        top: auto;
+        bottom: 80px;
         right: 15px;
         gap: 10px;
+        transform: none;
     }
     
     .social-fixed-btn {
