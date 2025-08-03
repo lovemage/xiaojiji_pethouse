@@ -320,13 +320,16 @@ body {
 
 /* 主要橫幅 */
 .hero {
-    background: linear-gradient(135deg, rgba(70,130,180,0.9), rgba(100,149,237,0.8));
+    /* 移除固定背景，讓HTML inline style和JavaScript動態設定生效 */
     height: 500px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: var(--white);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .hero-content h2 {
