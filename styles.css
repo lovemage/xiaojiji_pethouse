@@ -2194,6 +2194,139 @@ button {
     font-size: 14px;
 }
 
+/* ===== 照片網格樣式 ===== */
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.photo-card {
+    background: var(--white);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.photo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.photo-image {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+.photo-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.photo-card:hover .photo-image img {
+    transform: scale(1.05);
+}
+
+.photo-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    padding: 20px 15px 15px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.photo-card:hover .photo-overlay {
+    transform: translateY(0);
+}
+
+.photo-info h4 {
+    color: white;
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.photo-info p {
+    color: rgba(255,255,255,0.9);
+    margin: 3px 0;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.photo-info p.price {
+    color: var(--accent-color);
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.photo-info i {
+    width: 12px;
+    font-size: 11px;
+}
+
+/* 移動端照片網格優化 */
+@media (max-width: 768px) {
+    .photos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+    
+    .photo-image {
+        height: 200px;
+    }
+    
+    .photo-overlay {
+        padding: 15px 12px 12px;
+    }
+    
+    .photo-info h4 {
+        font-size: 15px;
+    }
+    
+    .photo-info p {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .photos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .photo-image {
+        height: 180px;
+    }
+    
+    .photo-overlay {
+        padding: 12px 10px 10px;
+    }
+    
+    .photo-info h4 {
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+    
+    .photo-info p {
+        font-size: 11px;
+        gap: 4px;
+    }
+}
+
 /* ===== 品種篩選標籤樣式 ===== */
 .breed-filters {
     display: flex;

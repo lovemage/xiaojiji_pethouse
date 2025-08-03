@@ -156,13 +156,18 @@ class BreedFilter {
 
         this.hideNoPetsMessage();
 
+        // 如果選擇特定品種，直接顯示所有照片
+        if (this.currentBreed !== 'all') {
+            this.displayAllPhotos(petsToShow);
+        } else {
+                    // 顯示全部時仍使用卡片模式
+        this.gridContainer.className = 'dogs-grid'; // 恢復原本的網格類名
         petsToShow.forEach(pet => {
             const dogCard = this.createPetCard(pet);
             this.gridContainer.appendChild(dogCard);
         });
-
-        // 重新初始化寵物卡片點擊事件
         this.initializePetCardEvents();
+        }
     }
 
     // 創建寵物卡片
@@ -322,10 +327,75 @@ class BreedFilter {
         });
     }
 
+    // 顯示所有照片（品種篩選後直接顯示照片網格）
+    displayAllPhotos(pets) {
+        // 將網格容器轉換為照片網格模式
+        this.gridContainer.className = 'photos-grid';
+        
+        pets.forEach(pet => {
+            // 處理寵物的所有圖片
+            let images = [];
+            if (pet.images) {
+                if (typeof pet.images === 'string') {
+                    try {
+                        images = JSON.parse(pet.images);
+                    } catch (e) {
+                        images = [pet.images];
+                    }
+                } else if (Array.isArray(pet.images)) {
+                    images = pet.images;
+                }
+            }
+            
+            // 為每張圖片創建照片卡片
+            images.forEach((imageUrl, index) => {
+                const photoCard = this.createPhotoCard(pet, imageUrl, index);
+                this.gridContainer.appendChild(photoCard);
+            });
+        });
+    }
+
+    // 創建照片卡片
+    createPhotoCard(pet, imageUrl, imageIndex) {
+        const photoCard = document.createElement('div');
+        photoCard.className = 'photo-card';
+        photoCard.dataset.petId = pet.id;
+        photoCard.dataset.imageIndex = imageIndex;
+
+        const displaySettings = window.displaySettings || {};
+        
+        photoCard.innerHTML = `
+            <div class="photo-image">
+                <img src="${imageUrl}" alt="${pet.name} - 照片 ${imageIndex + 1}" loading="lazy">
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        ${displaySettings.showName !== false ? `<h4>${pet.name}</h4>` : ''}
+                        ${displaySettings.showBreed !== false ? `<p><i class="fas fa-paw"></i> ${pet.breed}</p>` : ''}
+                        ${displaySettings.showAge !== false ? `<p><i class="fas fa-birthday-cake"></i> ${pet.age}</p>` : ''}
+                        ${displaySettings.showGender !== false ? `<p><i class="fas fa-venus-mars"></i> ${pet.gender}</p>` : ''}
+                        ${displaySettings.showColor !== false && pet.color ? `<p><i class="fas fa-palette"></i> ${pet.color}</p>` : ''}
+                        ${displaySettings.showPrice !== false && pet.price ? `<p class="price"><i class="fas fa-tag"></i> NT$ ${pet.price}</p>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // 添加點擊事件查看大圖
+        photoCard.addEventListener('click', () => {
+            this.openPhotoViewer(pet, [imageUrl]);
+        });
+
+        return photoCard;
+    }
+
     // 顯示無寵物訊息
     showNoPetsMessage() {
         if (this.noPetsMessage) {
             this.noPetsMessage.style.display = 'block';
+        }
+        // 恢復原本的網格類名
+        if (this.gridContainer) {
+            this.gridContainer.className = 'dogs-grid';
         }
     }
 
