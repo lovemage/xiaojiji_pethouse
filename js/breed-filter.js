@@ -331,35 +331,19 @@ class BreedFilter {
         });
     }
 
-    // 創建照片卡片
+    // 創建純圖片卡片 (移除所有覆蓋層和資訊顯示)
     createPhotoCard(pet, imageUrl, imageIndex) {
         const photoCard = document.createElement('div');
         photoCard.className = 'photo-card';
         photoCard.dataset.petId = pet.id;
         photoCard.dataset.imageIndex = imageIndex;
-
-        const displaySettings = window.displaySettings || {};
         
+        // 純圖片展示，無任何覆蓋層或資訊
         photoCard.innerHTML = `
             <div class="photo-image">
                 <img src="${imageUrl}" alt="${pet.name} - 照片 ${imageIndex + 1}" loading="lazy">
-                <div class="photo-overlay">
-                    <div class="photo-info">
-                        ${displaySettings.showName !== false ? `<h4>${pet.name}</h4>` : ''}
-                        ${displaySettings.showBreed !== false ? `<p><i class="fas fa-paw"></i> ${pet.breed}</p>` : ''}
-                        ${displaySettings.showAge !== false ? `<p><i class="fas fa-birthday-cake"></i> ${pet.age}</p>` : ''}
-                        ${displaySettings.showGender !== false ? `<p><i class="fas fa-venus-mars"></i> ${pet.gender}</p>` : ''}
-                        ${displaySettings.showColor !== false && pet.color ? `<p><i class="fas fa-palette"></i> ${pet.color}</p>` : ''}
-                        ${displaySettings.showPrice !== false && pet.price ? `<p class="price"><i class="fas fa-tag"></i> NT$ ${pet.price}</p>` : ''}
-                    </div>
-                </div>
             </div>
         `;
-
-        // 添加點擊事件查看大圖
-        photoCard.addEventListener('click', () => {
-            this.openPhotoViewer(pet, [imageUrl]);
-        });
 
         return photoCard;
     }
