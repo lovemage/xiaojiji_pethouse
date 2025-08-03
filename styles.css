@@ -1842,80 +1842,19 @@ button {
     opacity: 1;
 }
 
-/* 社群媒體懸浮選單 */
-.social-float-menu {
+/* 右側固定社群按鈕 */
+.social-float-fixed {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
     z-index: 999;
-}
-
-.social-float-toggle {
-    width: 65px;
-    height: 65px;
-    background-color: var(--white);
-    border-radius: 50%;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    transition: all 0.3s;
-    position: relative;
-    z-index: 2;
-    border: 2px solid var(--accent-color);
-    overflow: hidden;
-    padding: 0;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.social-float-toggle:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 25px rgba(0,0,0,0.2);
-}
-
-.social-logo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: opacity 0.3s;
-    display: block;
-}
-
-.social-close {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 24px;
-    color: var(--primary-color);
-}
-
-.social-float-menu.active .social-logo {
-    opacity: 0;
-}
-
-.social-float-menu.active .social-close {
-    opacity: 1;
-}
-
-.social-float-menu.active .social-float-toggle {
-    background-color: var(--light-bg);
-}
-
-/* 社群按鈕容器 */
-.social-float-buttons {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    pointer-events: none;
-}
-
-.social-float-btn {
-    position: absolute;
+.social-fixed-btn {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -1924,12 +1863,15 @@ button {
     justify-content: center;
     text-decoration: none;
     color: white;
-    font-size: 24px;
+    font-size: 22px;
     box-shadow: 0 3px 15px rgba(0,0,0,0.2);
-    opacity: 0;
-    transform: scale(0);
-    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    pointer-events: none;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.social-fixed-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
 }
 
 /* 各社群平台顏色 */
@@ -1953,47 +1895,7 @@ button {
     background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
 }
 
-/* 展開時的位置 */
-.social-float-menu.active .social-float-btn {
-    opacity: 1;
-    transform: scale(1);
-    pointer-events: all;
-}
 
-.social-float-menu.active .line-btn {
-    bottom: 130px;
-    right: 7px;
-    transition-delay: 0.1s;
-}
-
-.social-float-menu.active .facebook-btn {
-    bottom: 100px;
-    right: 50px;
-    transition-delay: 0.2s;
-}
-
-.social-float-menu.active .youtube-btn {
-    bottom: 65px;
-    right: 85px;
-    transition-delay: 0.3s;
-}
-
-.social-float-menu.active .tiktok-btn {
-    bottom: 40px;
-    right: 50px;
-    transition-delay: 0.4s;
-}
-
-.social-float-menu.active .instagram-btn {
-    bottom: 7px;
-    right: 7px;
-    transition-delay: 0.5s;
-}
-
-/* 懸停效果 */
-.social-float-btn:hover {
-    transform: scale(1.15);
-}
 
 /* 工具提示 */
 .social-tooltip {
@@ -2615,45 +2517,15 @@ button {
         padding: 30px 20px;
     }
     
-    .social-float-menu {
-        bottom: 20px;
-        right: 20px;
+    .social-float-fixed {
+        right: 15px;
+        gap: 10px;
     }
     
-    .social-float-toggle {
-        width: 55px;
-        height: 55px;
-    }
-    
-    .social-float-btn {
+    .social-fixed-btn {
         width: 45px;
         height: 45px;
         font-size: 20px;
-    }
-    
-    .social-float-menu.active .line-btn {
-        bottom: 115px;
-        right: 5px;
-    }
-    
-    .social-float-menu.active .facebook-btn {
-        bottom: 90px;
-        right: 40px;
-    }
-    
-    .social-float-menu.active .youtube-btn {
-        bottom: 60px;
-        right: 70px;
-    }
-    
-    .social-float-menu.active .tiktok-btn {
-        bottom: 35px;
-        right: 40px;
-    }
-    
-    .social-float-menu.active .instagram-btn {
-        bottom: 5px;
-        right: 5px;
     }
     
     .social-tooltip {

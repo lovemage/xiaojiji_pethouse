@@ -1256,11 +1256,11 @@ function closeAnnouncement() {
     }
 }
 
-// 社群媒體選單開關
-function toggleSocialMenu() {
-    const socialMenu = document.querySelector('.social-float-menu');
-    socialMenu.classList.toggle('active');
-}
+// 社群媒體選單開關（已移除切換功能）
+// function toggleSocialMenu() {
+//     const socialMenu = document.querySelector('.social-float-menu');
+//     socialMenu.classList.toggle('active');
+// }
 
 // 載入客戶評價
 async function loadTestimonials() {
