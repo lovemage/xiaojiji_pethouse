@@ -557,6 +557,46 @@ button {
     object-fit: cover;
 }
 
+/* 品種代表卡片樣式 */
+.breed-card {
+    position: relative;
+    cursor: pointer;
+}
+
+.breed-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.breed-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: white;
+    padding: 20px 15px 15px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.breed-card:hover .breed-overlay {
+    opacity: 1;
+}
+
+.breed-overlay h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.breed-overlay p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
 /* 移動端響應式設計 */
 @media (max-width: 768px) {
     .dogs-grid-display {
