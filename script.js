@@ -1776,7 +1776,7 @@ function getRandomPets(pets, count) {
     return shuffled.slice(0, count);
 }
 
-// 顯示隨機寵物圖片（固定網格版本）
+// 顯示每個品種一張代表圖片
 async function displayRandomPets(pets) {
     const randomDogsGrid = document.getElementById('randomDogsGrid');
     if (!randomDogsGrid) return;
@@ -1787,13 +1787,21 @@ async function displayRandomPets(pets) {
     await loadFrontendDisplaySettings();
     console.log('首頁顯示設定:', displaySettings);
 
-    // 獲取隨機16張寵物圖片（4x4網格）
-    const randomPets = getRandomPets(pets, 16);
+    // 按品種分組，每個品種只顯示一張代表圖片
+    const breedMap = new Map();
     
-    // 創建寵物圖片卡片的函數
-    function createPetImageCard(pet) {
+    pets.forEach(pet => {
+        if (pet.breed && !breedMap.has(pet.breed)) {
+            breedMap.set(pet.breed, pet);
+        }
+    });
+    
+    // 創建寵物品種代表卡片的函數
+    function createBreedRepresentativeCard(pet) {
         const dogCard = document.createElement('div');
-        dogCard.className = 'dog-card';
+        dogCard.className = 'dog-card breed-card';
+        dogCard.dataset.breed = pet.breed;
+        dogCard.dataset.category = pet.category;
 
         // 處理圖片
         let images = [];
@@ -1810,17 +1818,50 @@ async function displayRandomPets(pets) {
         }
         const imageUrl = images.length > 0 ? images[0] : 'images/64805.jpg';
 
-        // 純圖片展示卡片
-        dogCard.innerHTML = `<img src="${imageUrl}" alt="${pet.name || '寵物圖片'}" loading="lazy">`;
+        // 品種代表卡片（包含品種名稱）
+        dogCard.innerHTML = `
+            <img src="${imageUrl}" alt="${pet.breed}" loading="lazy">
+            <div class="breed-overlay">
+                <h3>${pet.breed}</h3>
+                <p>點擊查看所有圖片</p>
+            </div>
+        `;
+
+        // 添加點擊事件，跳轉到對應品種頁面
+        dogCard.addEventListener('click', () => {
+            navigateToBreedPage(pet.breed, pet.category);
+        });
 
         return dogCard;
     }
 
-    // 創建16張隨機寵物圖片卡片
-    randomPets.forEach((pet, index) => {
-        const dogCard = createPetImageCard(pet);
+    // 創建每個品種的代表卡片
+    Array.from(breedMap.values()).forEach(pet => {
+        const dogCard = createBreedRepresentativeCard(pet);
         randomDogsGrid.appendChild(dogCard);
     });
+}
+
+// 跳轉到品種頁面的函數
+function navigateToBreedPage(breed, category) {
+    let targetPage = '';
+    
+    switch(category) {
+        case 'small':
+            targetPage = 'small-dogs.html';
+            break;
+        case 'medium':
+            targetPage = 'medium-dogs.html';
+            break;
+        case 'large':
+            targetPage = 'large-dogs.html';
+            break;
+        default:
+            targetPage = 'small-dogs.html'; // 預設小型犬
+    }
+    
+    // 跳轉到對應頁面並帶上品種參數
+    window.location.href = `${targetPage}?breed=${encodeURIComponent(breed)}`;
 }
 
 // 移除滑動功能 - 改為固定網格展示
