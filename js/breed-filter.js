@@ -17,7 +17,18 @@ class BreedFilter {
             await this.loadPets();
             this.generateBreedFilters();
             this.bindEvents();
-            this.displayPets();
+            
+            // 檢查URL參數是否指定品種
+            const urlParams = new URLSearchParams(window.location.search);
+            const breedFromUrl = urlParams.get('breed');
+            
+            if (breedFromUrl && this.breeds.has(breedFromUrl)) {
+                // 自動選擇URL指定的品種
+                this.selectBreed(breedFromUrl);
+            } else {
+                // 顯示所有寵物
+                this.displayPets();
+            }
         } catch (error) {
             console.error('品種篩選初始化失敗:', error);
         }
